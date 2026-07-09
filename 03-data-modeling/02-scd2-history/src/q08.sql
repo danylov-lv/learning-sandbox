@@ -1,0 +1,5 @@
+-- q08: listings whose product_discovered event happened while the shop's
+-- as-of tier was gold, counted per shop, plus one TOTAL row.
+-- Columns: (shop_code, gold_discovered_listings)
+--
+-- TODO: write your query. Check: uv run python harness/validate.py --q q08

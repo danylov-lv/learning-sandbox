@@ -1,0 +1,3 @@
+-- Task 01: cross-source-price-spread
+-- Expected output columns (in order): root_category, tier, distinct_products, distinct_sources, snapshot_count, min_price, avg_price, max_price
+-- Write your query below.

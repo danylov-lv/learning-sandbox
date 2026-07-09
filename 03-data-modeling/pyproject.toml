@@ -1,0 +1,9 @@
+[project]
+name = "data-modeling"
+version = "0.1.0"
+description = "Module 03: data modeling for PriceWatch, a price-tracking platform (OLTP, temporal history, SCD2, star schema)"
+requires-python = ">=3.12"
+dependencies = [
+    "psycopg[binary]==3.2.3",
+    "numpy==2.1.3",
+]

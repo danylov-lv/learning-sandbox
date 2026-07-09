@@ -1,0 +1,24 @@
+-- Contract: probe.sql
+--
+-- Reproduces data/ground-truth.json's filter_probe:
+--   source_id = 3
+--   captured_at covering 2025-09-01 through 2025-10-31 inclusive (UTC)
+--
+-- Required output: exactly one row with columns:
+--   row_count   bigint   -- count of matching rows (rows with a null price
+--                            still count)
+--   price_sum   double   -- sum of price over matching rows (SUM ignores
+--                            nulls automatically)
+--
+-- This date range spans exactly two hive partitions: month=2025-09 and
+-- month=2025-10. captured_at lives inside the Parquet files, not in the
+-- directory path, so a WHERE clause that only filters on captured_at gives
+-- DuckDB no reason to skip the other 16 partition files before opening
+-- them. Add an explicit filter on the `month` partition column as well, so
+-- the file list is pruned before any row group is touched. See hint-1/2 if
+-- "the file list is pruned" doesn't yet mean something concrete to you.
+--
+-- Read the lake the same way as monthly_rollup.sql: read_parquet with
+-- hive_partitioning=true.
+
+-- TODO: write the query

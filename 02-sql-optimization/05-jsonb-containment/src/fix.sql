@@ -1,0 +1,9 @@
+-- Task 05: JSONB containment.
+--
+-- queries/q05.sql filters products.attrs with the @> containment operator.
+-- No existing index supports that operator. Write the DDL that fixes it,
+-- then apply it against the live database yourself (this file is not run
+-- for you).
+--
+-- Constraints: order_items, products, reviews only. No DDL/DML on orders,
+-- users, payments, inventory_events, sellers, categories.

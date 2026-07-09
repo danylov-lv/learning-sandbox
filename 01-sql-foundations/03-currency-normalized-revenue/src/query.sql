@@ -1,0 +1,3 @@
+-- Task 03: currency-normalized-revenue
+-- Expected output columns (in order): month, tier, snapshot_count, usd_revenue
+-- Write your query below.

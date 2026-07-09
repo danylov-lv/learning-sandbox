@@ -1,0 +1,11 @@
+-- Task 02: support dashboard.
+--
+-- queries/q02.sql filters orders by user_id and a created_at range. Decide
+-- whether an index you already have (e.g. from task 01) already covers
+-- this access pattern, or whether you need new/adjusted DDL. If your
+-- conclusion is "no new DDL needed," say so here with the reasoning; the
+-- checker cares about the resulting plan and timing, not about whether
+-- this file contains a CREATE INDEX statement.
+--
+-- Constraints: orders, users only. No DDL/DML on products, order_items,
+-- reviews, payments, inventory_events, sellers, categories.

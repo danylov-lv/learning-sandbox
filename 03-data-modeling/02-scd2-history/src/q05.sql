@@ -1,0 +1,8 @@
+-- q05: average USD price by shop tier, where tier is the shop's tier AS OF
+-- each observation's own event_time, restricted to observations from
+-- December 2024.
+-- Columns: (tier, avg_price_usd)
+-- Warning: grouping by the shop's CURRENT tier instead of the as-of tier
+-- gives a different, wrong answer.
+--
+-- TODO: write your query. Check: uv run python harness/validate.py --q q05

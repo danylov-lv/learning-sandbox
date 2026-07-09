@@ -1,0 +1,3 @@
+-- Task 02: category-tree-rollup
+-- Expected output columns (in order): root_category, subtree_category_count, leaf_count, max_depth, product_count, product_share_pct
+-- Write your query below.

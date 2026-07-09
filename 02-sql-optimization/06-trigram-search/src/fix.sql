@@ -1,0 +1,9 @@
+-- Task 06: trigram search.
+--
+-- queries/q06.sql does ILIKE '%titanium%' against products.title, a
+-- leading-wildcard pattern no B-tree index can accelerate. Write the DDL
+-- that fixes it (extension + index), then apply it against the live
+-- database yourself (this file is not run for you).
+--
+-- Constraints: order_items, products, reviews only. No DDL/DML on orders,
+-- users, payments, inventory_events, sellers, categories.

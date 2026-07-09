@@ -1,0 +1,14 @@
+[project]
+name = "storage-and-formats"
+version = "0.1.0"
+description = "Module 04: storage formats and lake layout for PriceWatch scraped price snapshots (Parquet internals, partitioning, MinIO, Delta Lake, DuckDB)"
+requires-python = ">=3.12"
+dependencies = [
+    "boto3==1.43.42",
+    "deltalake==1.6.0",
+    "duckdb==1.5.4",
+    "faker==40.28.1",
+    "numpy==2.5.1",
+    "pyarrow==24.0.0",
+    "zstandard==0.25.0",
+]

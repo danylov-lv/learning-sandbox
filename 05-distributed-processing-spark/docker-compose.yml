@@ -1,0 +1,51 @@
+services:
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: sandbox
+      MINIO_ROOT_PASSWORD: sandbox123
+    ports:
+      - "${SANDBOX_05_MINIO_PORT:-9501}:9000"
+      - "${SANDBOX_05_MINIO_CONSOLE_PORT:-9502}:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 sandbox sandbox123 &&
+      mc mb --ignore-existing local/price-lake-05 &&
+      echo 'bucket price-lake-05 ready'
+      "
+
+  spark:
+    image: apache/spark:3.5.3-python3
+    user: root
+    depends_on:
+      minio:
+        condition: service_healthy
+    working_dir: /workspace
+    entrypoint: ["sleep", "infinity"]
+    environment:
+      # spark.jars.packages resolves hadoop-aws + the matching AWS SDK on first use;
+      # the ivy cache volume below makes every run after the first one offline.
+      SPARK_SUBMIT_OPTS: ""
+    ports:
+      - "${SANDBOX_05_SPARK_UI_PORT:-4040}:4040"
+    volumes:
+      - .:/workspace
+      - spark-ivy-cache:/opt/spark-ivy
+
+volumes:
+  minio-data:
+  spark-ivy-cache:

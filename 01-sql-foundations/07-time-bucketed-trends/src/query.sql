@@ -1,0 +1,3 @@
+-- Task 07: time-bucketed-trends
+-- Expected output columns (in order): week_start, tier, snapshot_count, distinct_products, distinct_product_source_pairs, avg_price_usd
+-- Write your query below.

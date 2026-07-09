@@ -1,0 +1,11 @@
+-- Task 11: vacuum debt / autovacuum hygiene.
+--
+-- Your maintenance script. Must be runnable via psql against your own DB
+-- (mixing DDL-ish maintenance commands like VACUUM / ALTER TABLE ... SET /
+-- ALTER TABLE ... RESET is expected; this is not a single SELECT).
+--
+-- Constraints: orders, payments, inventory_events only. No DDL/DML on
+-- products, order_items, reviews, users, sellers, categories.
+-- Do not run this against the shared sandbox DB blindly -- read the README
+-- for why VACUUM FULL needs a different decision than plain VACUUM here,
+-- table by table.

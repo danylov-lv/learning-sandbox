@@ -1,0 +1,5 @@
+-- q04: daily min/max/avg USD price for product P00001 over the 60 days
+-- starting 2025-01-01.
+-- Columns: (day, min_price_usd, max_price_usd, avg_price_usd)
+--
+-- TODO: write your query. Check: uv run python harness/validate.py --q q04

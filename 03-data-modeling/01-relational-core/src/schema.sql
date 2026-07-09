@@ -1,0 +1,19 @@
+-- PriceWatch relational core: DDL for shops, products, listings, and price
+-- observations, designed from scratch by you.
+--
+-- What belongs here:
+--   - CREATE TABLE statements for the entities and facts you decide on.
+--   - Primary keys, foreign keys, unique constraints, and any indexes you
+--     need for the loader or the questions in q01.sql..q04.sql to run in
+--     reasonable time.
+--   - A small reference table for FX rates if you go that route (see
+--     hints/hint-3.md).
+--
+-- How to apply it (from the module root, with `docker compose up -d` running):
+--   docker compose exec -T postgres psql -U sandbox -d sandbox < 01-relational-core/src/schema.sql
+--
+-- Re-running this file should either be safe (CREATE TABLE IF NOT EXISTS /
+-- DROP TABLE IF EXISTS ... CASCADE first) or you should document that it is
+-- run-once, to match whatever load.py assumes.
+--
+-- TODO: write your schema.

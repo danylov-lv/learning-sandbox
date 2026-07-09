@@ -1,0 +1,17 @@
+-- SCD2 (or equivalent interval-table) history for:
+--   - shop name, shop tier
+--   - product brand, product category
+--
+-- What belongs here:
+--   - CREATE TABLE statements for your history tables (validity intervals,
+--     e.g. valid_from / valid_to columns, half-open [valid_from, valid_to)).
+--   - The backfill: populate them from data/events.jsonl (shop_registered,
+--     shop_renamed, shop_tier_changed, product_discovered,
+--     product_attrs_changed), or from whatever staging table you kept from
+--     task 01's loader.
+--
+-- How to apply it (from the module root, with `docker compose up -d` running
+-- and task 01's schema already loaded):
+--   docker compose exec -T postgres psql -U sandbox -d sandbox < 02-scd2-history/src/migration.sql
+--
+-- TODO: write your history DDL and backfill.

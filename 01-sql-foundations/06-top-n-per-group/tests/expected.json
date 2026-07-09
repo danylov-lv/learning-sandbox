@@ -1,0 +1,347 @@
+{
+ "columns": [
+  "category_name",
+  "rank",
+  "product_id",
+  "product_name",
+  "max_price"
+ ],
+ "rows": [
+  [
+   "Arrive Operation",
+   1,
+   100622,
+   "King Projector Z512",
+   665.45
+  ],
+  [
+   "Arrive Operation",
+   2,
+   43405,
+   "Sanders Rack C7526",
+   467.61
+  ],
+  [
+   "Arrive Operation",
+   3,
+   63272,
+   "Ross Toaster Y2084",
+   463.63
+  ],
+  [
+   "Country Forget",
+   1,
+   169634,
+   "Potts Watch Y3050",
+   163.06
+  ],
+  [
+   "Country Forget",
+   2,
+   85315,
+   "Wells Router X9671",
+   143.65
+  ],
+  [
+   "Country Forget",
+   3,
+   178251,
+   "Jones Mouse L3204",
+   132.12
+  ],
+  [
+   "Debate Building",
+   1,
+   17129,
+   "Richards Drill P7200",
+   209.7
+  ],
+  [
+   "Debate Building",
+   2,
+   123639,
+   "Schultz Helmet B404",
+   150.33
+  ],
+  [
+   "Debate Building",
+   3,
+   144823,
+   "Johnson Cable S5910",
+   101.94
+  ],
+  [
+   "East Why",
+   1,
+   144831,
+   "Gallagher Battery C9472",
+   105.97
+  ],
+  [
+   "East Why",
+   2,
+   47214,
+   "Fitzgerald Adapter Z9660",
+   95.14
+  ],
+  [
+   "East Why",
+   3,
+   31652,
+   "Hall Desk X5100",
+   85.49
+  ],
+  [
+   "Finally Too",
+   1,
+   104746,
+   "Phillips Headset R9458",
+   72.46
+  ],
+  [
+   "Finally Too",
+   2,
+   107818,
+   "Aguilar Cable D1553",
+   70.16
+  ],
+  [
+   "Finally Too",
+   3,
+   183391,
+   "Brooks Battery Y1112",
+   66.19
+  ],
+  [
+   "Fly Likely",
+   1,
+   70412,
+   "Hawkins Mixer D9349",
+   634.69
+  ],
+  [
+   "Fly Likely",
+   2,
+   132161,
+   "Watts Watch Z3240",
+   436.25
+  ],
+  [
+   "Fly Likely",
+   3,
+   112348,
+   "Medina Purifier K8624",
+   391.56
+  ],
+  [
+   "It Experience",
+   1,
+   66354,
+   "Ross Desk G867",
+   52.82
+  ],
+  [
+   "It Experience",
+   2,
+   132624,
+   "Potts Tent A5735",
+   51.52
+  ],
+  [
+   "It Experience",
+   3,
+   15545,
+   "George Thermostat J3828",
+   46.6
+  ],
+  [
+   "Lose Baby",
+   1,
+   1882,
+   "Ross Backpack T5621",
+   89.25
+  ],
+  [
+   "Lose Baby",
+   2,
+   96656,
+   "Aguilar Speaker P7807",
+   70.13
+  ],
+  [
+   "Lose Baby",
+   3,
+   122607,
+   "Ross Tripod O8350",
+   55.54
+  ],
+  [
+   "Military Region",
+   1,
+   57016,
+   "Reynolds Grinder G7633",
+   1356.27
+  ],
+  [
+   "Military Region",
+   2,
+   104881,
+   "Collins Chair M2243",
+   1048.85
+  ],
+  [
+   "Military Region",
+   3,
+   126663,
+   "Anderson Tripod C4295",
+   1012.08
+  ],
+  [
+   "Million Republican",
+   1,
+   124909,
+   "Washington Mixer C3420",
+   204.08
+  ],
+  [
+   "Million Republican",
+   2,
+   165442,
+   "Sellers Pump C4471",
+   203.7
+  ],
+  [
+   "Million Republican",
+   3,
+   36512,
+   "Reynolds Pump B6597",
+   192.23
+  ],
+  [
+   "Partner Majority",
+   1,
+   152404,
+   "Day Grinder D3077",
+   209.16
+  ],
+  [
+   "Partner Majority",
+   2,
+   14556,
+   "Green Battery V7774",
+   177.78
+  ],
+  [
+   "Partner Majority",
+   3,
+   166197,
+   "Rojas Sneakers C2176",
+   171.58
+  ],
+  [
+   "Project Weight",
+   1,
+   177405,
+   "Watts Jacket P3634",
+   231.86
+  ],
+  [
+   "Project Weight",
+   2,
+   11361,
+   "Watts Charger U8460",
+   230.37
+  ],
+  [
+   "Project Weight",
+   3,
+   102416,
+   "George Lamp P6255",
+   182.74
+  ],
+  [
+   "Society Apply",
+   1,
+   69509,
+   "Brooks Mat E4700",
+   38.72
+  ],
+  [
+   "Society Apply",
+   2,
+   123036,
+   "Bauer Toaster O6142",
+   27.43
+  ],
+  [
+   "Society Apply",
+   3,
+   134581,
+   "Green Doorbell A1137",
+   26.09
+  ],
+  [
+   "Stock Beyond",
+   1,
+   20612,
+   "Gallagher Keyboard S2561",
+   116.6
+  ],
+  [
+   "Stock Beyond",
+   2,
+   48970,
+   "Brooks Chair L8046",
+   116.04
+  ],
+  [
+   "Stock Beyond",
+   3,
+   82472,
+   "Carpenter Pump O5989",
+   71.88
+  ],
+  [
+   "True Year",
+   1,
+   16825,
+   "Day Doorbell I9094",
+   102.78
+  ],
+  [
+   "True Year",
+   2,
+   172968,
+   "Richardson Backpack M4146",
+   83.92
+  ],
+  [
+   "True Year",
+   3,
+   31311,
+   "Rojas Case F1712",
+   72.11
+  ],
+  [
+   "Under Six",
+   1,
+   4090,
+   "Koch Thermostat H8684",
+   129.6
+  ],
+  [
+   "Under Six",
+   2,
+   94178,
+   "Chambers Desk A1386",
+   122.98
+  ],
+  [
+   "Under Six",
+   3,
+   56366,
+   "Mays Backpack M6858",
+   90.45
+  ]
+ ]
+}

@@ -1,0 +1,7 @@
+-- q01: number of currently-active listings per shop, at the end of the
+-- event stream.
+-- Columns: (shop_code, active_listings)
+-- A listing is active from its product_discovered event, inactive from
+-- product_delisted, active again from product_relisted.
+--
+-- TODO: write your query. Check: uv run python harness/validate.py --q q01

@@ -1,0 +1,9 @@
+-- Task 04: index-only scan.
+--
+-- queries/q04.sql needs created_at, status, total_amount for one user's
+-- most recent rows. Write the DDL that lets Postgres answer this entirely
+-- from an index, then apply it against the live database yourself (this
+-- file is not run for you).
+--
+-- Constraints: orders, users only. No DDL/DML on products, order_items,
+-- reviews, payments, inventory_events, sellers, categories.

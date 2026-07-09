@@ -1,0 +1,3 @@
+-- Task 09: dedup-latest-snapshot
+-- Expected output columns (in order): tier, currency, pair_count, avg_latest_price, in_stock_share
+-- Write your query below.

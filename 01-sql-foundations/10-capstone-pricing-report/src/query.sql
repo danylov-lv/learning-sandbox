@@ -1,0 +1,3 @@
+-- Task 10: capstone-pricing-report
+-- Expected output columns (in order): month, root_name, distinct_products, snapshot_count, median_price_usd, mom_median_change_pct, in_stock_share
+-- Write your query below.

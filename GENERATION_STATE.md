@@ -1,0 +1,29 @@
+# GENERATION_STATE
+
+Status legend: pending / in-progress / done
+
+- [x] skeleton (root README, PROGRESS.md, CONVENTIONS.md, stub module READMEs) — done. Note: toolkit/ dirs and PROGRESS.md toolkit section are created during the toolkit module's own turn.
+- [x] 01-sql-foundations — done. 10 tasks (01–09 + capstone 10 with 3 checkpoints), module README, PROGRESS section, .authoring notes; expected.json verified against live seeded DB, no reference solutions committed.
+- [x] 02-sql-optimization — done. 14 tasks (01–13 + capstone 14 with 3 checkpoints and workload qc01–qc08), module README, PROGRESS section, .authoring notes (tasks-w1/w2/w3a/w3b/w3c/w4-capstone); all checkers verified against live seeded DB (stock fails cleanly, reference fixes pass in rolled-back txns; task 11 pass-path verified in scratch DB), no reference solutions committed, shared DB left byte-identical to stock.
+- [x] 03-data-modeling — done. 4 tasks (01-relational-core q01–q04, 02-scd2-history q05–q08, 03-star-schema q09–q11 with mart-schema contract, 04-capstone-bitemporal q12/q13a/q13b/q14/q15 + DESIGN.md, checkpoints CP1–CP3), module README, PROGRESS section, .authoring/notes.md, harness/{common,events,ground_truth,validate}.py + questions.md. Data gitignored, regenerated deterministically (seed 42, 2,336,793 events); ground_truth.json cache keyed by data sha, all 16 keys with non-degeneracy assertions. validate.py verified live: fail-path graceful (0/16, exit 1, no tracebacks), compare machinery pass-path tested via throwaway scratch schema (removed after). No reference solutions committed. Stale empty dirs from an earlier 7-task draft removed.
+- [x] 04-storage-and-formats — done. 8 tasks (01–07 + capstone 08 with CP1 pipeline/CP2 quality gates/CP3 DESIGN.md), module README, compose (MinIO, verified up), generate.py, harness/common.py, PROGRESS section, .authoring/notes.md. All validators verified live on the 400k test set: stock stubs fail cleanly (NOT PASSED, exit 1, no tracebacks), pass-paths proven via throwaway scratchpad reference impls (never committed). Mid-generation decontamination: tasks 03/04/08 had reference impls accidentally committed in src/ — replaced with NotImplementedError stubs, leftovers removed, re-verified. Stock state restored: bucket empty, data/ = raw + ground-truth.json only, MinIO down. Key empirics recorded in .authoring/notes.md (duckdb needs SET TimeZone='UTC' for probe reconciliation; delta-rs 1.6 metrics keys numFilesAdded/numFilesRemoved; MinIO storage_options incl. AWS_S3_ALLOW_UNSAFE_RENAME).
+- [x] 05-distributed-processing-spark — done. 8 tasks (01-lazy-plans-and-explain, 02-partitions-and-shuffles, 03-joins-broadcast-vs-smj, 04-udfs-and-arrow, 05-windows-at-scale, 06-parquet-to-minio-s3a, 07-polars-calibration host-side, capstone 08-scrape-lake with CP1 silver lake / CP2 shuffle tuning / CP3 DESIGN.md), module README, compose (spark 3.5.3 + MinIO 9501/9502, ports recorded in CONVENTIONS.md), generate.py (seed 50505, 2M authoring set committed as data/, gitignored), harness/common.py incl. get_plan/plan_has, PROGRESS section, .authoring/notes.md. All validators verified live: stock stubs fail cleanly (NOT PASSED, exit 1), pass-paths proven via throwaway reference impls in gitignored scratch/ (deleted; stubs diff-verified restored). Task 01's check_notes_filled bumped to min_chars=650 (template alone scored 441). Stock restored: bucket price-lake-05 empty, data/ = raw-events + reference + ground-truth.json, no results-local.json/__pycache__, root probe_*.py folded into .authoring/notes.md and deleted. Key empirics in .authoring/notes.md (AQE vs partition counts, session-config leakage, row_number matches GT top-n, PartitionFilters gate, polars ComputeError on malformed NDJSON, plan node names doubled in formatted mode).
+- [ ] 06-pipelines-and-orchestration — pending (stub README only)
+- [ ] 07-streaming — pending (stub README only)
+- [ ] 08-cdc-debezium — pending (stub README only)
+- [ ] 09-olap-clickhouse-duckdb — pending (stub README only)
+- [ ] 10-nosql-patterns — pending (stub README only)
+- [ ] 11-python-concurrency — pending (stub README only)
+- [ ] 12-api-engineering — pending (stub README only)
+- [ ] 13-scraping-at-scale — pending (stub README only)
+- [ ] 14-stats-and-ml-foundations — pending (stub README only)
+- [ ] 15-llm-in-pipelines — pending (stub README only)
+- [ ] 16-testing-engineering — pending (stub README only)
+- [ ] 17-system-design — pending (stub README only)
+- [ ] 18-rust-track — pending (stub README only)
+- [ ] 19-ts-track — pending (stub README only)
+- [ ] 20-kubernetes — pending (stub README only)
+- [ ] toolkit (t1–t4) — pending (directory not created yet)
+- [ ] ci-meta — pending (stub README only)
+
+Rules: one module at a time, in this order. Update this file after every module. Skeleton (README.md, PROGRESS.md) is generated first, before module 01.

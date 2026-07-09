@@ -1,0 +1,3 @@
+-- Task 04: price-change-detection
+-- Expected output columns (in order): product_id, source_id, captured_at, prev_price, price, drop_pct
+-- Write your query below.

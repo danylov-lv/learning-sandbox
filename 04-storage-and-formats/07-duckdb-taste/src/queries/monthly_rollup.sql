@@ -1,0 +1,21 @@
+-- Contract: monthly_rollup.sql
+--
+-- Reads the hive-partitioned Parquet lake at data/lake (month=YYYY-MM
+-- partition directories, see the module README) and returns one row per
+-- month.
+--
+-- Required output columns, in this exact order:
+--   month       varchar   -- the hive partition value, e.g. '2025-09'
+--   row_count   bigint    -- count of every row in that month, including
+--                            rows with a null price (non-200 scrapes)
+--   price_sum   double    -- sum of price for that month; SQL SUM already
+--                            skips nulls, no extra filtering needed
+--
+-- Result must have exactly one row per month and be ordered by month
+-- ascending.
+--
+-- Read the lake with read_parquet('data/lake/*/*.parquet',
+-- hive_partitioning=true) so the `month` column comes from the directory
+-- path rather than from inside the Parquet files.
+
+-- TODO: write the query

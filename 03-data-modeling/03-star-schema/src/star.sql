@@ -1,0 +1,14 @@
+-- Task 03: mart DDL + population.
+--
+-- Build the `mart` schema here: CREATE SCHEMA mart; then CREATE TABLE for
+-- mart.dim_shop, mart.dim_product (both need valid_from/valid_to),
+-- mart.dim_date, and mart.fact_price_observation. Follow with the
+-- INSERT ... SELECT statements that populate them from your own OLTP and
+-- SCD2 tables (from tasks 01-02) in this same database.
+--
+-- This file is applied once against your live database (e.g. via psql or
+-- a short psycopg script) to build and load the mart. It is not run by the
+-- validator directly -- q09/q10/q11 are checked against whatever state
+-- `mart` is in when you run harness/validate.py.
+--
+-- TODO: write your DDL + population here.

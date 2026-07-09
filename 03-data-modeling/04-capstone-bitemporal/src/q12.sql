@@ -1,0 +1,3 @@
+-- q12: listings delisted during 2025, never relisted since (as of end of stream).
+-- Columns: shop_code, product_code, delisted_date
+-- TODO: write your query. Check: uv run python harness/validate.py --q q12

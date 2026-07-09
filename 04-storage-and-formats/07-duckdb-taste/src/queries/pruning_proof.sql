@@ -1,0 +1,16 @@
+-- Contract: pruning_proof.sql
+--
+-- The exact same query as probe.sql (same FROM, same WHERE, same month
+-- filter), wrapped in EXPLAIN ANALYZE. DuckDB still plans and runs the
+-- query, but returns its profiled plan instead of the result rows.
+-- tests/bench.py and tests/validate.py parse that plan to count how many
+-- physical Parquet files DuckDB actually opened -- the number that proves
+-- (or disproves) that partition pruning happened.
+--
+-- Required shape: this file's first two words must be
+--   EXPLAIN ANALYZE
+-- followed by the same SELECT you wrote in probe.sql. Do not add
+-- EXPLAIN ANALYZE to probe.sql itself -- that file must keep returning real
+-- rows, not a plan.
+
+-- TODO: write the query

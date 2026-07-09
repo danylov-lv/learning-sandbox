@@ -1,0 +1,9 @@
+-- Task 01: read the plan.
+--
+-- queries/q01.sql filters orders by user_id and orders by created_at, but
+-- the only index on orders is on (status) alone. Write the DDL that lets
+-- Postgres serve this query without scanning the whole table, then apply
+-- it against the live database yourself (this file is not run for you).
+--
+-- Constraints: orders, users only. No DDL/DML on products, order_items,
+-- reviews, payments, inventory_events, sellers, categories.

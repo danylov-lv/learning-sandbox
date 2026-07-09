@@ -1,0 +1,7 @@
+-- q03: deduplicated observation counts by currency, plus one ALL row with
+-- the grand total.
+-- Columns: (currency, observation_count)
+-- This is the check that your loader deduplicated (shop_code, product_code,
+-- event_time) correctly, keeping the first-arriving copy.
+--
+-- TODO: write your query. Check: uv run python harness/validate.py --q q03

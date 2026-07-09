@@ -1,0 +1,4 @@
+-- q10: avg USD price by shop country and shop tier (as-of), 2025-01-01T00:00:00Z <= event_time < 2025-07-01T00:00:00Z.
+-- Columns: country, tier, avg_price_usd
+-- Query mart only (search_path is locked to `mart`; no `public.` references allowed).
+-- TODO: write your query. Check: uv run python harness/validate.py --q q10

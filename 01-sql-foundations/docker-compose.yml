@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: sandbox
+      POSTGRES_USER: sandbox
+      POSTGRES_PASSWORD: sandbox
+    ports:
+      - "${SANDBOX_01_PORT:-54301}:5432"
+    volumes:
+      - sandbox_01_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sandbox -d sandbox"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  sandbox_01_pgdata:

@@ -1,0 +1,9 @@
+-- Task 08: index audit on reviews.
+--
+-- src/workload.md documents every read pattern that actually runs against
+-- reviews. Cross-reference it against the five existing indexes and write
+-- the DROP INDEX statements you can justify. Apply this against the live
+-- database yourself (this file is not run for you).
+--
+-- Constraints: order_items, products, reviews only. No DDL/DML on orders,
+-- users, payments, inventory_events, sellers, categories.

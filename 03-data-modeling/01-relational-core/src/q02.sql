@@ -1,0 +1,6 @@
+-- q02: latest observation per (shop, product) for the fixed top-10 product
+-- set: P00001, P01996, P01001, P00004, P00998, P01995, P01000, P01999,
+-- P00002, P00999.
+-- Columns: (product_code, shop_code, event_time, price_usd)
+--
+-- TODO: write your query. Check: uv run python harness/validate.py --q q02

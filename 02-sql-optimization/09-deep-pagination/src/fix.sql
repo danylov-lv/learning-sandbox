@@ -1,0 +1,12 @@
+-- Task 09: deep pagination -- optional supporting index.
+--
+-- The keyset rewrite in src/page_query.sql may or may not need a new index
+-- to hit an efficient plan -- that depends on how well the existing
+-- single-column idx_inventory_events_occurred_at serves the (occurred_at,
+-- id) row-comparison predicate. Investigate with EXPLAIN (ANALYZE, BUFFERS)
+-- before assuming you need this file at all.
+--
+-- If you do need an index, write it here and apply it against the live
+-- database yourself (this file is not run for you).
+--
+-- Constraints: inventory_events only. No DDL/DML on any other table.

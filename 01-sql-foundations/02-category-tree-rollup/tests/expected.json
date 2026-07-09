@@ -1,0 +1,76 @@
+{
+ "columns": [
+  "root_category",
+  "subtree_category_count",
+  "leaf_count",
+  "max_depth",
+  "product_count",
+  "product_share_pct"
+ ],
+ "rows": [
+  [
+   "Automotive",
+   66,
+   43,
+   3,
+   29876,
+   14.94
+  ],
+  [
+   "Electronics",
+   68,
+   44,
+   3,
+   13737,
+   6.87
+  ],
+  [
+   "Fashion",
+   72,
+   47,
+   3,
+   23313,
+   11.66
+  ],
+  [
+   "Health & Beauty",
+   68,
+   45,
+   3,
+   39653,
+   19.83
+  ],
+  [
+   "Home & Garden",
+   73,
+   49,
+   3,
+   10932,
+   5.47
+  ],
+  [
+   "Pet Supplies",
+   63,
+   41,
+   3,
+   47364,
+   23.68
+  ],
+  [
+   "Sports & Outdoors",
+   66,
+   43,
+   3,
+   14371,
+   7.19
+  ],
+  [
+   "Toys & Hobbies",
+   62,
+   40,
+   3,
+   20754,
+   10.38
+  ]
+ ]
+}

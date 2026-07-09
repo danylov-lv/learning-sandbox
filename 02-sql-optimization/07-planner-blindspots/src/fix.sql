@@ -1,0 +1,9 @@
+-- Task 07: planner blindspots.
+--
+-- src/given_query.sql filters orders.status, a column the planner is
+-- misestimating badly. Write the statistics-related fix here (statistics
+-- target and/or a re-ANALYZE of orders), then apply it against the live
+-- database yourself (this file is not run for you).
+--
+-- Constraints: orders, users only. No DDL/DML on products, order_items,
+-- reviews, payments, inventory_events, sellers, categories.

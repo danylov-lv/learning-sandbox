@@ -1,0 +1,3 @@
+-- q15: monthly observation count by category as-of, for 2025.
+-- Columns: month, category, observation_count
+-- TODO: write your query. Check: uv run python harness/validate.py --q q15

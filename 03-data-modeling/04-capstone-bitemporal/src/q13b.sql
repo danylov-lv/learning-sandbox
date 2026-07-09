@@ -1,0 +1,3 @@
+-- q13b: March 2025 avg USD price by category as-of, all data vs. ingested_at <= 2025-04-01T00:00:00Z.
+-- Columns: category, avg_price_usd_all, avg_price_usd_by_cutoff (NULL if no rows under cutoff)
+-- TODO: write your query. Check: uv run python harness/validate.py --q q13b

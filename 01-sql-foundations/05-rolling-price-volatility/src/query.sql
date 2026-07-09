@@ -1,0 +1,3 @@
+-- Task 05: rolling-price-volatility
+-- Expected output columns (in order): product_id, source_id, snapshot_count, avg_rolling_stddev, max_rolling_stddev
+-- Write your query below.

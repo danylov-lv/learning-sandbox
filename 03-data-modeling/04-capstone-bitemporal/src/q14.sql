@@ -1,0 +1,5 @@
+-- q14: per client, tracked product count and total qualifying price-drop count since each product's tracked_since.
+-- Columns: client_code, tracked_products, price_drop_count
+-- A price drop = a deduplicated observation on a listing priced at <=80% of the immediately preceding
+-- deduplicated observation on that same listing.
+-- TODO: write your query. Check: uv run python harness/validate.py --q q14

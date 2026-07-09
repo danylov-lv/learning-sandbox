@@ -1,0 +1,9 @@
+-- Task 03: order detail join.
+--
+-- queries/q03.sql filters order_items by order_id, but the only composite
+-- index on this table leads with product_id. Write the DDL that fixes this,
+-- then apply it against the live database yourself (this file is not run
+-- for you).
+--
+-- Constraints: order_items, products, reviews only. No DDL/DML on orders,
+-- users, payments, inventory_events, sellers, categories.

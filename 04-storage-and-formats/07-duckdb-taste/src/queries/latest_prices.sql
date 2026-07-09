@@ -1,0 +1,24 @@
+-- Contract: latest_prices.sql
+--
+-- For every product_id, returns its most recent price observation among
+-- rows with a non-null price. A null price means the scrape failed
+-- (http_status != 200) and no price was ever observed at that timestamp --
+-- those rows are not candidates for "latest price".
+--
+-- Required output columns, one row per product_id:
+--   product_id          bigint
+--   captured_at_epoch   bigint   -- captured_at as Unix epoch seconds (UTC)
+--   price               double
+--
+-- Query all products in the lake -- do not hardcode product_id values in
+-- this file. The validator only checks a fixed set of 10 product_ids
+-- (data/ground-truth.json's latest_price_probe) against your full result,
+-- filtering it down itself.
+--
+-- Two ways to compute "latest row per group" in SQL: a window function
+-- (ROW_NUMBER() / RANK() partitioned by product_id, ordered by
+-- captured_at) or the arg_max() aggregate. Either is a legitimate choice --
+-- the README's topics list points at both so you can compare them
+-- yourself.
+
+-- TODO: write the query

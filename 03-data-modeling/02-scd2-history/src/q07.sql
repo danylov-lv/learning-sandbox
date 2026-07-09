@@ -1,0 +1,6 @@
+-- q07: shops whose FIRST rename happened before 2024-09-01T00:00:00Z --
+-- their name as of that cutoff, and their current (latest) name. Shops
+-- never renamed, or renamed only after the cutoff, are excluded.
+-- Columns: (shop_code, name_as_of_cutoff, current_name)
+--
+-- TODO: write your query. Check: uv run python harness/validate.py --q q07

@@ -1,0 +1,4 @@
+-- q09: monthly avg USD price and observation count by product category, 2025.
+-- Columns: month, category, avg_price_usd, observation_count
+-- Query mart only (search_path is locked to `mart`; no `public.` references allowed).
+-- TODO: write your query. Check: uv run python harness/validate.py --q q09

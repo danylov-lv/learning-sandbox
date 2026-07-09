@@ -1,0 +1,5 @@
+-- q06: brand of products P00008, P00595, P00652 as of 2024-04-01T00:00:00Z
+-- and as of 2024-07-01T00:00:00Z.
+-- Columns: (product_code, brand_as_of_d1, brand_as_of_d2)
+--
+-- TODO: write your query. Check: uv run python harness/validate.py --q q06

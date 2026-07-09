@@ -1,0 +1,3 @@
+-- Task 06: top-n-per-group
+-- Expected output columns (in order): category_name, rank, product_id, product_name, max_price
+-- Write your query below.

@@ -1,0 +1,3 @@
+-- q13a: monthly share of observations with ingested_at - event_time > 24h, for 2025.
+-- Columns: month, late_share (rounded to 4 decimals)
+-- TODO: write your query. Check: uv run python harness/validate.py --q q13a
