@@ -1,0 +1,19 @@
+[project]
+name = "pipelines-and-orchestration"
+version = "0.1.0"
+description = "Module 06: Airflow ETL over scraped price dumps (staging/core/mart, incremental loads, backfill, poison records, pandera contracts, contract evolution, Spark, dbt, Prefect)"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.43.44",
+    "dbt-core>=1.11.12",
+    "dbt-postgres>=1.10.2",
+    "faker>=40.28.1",
+    "numpy>=2.4.6",
+    "pandas>=3.0.3",
+    "pandera>=0.32.1",
+    "prefect>=3",
+    "psycopg[binary]>=3.3.4",
+    "pyarrow>=24.0.0",
+    "pytest>=9.1.1",
+    "requests>=2.34.2",
+]

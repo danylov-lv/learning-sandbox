@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  # TODO: model blocks for mart_daily_category_gmv and fct_order_line_items.
+  # Include at least one column using your own custom generic test (defined
+  # under macros/) in addition to the built-in unique/not_null/relationships/
+  # accepted_values tests.

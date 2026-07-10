@@ -1,0 +1,1 @@
+-- TODO: staging view over source('marketplace', 'products') — rename/cast only, no aggregation.

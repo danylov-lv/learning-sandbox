@@ -1,0 +1,6 @@
+apiVersion: v2
+name: price-pipeline
+description: Daily price load (CronJob) plus an always-on load-freshness monitor (Deployment + PDB) for module 06's warehouse.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

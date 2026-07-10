@@ -1,0 +1,3 @@
+-- TODO: incremental fact model over order line items, keyed by a stable unique key.
+-- Use {{ config(materialized='incremental', unique_key=...) }} and is_incremental()
+-- to only process new/changed source rows on repeat runs.

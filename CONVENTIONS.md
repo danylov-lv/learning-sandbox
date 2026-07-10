@@ -75,6 +75,9 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 | 04-storage-and-formats | MinIO (API / console) | 9301 / 9302 | `SANDBOX_04_MINIO_PORT` / `SANDBOX_04_MINIO_CONSOLE_PORT` |
 | 05-distributed-processing-spark | MinIO (API / console) | 9501 / 9502 | `SANDBOX_05_MINIO_PORT` / `SANDBOX_05_MINIO_CONSOLE_PORT` |
 | 05-distributed-processing-spark | Spark UI | 4040 | `SANDBOX_05_SPARK_UI_PORT` |
+| 06-pipelines-and-orchestration | Postgres | 54306 | `SANDBOX_06_PORT` |
+| 06-pipelines-and-orchestration | Airflow UI | 8306 | `SANDBOX_06_AIRFLOW_PORT` |
+| 06-pipelines-and-orchestration | MinIO (API / console) | 9601 / 9602 | `SANDBOX_06_MINIO_PORT` / `SANDBOX_06_MINIO_CONSOLE_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 

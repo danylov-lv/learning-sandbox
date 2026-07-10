@@ -1,0 +1,2 @@
+-- TODO: aggregate mart — one row per (order_date, category_family), built from
+-- the staging layer. See README "What's required" for the exact grain and metrics.

@@ -1,0 +1,49 @@
+# Values skeleton — every TODO below is a decision the templates you write
+# will consume. Add keys as your templates need them; delete none of the
+# structure without replacing it.
+
+image:
+  # TODO: the image you built from src/Dockerfile and loaded into kind
+  repository: ""
+  tag: ""
+  pullPolicy: IfNotPresent
+
+warehouse:
+  # TODO: how the module's compose-hosted Postgres is reachable from
+  # inside the kind cluster (host, port, db, user; password via a Secret
+  # you template, not a plaintext value here).
+  host: ""
+  port: 5432
+  database: pipelines
+  user: sandbox
+
+loader:
+  # TODO: cron schedule for the daily load, plus the CronJob knobs you
+  # decided on (concurrencyPolicy, backoffLimit, startingDeadlineSeconds).
+  schedule: ""
+
+monitor:
+  replicas: 1
+  # TODO: freshness threshold the monitor alarms on, however your
+  # monitor.py consumes it.
+  freshnessThresholdMinutes: 0
+  resources:
+    # TODO: derive from MEASUREMENT, not folklore. Run the monitor, watch
+    # `kubectl top pod` (or `docker stats`) through at least a few of its
+    # check cycles, then set these — and record the raw numbers you saw as
+    # comments here, e.g.:
+    #   measured: cpu idle ~Xm, peak during check ~Ym; rss ~ZMi steady
+    # The validator warns if these are exactly the classic copy-paste
+    # 100m/128Mi defaults.
+    requests:
+      cpu: ""
+      memory: ""
+    limits:
+      cpu: ""
+      memory: ""
+
+pdb:
+  # TODO: what the PDB guarantees for the monitor during voluntary
+  # disruptions (minAvailable or maxUnavailable — pick one and say why in
+  # NOTES.md).
+  minAvailable: 1

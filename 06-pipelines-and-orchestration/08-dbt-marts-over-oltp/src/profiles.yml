@@ -1,0 +1,12 @@
+marketplace_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('SANDBOX_02_HOST', 'localhost') }}"
+      port: "{{ env_var('SANDBOX_02_PORT', '54302') | as_number }}"
+      user: "{{ env_var('SANDBOX_02_USER', 'sandbox') }}"
+      pass: "{{ env_var('SANDBOX_02_PASSWORD', 'sandbox') }}"
+      dbname: "{{ env_var('SANDBOX_02_DB', 'sandbox') }}"
+      schema: dbt_analytics
+      threads: 4

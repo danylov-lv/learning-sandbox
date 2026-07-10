@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  # TODO: one model block per staging view (stg_orders, stg_order_items,
+  # stg_products, stg_categories) with column tests — at minimum unique +
+  # not_null on each primary key, not_null on foreign keys, relationships
+  # tests wiring the foreign keys back to their parent staging model, and
+  # accepted_values where a column has a known, closed set of values.

@@ -1,0 +1,5 @@
+-- TODO: write one custom generic test macro here, e.g.:
+-- {% test my_test_name(model, column_name) %}
+--     select * from {{ model }} where ...
+-- {% endtest %}
+-- Reference it from a schema.yml the same way you'd reference unique/not_null.

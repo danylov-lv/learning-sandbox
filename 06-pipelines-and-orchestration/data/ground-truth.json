@@ -1,0 +1,712 @@
+{
+  "seed": 60606,
+  "scale": 1.0,
+  "days": [
+    "2025-06-01",
+    "2025-06-02",
+    "2025-06-03",
+    "2025-06-04",
+    "2025-06-05",
+    "2025-06-06",
+    "2025-06-07",
+    "2025-06-08",
+    "2025-06-09",
+    "2025-06-10",
+    "2025-06-11",
+    "2025-06-12",
+    "2025-06-13",
+    "2025-06-14"
+  ],
+  "schema_drift": {
+    "seller_rating_from": "2025-06-10",
+    "price_string_from": "2025-06-12"
+  },
+  "constants": {
+    "sources": [
+      "shopnest.example",
+      "dealbarn.example",
+      "cartify.example",
+      "brightbuy.example",
+      "thriftloop.example",
+      "primemart.example"
+    ],
+    "categories": [
+      "electronics",
+      "home-goods",
+      "kitchen",
+      "toys",
+      "sporting-goods",
+      "office-supplies",
+      "beauty",
+      "grocery",
+      "pet-supplies",
+      "tools",
+      "furniture",
+      "apparel"
+    ],
+    "currency_weights": {
+      "USD": 0.6,
+      "EUR": 0.25,
+      "GBP": 0.15
+    },
+    "n_products": 8000
+  },
+  "per_day": {
+    "2025-06-01": {
+      "total_lines": 38735,
+      "malformed_lines": 155,
+      "parseable_records": 38580,
+      "duplicate_lines": 775,
+      "invalid_records": {
+        "total": 378,
+        "missing_url": 113,
+        "bad_price": 113,
+        "unknown_currency": 76,
+        "bad_timestamp": 76
+      },
+      "valid_records": 37427,
+      "late_arriving_records": 0,
+      "distinct_products_valid": 3654,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-02": {
+      "total_lines": 39371,
+      "malformed_lines": 157,
+      "parseable_records": 39214,
+      "duplicate_lines": 787,
+      "invalid_records": {
+        "total": 384,
+        "missing_url": 115,
+        "bad_price": 115,
+        "unknown_currency": 77,
+        "bad_timestamp": 77
+      },
+      "valid_records": 38043,
+      "late_arriving_records": 1141,
+      "distinct_products_valid": 3679,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-03": {
+      "total_lines": 49467,
+      "malformed_lines": 198,
+      "parseable_records": 49269,
+      "duplicate_lines": 989,
+      "invalid_records": {
+        "total": 483,
+        "missing_url": 145,
+        "bad_price": 145,
+        "unknown_currency": 97,
+        "bad_timestamp": 96
+      },
+      "valid_records": 47797,
+      "late_arriving_records": 1434,
+      "distinct_products_valid": 4088,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-04": {
+      "total_lines": 49823,
+      "malformed_lines": 199,
+      "parseable_records": 49624,
+      "duplicate_lines": 996,
+      "invalid_records": {
+        "total": 486,
+        "missing_url": 146,
+        "bad_price": 146,
+        "unknown_currency": 97,
+        "bad_timestamp": 97
+      },
+      "valid_records": 48142,
+      "late_arriving_records": 1444,
+      "distinct_products_valid": 4143,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-05": {
+      "total_lines": 49332,
+      "malformed_lines": 197,
+      "parseable_records": 49135,
+      "duplicate_lines": 987,
+      "invalid_records": {
+        "total": 481,
+        "missing_url": 144,
+        "bad_price": 144,
+        "unknown_currency": 96,
+        "bad_timestamp": 97
+      },
+      "valid_records": 47667,
+      "late_arriving_records": 1430,
+      "distinct_products_valid": 4072,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-06": {
+      "total_lines": 51363,
+      "malformed_lines": 205,
+      "parseable_records": 51158,
+      "duplicate_lines": 1027,
+      "invalid_records": {
+        "total": 501,
+        "missing_url": 150,
+        "bad_price": 150,
+        "unknown_currency": 100,
+        "bad_timestamp": 101
+      },
+      "valid_records": 49630,
+      "late_arriving_records": 1489,
+      "distinct_products_valid": 4174,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-07": {
+      "total_lines": 42304,
+      "malformed_lines": 169,
+      "parseable_records": 42135,
+      "duplicate_lines": 846,
+      "invalid_records": {
+        "total": 413,
+        "missing_url": 124,
+        "bad_price": 124,
+        "unknown_currency": 83,
+        "bad_timestamp": 82
+      },
+      "valid_records": 40876,
+      "late_arriving_records": 1226,
+      "distinct_products_valid": 3782,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-08": {
+      "total_lines": 34065,
+      "malformed_lines": 136,
+      "parseable_records": 33929,
+      "duplicate_lines": 681,
+      "invalid_records": {
+        "total": 332,
+        "missing_url": 100,
+        "bad_price": 100,
+        "unknown_currency": 66,
+        "bad_timestamp": 66
+      },
+      "valid_records": 32916,
+      "late_arriving_records": 987,
+      "distinct_products_valid": 3470,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-09": {
+      "total_lines": 49347,
+      "malformed_lines": 197,
+      "parseable_records": 49150,
+      "duplicate_lines": 987,
+      "invalid_records": {
+        "total": 482,
+        "missing_url": 145,
+        "bad_price": 145,
+        "unknown_currency": 96,
+        "bad_timestamp": 96
+      },
+      "valid_records": 47681,
+      "late_arriving_records": 1430,
+      "distinct_products_valid": 4075,
+      "has_seller_rating": false,
+      "price_is_string": false
+    },
+    "2025-06-10": {
+      "total_lines": 31013,
+      "malformed_lines": 124,
+      "parseable_records": 30889,
+      "duplicate_lines": 620,
+      "invalid_records": {
+        "total": 303,
+        "missing_url": 91,
+        "bad_price": 91,
+        "unknown_currency": 61,
+        "bad_timestamp": 60
+      },
+      "valid_records": 29966,
+      "late_arriving_records": 899,
+      "distinct_products_valid": 3252,
+      "has_seller_rating": true,
+      "price_is_string": false
+    },
+    "2025-06-11": {
+      "total_lines": 37350,
+      "malformed_lines": 149,
+      "parseable_records": 37201,
+      "duplicate_lines": 747,
+      "invalid_records": {
+        "total": 365,
+        "missing_url": 110,
+        "bad_price": 110,
+        "unknown_currency": 73,
+        "bad_timestamp": 72
+      },
+      "valid_records": 36089,
+      "late_arriving_records": 1083,
+      "distinct_products_valid": 3554,
+      "has_seller_rating": true,
+      "price_is_string": false
+    },
+    "2025-06-12": {
+      "total_lines": 63359,
+      "malformed_lines": 253,
+      "parseable_records": 63106,
+      "duplicate_lines": 1267,
+      "invalid_records": {
+        "total": 618,
+        "missing_url": 185,
+        "bad_price": 185,
+        "unknown_currency": 124,
+        "bad_timestamp": 124
+      },
+      "valid_records": 61221,
+      "late_arriving_records": 1837,
+      "distinct_products_valid": 4568,
+      "has_seller_rating": true,
+      "price_is_string": true
+    },
+    "2025-06-13": {
+      "total_lines": 32348,
+      "malformed_lines": 129,
+      "parseable_records": 32219,
+      "duplicate_lines": 647,
+      "invalid_records": {
+        "total": 316,
+        "missing_url": 95,
+        "bad_price": 95,
+        "unknown_currency": 63,
+        "bad_timestamp": 63
+      },
+      "valid_records": 31256,
+      "late_arriving_records": 938,
+      "distinct_products_valid": 3315,
+      "has_seller_rating": true,
+      "price_is_string": true
+    },
+    "2025-06-14": {
+      "total_lines": 37445,
+      "malformed_lines": 150,
+      "parseable_records": 37295,
+      "duplicate_lines": 749,
+      "invalid_records": {
+        "total": 365,
+        "missing_url": 110,
+        "bad_price": 110,
+        "unknown_currency": 73,
+        "bad_timestamp": 72
+      },
+      "valid_records": 36181,
+      "late_arriving_records": 1085,
+      "distinct_products_valid": 3627,
+      "has_seller_rating": true,
+      "price_is_string": true
+    }
+  },
+  "per_day_currency": {
+    "2025-06-01": {
+      "USD": {
+        "count": 22505,
+        "price_sum": 2263192.87
+      },
+      "EUR": {
+        "count": 9325,
+        "price_sum": 925549.86
+      },
+      "GBP": {
+        "count": 5597,
+        "price_sum": 542528.98
+      }
+    },
+    "2025-06-02": {
+      "USD": {
+        "count": 22770,
+        "price_sum": 2263100.0
+      },
+      "EUR": {
+        "count": 9678,
+        "price_sum": 944968.42
+      },
+      "GBP": {
+        "count": 5595,
+        "price_sum": 529233.37
+      }
+    },
+    "2025-06-03": {
+      "USD": {
+        "count": 28675,
+        "price_sum": 2803564.52
+      },
+      "EUR": {
+        "count": 11999,
+        "price_sum": 1199178.55
+      },
+      "GBP": {
+        "count": 7123,
+        "price_sum": 714637.55
+      }
+    },
+    "2025-06-04": {
+      "USD": {
+        "count": 28845,
+        "price_sum": 2780852.95
+      },
+      "EUR": {
+        "count": 11925,
+        "price_sum": 1169306.37
+      },
+      "GBP": {
+        "count": 7372,
+        "price_sum": 697670.51
+      }
+    },
+    "2025-06-05": {
+      "USD": {
+        "count": 28679,
+        "price_sum": 2820111.38
+      },
+      "EUR": {
+        "count": 11685,
+        "price_sum": 1127942.9
+      },
+      "GBP": {
+        "count": 7303,
+        "price_sum": 708669.32
+      }
+    },
+    "2025-06-06": {
+      "USD": {
+        "count": 29857,
+        "price_sum": 2922225.91
+      },
+      "EUR": {
+        "count": 12390,
+        "price_sum": 1235657.93
+      },
+      "GBP": {
+        "count": 7383,
+        "price_sum": 709868.77
+      }
+    },
+    "2025-06-07": {
+      "USD": {
+        "count": 24389,
+        "price_sum": 2356956.75
+      },
+      "EUR": {
+        "count": 10302,
+        "price_sum": 1010408.32
+      },
+      "GBP": {
+        "count": 6185,
+        "price_sum": 604795.67
+      }
+    },
+    "2025-06-08": {
+      "USD": {
+        "count": 19685,
+        "price_sum": 1924520.05
+      },
+      "EUR": {
+        "count": 8299,
+        "price_sum": 794282.81
+      },
+      "GBP": {
+        "count": 4932,
+        "price_sum": 473390.64
+      }
+    },
+    "2025-06-09": {
+      "USD": {
+        "count": 28706,
+        "price_sum": 2804650.81
+      },
+      "EUR": {
+        "count": 11830,
+        "price_sum": 1169279.98
+      },
+      "GBP": {
+        "count": 7145,
+        "price_sum": 705529.91
+      }
+    },
+    "2025-06-10": {
+      "USD": {
+        "count": 18037,
+        "price_sum": 1742236.85
+      },
+      "EUR": {
+        "count": 7501,
+        "price_sum": 705424.42
+      },
+      "GBP": {
+        "count": 4428,
+        "price_sum": 439841.01
+      }
+    },
+    "2025-06-11": {
+      "USD": {
+        "count": 21662,
+        "price_sum": 2120492.02
+      },
+      "EUR": {
+        "count": 8961,
+        "price_sum": 876758.6
+      },
+      "GBP": {
+        "count": 5466,
+        "price_sum": 529485.99
+      }
+    },
+    "2025-06-12": {
+      "USD": {
+        "count": 36751,
+        "price_sum": 3609326.98
+      },
+      "EUR": {
+        "count": 15268,
+        "price_sum": 1480986.67
+      },
+      "GBP": {
+        "count": 9202,
+        "price_sum": 893755.83
+      }
+    },
+    "2025-06-13": {
+      "USD": {
+        "count": 18739,
+        "price_sum": 1872677.64
+      },
+      "EUR": {
+        "count": 7776,
+        "price_sum": 758368.29
+      },
+      "GBP": {
+        "count": 4741,
+        "price_sum": 470907.71
+      }
+    },
+    "2025-06-14": {
+      "USD": {
+        "count": 21701,
+        "price_sum": 2074327.97
+      },
+      "EUR": {
+        "count": 9038,
+        "price_sum": 870883.6
+      },
+      "GBP": {
+        "count": 5442,
+        "price_sum": 547134.45
+      }
+    }
+  },
+  "global": {
+    "distinct_source_product_pairs": 32626,
+    "per_category_valid_counts": {
+      "electronics": 206960,
+      "home-goods": 97139,
+      "kitchen": 61938,
+      "toys": 45299,
+      "sporting-goods": 35413,
+      "office-supplies": 29097,
+      "beauty": 24156,
+      "grocery": 21230,
+      "pet-supplies": 18550,
+      "tools": 16551,
+      "furniture": 14779,
+      "apparel": 13780
+    },
+    "mart_reference": {
+      "2025-06-01": {
+        "USD": {
+          "count": 22505,
+          "price_sum": 2263192.87
+        },
+        "EUR": {
+          "count": 9325,
+          "price_sum": 925549.86
+        },
+        "GBP": {
+          "count": 5597,
+          "price_sum": 542528.98
+        }
+      },
+      "2025-06-02": {
+        "USD": {
+          "count": 22770,
+          "price_sum": 2263100.0
+        },
+        "EUR": {
+          "count": 9678,
+          "price_sum": 944968.42
+        },
+        "GBP": {
+          "count": 5595,
+          "price_sum": 529233.37
+        }
+      },
+      "2025-06-03": {
+        "USD": {
+          "count": 28675,
+          "price_sum": 2803564.52
+        },
+        "EUR": {
+          "count": 11999,
+          "price_sum": 1199178.55
+        },
+        "GBP": {
+          "count": 7123,
+          "price_sum": 714637.55
+        }
+      },
+      "2025-06-04": {
+        "USD": {
+          "count": 28845,
+          "price_sum": 2780852.95
+        },
+        "EUR": {
+          "count": 11925,
+          "price_sum": 1169306.37
+        },
+        "GBP": {
+          "count": 7372,
+          "price_sum": 697670.51
+        }
+      },
+      "2025-06-05": {
+        "USD": {
+          "count": 28679,
+          "price_sum": 2820111.38
+        },
+        "EUR": {
+          "count": 11685,
+          "price_sum": 1127942.9
+        },
+        "GBP": {
+          "count": 7303,
+          "price_sum": 708669.32
+        }
+      },
+      "2025-06-06": {
+        "USD": {
+          "count": 29857,
+          "price_sum": 2922225.91
+        },
+        "EUR": {
+          "count": 12390,
+          "price_sum": 1235657.93
+        },
+        "GBP": {
+          "count": 7383,
+          "price_sum": 709868.77
+        }
+      },
+      "2025-06-07": {
+        "USD": {
+          "count": 24389,
+          "price_sum": 2356956.75
+        },
+        "EUR": {
+          "count": 10302,
+          "price_sum": 1010408.32
+        },
+        "GBP": {
+          "count": 6185,
+          "price_sum": 604795.67
+        }
+      },
+      "2025-06-08": {
+        "USD": {
+          "count": 19685,
+          "price_sum": 1924520.05
+        },
+        "EUR": {
+          "count": 8299,
+          "price_sum": 794282.81
+        },
+        "GBP": {
+          "count": 4932,
+          "price_sum": 473390.64
+        }
+      },
+      "2025-06-09": {
+        "USD": {
+          "count": 28706,
+          "price_sum": 2804650.81
+        },
+        "EUR": {
+          "count": 11830,
+          "price_sum": 1169279.98
+        },
+        "GBP": {
+          "count": 7145,
+          "price_sum": 705529.91
+        }
+      },
+      "2025-06-10": {
+        "USD": {
+          "count": 18037,
+          "price_sum": 1742236.85
+        },
+        "EUR": {
+          "count": 7501,
+          "price_sum": 705424.42
+        },
+        "GBP": {
+          "count": 4428,
+          "price_sum": 439841.01
+        }
+      },
+      "2025-06-11": {
+        "USD": {
+          "count": 21662,
+          "price_sum": 2120492.02
+        },
+        "EUR": {
+          "count": 8961,
+          "price_sum": 876758.6
+        },
+        "GBP": {
+          "count": 5466,
+          "price_sum": 529485.99
+        }
+      },
+      "2025-06-12": {
+        "USD": {
+          "count": 36751
+        },
+        "EUR": {
+          "count": 15268
+        },
+        "GBP": {
+          "count": 9202
+        }
+      },
+      "2025-06-13": {
+        "USD": {
+          "count": 18739
+        },
+        "EUR": {
+          "count": 7776
+        },
+        "GBP": {
+          "count": 4741
+        }
+      },
+      "2025-06-14": {
+        "USD": {
+          "count": 21701
+        },
+        "EUR": {
+          "count": 9038
+        },
+        "GBP": {
+          "count": 5442
+        }
+      }
+    }
+  }
+}

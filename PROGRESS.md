@@ -78,7 +78,20 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 06-pipelines-and-orchestration
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-first-dag-raw-to-staging — first Airflow DAG: raw NDJSON to `staging`, skipping malformed lines
+- [ ] 02-incremental-idempotent-loads — `@daily` schedule, idempotent partition loads, one audit row per run
+- [ ] 03-backfill-and-recovery — full + scoped backfill, recover a deleted range without duplicates
+- [ ] 04-poison-records-and-alerting — classify and quarantine malformed/invalid records, alert on degradation
+- [ ] 05-contract-gate-pandera — pandera schema as a boundary contract, route violations to quarantine
+- [ ] 06-contract-evolution — catch additive + type-change drift, evolve the schema without breaking downstream
+- [ ] 07-spark-stage-silver-lake — orchestrate the module 05 Spark job as a stage, write a partitioned silver lake to MinIO
+- [ ] 08-dbt-marts-over-oltp — dbt staging views + daily-GMV marts over module 02's OLTP Postgres, tests and incremental stability
+- [ ] 09-prefect-migration — port the incremental load to Prefect + written Airflow-vs-Prefect comparison
+- [ ] 10-capstone-end-to-end (capstone)
+  - [ ] CP1: build + full backfill — all 14 days through quarantine + contract gate into `core`, contracts green
+  - [ ] CP2: failure drills — recover a half-dead midstate without duplicates, handle a fresh unannounced drift
+  - [ ] CP3: design memo — DESIGN.md defended end-to-end, CP1+CP2 still green
+- [ ] k8s-bonus (optional) — package the loader as a hand-written Helm chart (CronJob, Deployment, PDB) on kind/k3d
 
 ## 07-streaming
 

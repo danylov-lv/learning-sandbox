@@ -1,0 +1,9 @@
+!data/
+data/*
+!data/ground-truth.json
+scratch/
+*-local.json
+__pycache__/
+!logs/
+logs/*
+!logs/.gitkeep

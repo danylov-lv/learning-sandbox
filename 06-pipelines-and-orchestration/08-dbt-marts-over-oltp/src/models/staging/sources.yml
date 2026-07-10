@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: marketplace
+    schema: public
+    description: >
+      Module 02's live Kupitron marketplace OLTP schema. Read-only source —
+      nothing in this project may write back here.
+    tables:
+      # TODO: declare one entry per module-02 table this project reads from
+      # (orders, order_items, products, categories, ...). Example shape:
+      # - name: orders
+      #   description: one row per placed order
