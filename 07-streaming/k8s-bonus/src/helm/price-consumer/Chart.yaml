@@ -1,0 +1,6 @@
+apiVersion: v2
+name: price-consumer
+description: Kafka consumer-group member for the price stream (module 07), deployed as a scalable Deployment + HPA + PDB.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

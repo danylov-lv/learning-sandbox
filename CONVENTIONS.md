@@ -78,6 +78,10 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 | 06-pipelines-and-orchestration | Postgres | 54306 | `SANDBOX_06_PORT` |
 | 06-pipelines-and-orchestration | Airflow UI | 8306 | `SANDBOX_06_AIRFLOW_PORT` |
 | 06-pipelines-and-orchestration | MinIO (API / console) | 9601 / 9602 | `SANDBOX_06_MINIO_PORT` / `SANDBOX_06_MINIO_CONSOLE_PORT` |
+| 07-streaming | Postgres | 54307 | `SANDBOX_07_PORT` |
+| 07-streaming | Redpanda (Kafka API) | 19092 | `SANDBOX_07_KAFKA_PORT` |
+| 07-streaming | Redpanda (Admin API) | 19644 | `SANDBOX_07_REDPANDA_ADMIN_PORT` |
+| 07-streaming | Redpanda Console | 8307 | `SANDBOX_07_CONSOLE_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 

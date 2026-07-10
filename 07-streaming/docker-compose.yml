@@ -1,0 +1,63 @@
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.3.5
+    command:
+      - redpanda
+      - start
+      - --mode
+      - dev-container
+      - --smp
+      - "1"
+      - --default-log-level=info
+      # Two Kafka listeners: PLAINTEXT for in-container clients (redpanda:9092),
+      # OUTSIDE advertised to host clients as localhost:${SANDBOX_07_KAFKA_PORT}.
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:9092,OUTSIDE://localhost:${SANDBOX_07_KAFKA_PORT:-19092}
+      - --rpc-addr
+      - redpanda:33145
+      - --advertise-rpc-addr
+      - redpanda:33145
+    ports:
+      - "${SANDBOX_07_KAFKA_PORT:-19092}:19092"
+      - "${SANDBOX_07_REDPANDA_ADMIN_PORT:-19644}:9644"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -q 'Healthy:.*true'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  console:
+    image: docker.redpanda.com/redpandadata/console:v2.8.5
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    ports:
+      - "${SANDBOX_07_CONSOLE_PORT:-8307}:8080"
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+  warehouse:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: sandbox
+      POSTGRES_PASSWORD: sandbox
+      POSTGRES_DB: streaming
+    ports:
+      - "${SANDBOX_07_PORT:-54307}:5432"
+    volumes:
+      - warehouse-data:/var/lib/postgresql/data
+      - ./docker/warehouse-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "sandbox", "-d", "streaming"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  redpanda-data:
+  warehouse-data:

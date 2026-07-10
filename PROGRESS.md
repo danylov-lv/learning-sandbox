@@ -95,7 +95,20 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 07-streaming
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-log-vs-queue-and-offsets — publish the price stream; two consumer groups each read the full log independently; history re-read from offset 0
+- [ ] 02-delivery-semantics — manual offset commits: at-most-once vs at-least-once; survive an injected mid-stream crash with zero loss
+- [ ] 03-consumer-groups-rebalancing — partition assignment across a group; trigger a rebalance and observe reprocessing/reassignment
+- [ ] 04-exactly-once-into-postgres — at-least-once + idempotent dedup/offset in one Postgres txn = exactly-once aggregate across two crashes
+- [ ] 05-windowed-aggregation — event-time 15-min tumbling windows per category, correct late-event assignment
+- [ ] 06-lag-monitoring — compute per-partition lag (high watermark minus committed), snapshot to Postgres, alert past a threshold under a burst
+- [ ] 07-compacted-topics — compacted topic for latest-state; materialize a current-price table matching last-write-wins by seq
+- [ ] 08-kafka-transactions-eos — transactional read-process-write between topics; exactly-once proven via a read_committed drain across a mid-txn crash
+- [ ] 09-rmq-vs-kafka-writeup — written: which parts of a production RMQ pipeline benefit from Kafka, which don't, why
+- [ ] 10-capstone-streaming-pipeline (capstone)
+  - [ ] CP1: steady pipeline — exactly-once category totals + event-time windows + latest-state, all matching ground truth on a clean run
+  - [ ] CP2: chaos consistency — same tables still exact after an injected crash and a two-instance rebalance; lag snapshot recorded
+  - [ ] CP3: design memo — DESIGN.md defended, CP1+CP2 still green
+- [ ] k8s-bonus (optional) — deploy the consumer as a Deployment with HPA + PDB on kind/minikube; scale replicas and watch the group rebalance
 
 ## 08-cdc-debezium
 

@@ -1,0 +1,67 @@
+# Values skeleton — every TODO below is a decision the templates you write
+# will consume. Add keys as your templates need them; delete none of the
+# structure without replacing it.
+
+image:
+  # TODO: the image you built from src/Dockerfile and loaded into kind
+  repository: ""
+  tag: ""
+  pullPolicy: IfNotPresent
+
+consumer:
+  # TODO: which task's consumer this pod actually runs (03's rebalance
+  # instrumentation is the natural pick for this bonus, but any task's
+  # consumer with a poll loop works). Wired in as an env var or CLI arg
+  # by your Deployment template — your call.
+  entrypointArg: ""
+  replicas: 2
+
+kafka:
+  # TODO: bootstrap address reachable from inside the cluster. If your
+  # broker is the module's docker-compose redpanda, this is the same
+  # "reach the host from inside kind" problem as module 06's k8s-bonus —
+  # solve it the same way (host.docker.internal / extraPortMappings) and
+  # record which one you used in NOTES.md.
+  bootstrapServers: ""
+  groupId: "t03-group"
+
+postgres:
+  # TODO: same reachability question as kafka.bootstrapServers, for the
+  # warehouse this consumer writes into (password via a Secret you
+  # template, not a plaintext value here).
+  host: ""
+  port: 5432
+  database: streaming
+  user: sandbox
+
+resources:
+  # TODO: derive from MEASUREMENT, not folklore. Run the consumer, watch
+  # `kubectl top pod` (or `docker stats`) through a few poll cycles, then
+  # set these — and record the raw numbers you saw as comments here, e.g.:
+  #   measured: cpu idle ~Xm, peak while polling+writing ~Ym; rss ~ZMi steady
+  # The validator warns (does not fail) if these land exactly on the
+  # classic copy-paste 100m/128Mi defaults.
+  requests:
+    cpu: ""
+    memory: ""
+  limits:
+    cpu: ""
+    memory: ""
+
+autoscaling:
+  # TODO: min/max replica bounds and the CPU target. Note for yourself in
+  # NOTES.md: CPU utilization is a proxy here — the metric that actually
+  # matters for a Kafka consumer is *lag*, and a real deployment would use
+  # KEDA's Kafka scaler (ScaledObject on consumer-group lag) instead of
+  # this HPA. This chart sticks to core k8s objects on purpose; KEDA is a
+  # CRD from a separate operator, out of scope for this bonus.
+  minReplicas: 0
+  maxReplicas: 0
+  targetCPUUtilizationPercentage: 0
+
+pdb:
+  # TODO: what the PDB guarantees for the consumer group during voluntary
+  # disruptions (minAvailable or maxUnavailable — pick one and say why in
+  # NOTES.md; note there what happens to partition ownership when a pod
+  # this PDB is protecting gets evicted anyway during a node drain).
+  minAvailable: 1
