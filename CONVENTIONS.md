@@ -82,6 +82,12 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 | 07-streaming | Redpanda (Kafka API) | 19092 | `SANDBOX_07_KAFKA_PORT` |
 | 07-streaming | Redpanda (Admin API) | 19644 | `SANDBOX_07_REDPANDA_ADMIN_PORT` |
 | 07-streaming | Redpanda Console | 8307 | `SANDBOX_07_CONSOLE_PORT` |
+| 08-cdc-debezium | Source Postgres | 54308 | `SANDBOX_08_SOURCE_PORT` |
+| 08-cdc-debezium | Mart Postgres | 54318 | `SANDBOX_08_MART_PORT` |
+| 08-cdc-debezium | Redpanda (Kafka API) | 19093 | `SANDBOX_08_KAFKA_PORT` |
+| 08-cdc-debezium | Redpanda (Admin API) | 19645 | `SANDBOX_08_REDPANDA_ADMIN_PORT` |
+| 08-cdc-debezium | Redpanda Console | 8308 | `SANDBOX_08_CONSOLE_PORT` |
+| 08-cdc-debezium | Kafka Connect REST | 8383 | `SANDBOX_08_CONNECT_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 

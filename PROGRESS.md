@@ -112,7 +112,17 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 08-cdc-debezium
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-connector-setup-snapshot-vs-streaming — register a Debezium Postgres connector; prove the snapshot phase (op=r per existing row) hands off to streaming (op=c/u/d) from the event stream alone
+- [ ] 02-change-event-anatomy — decode the full envelope: schema vs payload, the source block, and the base64 Kafka Connect Decimal encoding of NUMERIC prices under decimal.handling.mode=precise
+- [ ] 03-updates-and-deletes-downstream — apply before/after diffs and delete tombstones to a downstream replica table so it mirrors the source after an update/delete burst
+- [ ] 04-schema-evolution — add a column on the source without breaking a running connector or consumer; the replica keeps converging across the schema change
+- [ ] 05-replica-lag-and-alerting — measure replication-slot lag (bytes and time) and alert past a threshold under a change burst; understand the orphaned-slot WAL-pinning hazard
+- [ ] 06-exactly-once-materialization — LSN/offset-ordered idempotent upsert into the mart so redelivery/restart can't corrupt state (continuation of module 07 task 04)
+- [ ] 07-cdc-vs-rescraping-writeup — written: where CDC beats periodic re-scraping/re-querying and where it's overkill
+- [ ] 08-capstone-converge (capstone)
+  - [ ] CP1: steady replica — full source→Debezium→mart pipeline converges (mart == source) after a scripted insert/update/delete burst on a clean run
+  - [ ] CP2: chaos convergence — mart still converges to source after an injected mid-run crash and connector restart (redelivery survived)
+  - [ ] CP3: design memo — DESIGN.md defended, CP1+CP2 still green
 
 ## 09-olap-clickhouse-duckdb
 

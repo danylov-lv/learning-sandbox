@@ -1,0 +1,50 @@
+{
+  "seed": 80808,
+  "scale": 1.0,
+  "n_products": 5000,
+  "n_offers": 20000,
+  "constants": {
+    "categories": [
+      "electronics",
+      "home-goods",
+      "kitchen",
+      "toys",
+      "sporting-goods",
+      "office-supplies",
+      "beauty",
+      "apparel"
+    ],
+    "sellers": [
+      "NovaMarket",
+      "DealHive",
+      "QuickCart Direct",
+      "TrueValue Goods",
+      "BrightBazaar",
+      "PrimeSellers Co",
+      "EverydayGoods",
+      "SwiftTrade Outlet"
+    ],
+    "currency_weights": {
+      "USD": 0.6,
+      "EUR": 0.25,
+      "GBP": 0.15
+    }
+  },
+  "row_counts": {
+    "products": 5000,
+    "offers": 20000
+  },
+  "offers_price_sum": 1884008.69,
+  "distinct_products_with_offers": 2068,
+  "per_category_offer_counts": {
+    "electronics": 6652,
+    "home-goods": 6334,
+    "kitchen": 2056,
+    "toys": 755,
+    "sporting-goods": 2584,
+    "office-supplies": 551,
+    "beauty": 302,
+    "apparel": 766
+  },
+  "in_stock_count": 17004
+}

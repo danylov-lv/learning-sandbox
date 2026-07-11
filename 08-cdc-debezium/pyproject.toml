@@ -1,0 +1,14 @@
+[project]
+name = "cdc-debezium"
+version = "0.1.0"
+description = "Module 08: change data capture with Debezium — Postgres logical decoding to Kafka Connect to redpanda to a downstream mart, snapshot vs streaming, schema evolution, replica lag, exactly-once materialization"
+requires-python = ">=3.11"
+dependencies = [
+    "confluent-kafka>=2.6.1",
+    "psycopg[binary]>=3.3.4",
+    "numpy>=2.4.6",
+    "faker>=40.28.1",
+    "pytest>=9.1.1",
+    "requests>=2.34.2",
+    "pyyaml>=6.0.2",
+]
