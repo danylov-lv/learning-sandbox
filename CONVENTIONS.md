@@ -88,6 +88,9 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 | 08-cdc-debezium | Redpanda (Admin API) | 19645 | `SANDBOX_08_REDPANDA_ADMIN_PORT` |
 | 08-cdc-debezium | Redpanda Console | 8308 | `SANDBOX_08_CONSOLE_PORT` |
 | 08-cdc-debezium | Kafka Connect REST | 8383 | `SANDBOX_08_CONNECT_PORT` |
+| 09-olap-clickhouse-duckdb | ClickHouse (HTTP) | 8309 | `SANDBOX_09_CH_HTTP_PORT` |
+| 09-olap-clickhouse-duckdb | ClickHouse (native TCP) | 9309 | `SANDBOX_09_CH_NATIVE_PORT` |
+| 09-olap-clickhouse-duckdb | Postgres | 54309 | `SANDBOX_09_PG_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 

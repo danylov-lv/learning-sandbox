@@ -1,0 +1,14 @@
+[project]
+name = "olap-clickhouse-duckdb"
+version = "0.1.0"
+description = "Module 09: OLAP over scraped price history — ClickHouse MergeTree and sparse primary indexes, materialized views for streaming aggregation, ReplacingMergeTree dedup, TTL lifecycle, a Postgres-vs-ClickHouse benchmark at 50M rows, and DuckDB querying a Parquet lake directly"
+requires-python = ">=3.11"
+dependencies = [
+    "clickhouse-connect>=0.8",
+    "psycopg[binary]>=3.2",
+    "duckdb>=1.1",
+    "pyarrow>=17",
+    "numpy>=2",
+    "faker>=30",
+    "pytest>=8",
+]

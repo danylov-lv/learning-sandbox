@@ -126,7 +126,18 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 09-olap-clickhouse-duckdb
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-mergetree-and-primary-index — ORDER BY as a sparse primary index; prove part/granule pruning via `system.query_log` read_rows (pruned scan << full scan)
+- [ ] 02-materialized-views — incremental MV rollup (SummingMergeTree) maintaining daily-per-category count+price_sum as rows stream into a landing table
+- [ ] 03-replacingmergetree-dedup — ReplacingMergeTree(version) + FINAL/argMax to keep the latest row per natural key without waiting on background merges
+- [ ] 04-ttl-and-lifecycle — table TTL DELETE for retention (15-month window); force it with OPTIMIZE FINAL / MATERIALIZE TTL and verify the surviving split
+- [ ] 05-postgres-vs-clickhouse-50m — the same per-category in-stock analytics on a row store vs a columnar engine; correctness gate + machine-local relative timing baseline
+- [ ] 06-duckdb-on-parquet — DuckDB querying the Hive-partitioned Parquet lake directly (zero server); correctness + partition pruning to a single file
+- [ ] 07-duckdb-vs-clickhouse — same analytical query, running server vs embedded engine; correctness + cross-engine agreement + relative timing
+- [ ] 08-when-clickhouse-when-duckdb — written: decision framework for when a ClickHouse server, when DuckDB on a laptop, and when neither (keep it in Postgres)
+- [ ] 09-capstone (capstone)
+  - [ ] CP1: ClickHouse serving layer — incremental MV rollup + business questions (price_sum, per-category in-stock, top sellers) all match ground truth
+  - [ ] CP2: DuckDB cross-check — the same business questions answered over the Parquet lake reproduce ground truth (and thus agree with CP1), partition pruning proven
+  - [ ] CP3: design memo — DESIGN.md defended (ORDER BY, MV vs on-demand, lifecycle, server-vs-embedded), CP1+CP2 still green
 
 ## 10-nosql-patterns
 

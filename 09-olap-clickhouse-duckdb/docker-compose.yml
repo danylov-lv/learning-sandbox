@@ -1,0 +1,44 @@
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    environment:
+      CLICKHOUSE_USER: sandbox
+      CLICKHOUSE_PASSWORD: sandbox
+      CLICKHOUSE_DB: price_history
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "${SANDBOX_09_CH_HTTP_PORT:-8309}:8123"
+      - "${SANDBOX_09_CH_NATIVE_PORT:-9309}:9000"
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: sandbox
+      POSTGRES_PASSWORD: sandbox
+      POSTGRES_DB: price_history
+    ports:
+      - "${SANDBOX_09_PG_PORT:-54309}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/pg-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "sandbox", "-d", "price_history"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  clickhouse-data:
+  postgres-data:
