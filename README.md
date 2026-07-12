@@ -33,7 +33,7 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 | 7 | 07-streaming | Kafka (redpanda) for an RMQ practitioner: log vs queue, offsets, exactly-once, compacted topics | 5–6 |
 | 8 | 08-cdc-debezium | Postgres → Debezium → Kafka → downstream mart; schema evolution, convergence validation | 4–5 |
 | 9 | 09-olap-clickhouse-duckdb | MergeTree, materialized views, Postgres-vs-ClickHouse at 50M rows, DuckDB on Parquet | 4–5 |
-| 10 | 10-nosql-patterns | Redis beyond cache (rate limiter, locks, dedup, streams), MongoDB vs Postgres JSONB | 4 |
+| 10 | 10-nosql-patterns | Redis beyond cache (rate limiter, locks, dedup, streams), MongoDB vs Postgres JSONB | 5–6 |
 | 11 | 11-python-concurrency | Event-loop internals, broken-code rescues, cancellation, backpressure, GIL benchmarks, py-spy | 5–6 |
 | 12 | 12-api-engineering | FastAPI on the module 02 DB: cursor pagination, caching, rate limiting + security block (SQLi, authn/authz, secrets) | 5–6 |
 | 13 | 13-scraping-at-scale | Hostile local target site; data-quality platform, change detection, selector resilience, cost model, Prometheus/Grafana | 7–8 |

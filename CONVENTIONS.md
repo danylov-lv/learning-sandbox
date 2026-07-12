@@ -91,6 +91,9 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 | 09-olap-clickhouse-duckdb | ClickHouse (HTTP) | 8309 | `SANDBOX_09_CH_HTTP_PORT` |
 | 09-olap-clickhouse-duckdb | ClickHouse (native TCP) | 9309 | `SANDBOX_09_CH_NATIVE_PORT` |
 | 09-olap-clickhouse-duckdb | Postgres | 54309 | `SANDBOX_09_PG_PORT` |
+| 10-nosql-patterns | Redis (Redis Stack) | 6310 | `SANDBOX_10_REDIS_PORT` |
+| 10-nosql-patterns | MongoDB | 27310 | `SANDBOX_10_MONGO_PORT` |
+| 10-nosql-patterns | Postgres | 54310 | `SANDBOX_10_PG_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 

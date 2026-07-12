@@ -141,7 +141,17 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 10-nosql-patterns
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-rate-limiter — per-domain requests/window cap via a single atomic Redis check-and-record, closing the check-then-act race that lets a burst of workers blow past the limit
+- [ ] 02-distributed-lock — fleet-wide single-owner lock: token-checked safe release plus a fencing token so a worker stalled past its TTL can't corrupt state after another worker takes over
+- [ ] 03-dedup-filter — exact Redis SET vs Bloom filter for "have I seen this url": exactness/zero-false-negatives vs a fixed tiny memory footprint traded for a bounded false-positive rate
+- [ ] 04-redis-streams-consumer — consumer group with PEL tracking, XACK, and XAUTOCLAIM reclaim so a dead worker's in-flight entries get taken over without double-claiming a still-alive worker's work
+- [ ] 05-mongodb-document-modeling — model heterogeneous scraped products as documents and make the hot queries fast: compound + multikey (array/nested-field) indexes the planner actually uses (IXSCAN, not COLLSCAN)
+- [ ] 06-mongodb-vs-jsonb — same containment query, nested-field match, and partial update on MongoDB vs Postgres JSONB+GIN, each properly indexed, for an honest head-to-head
+- [ ] 07-nosql-decision-writeup — written: per-workload memo on which of the six patterns earn a dedicated store, which are just Postgres-able coordination, grounded in what you built and measured
+- [ ] 08-capstone (capstone)
+  - [ ] CP1: steady materialization — full category-enriched event stream drained by a two-consumer group converges t08_state (count, price_sum, per-category count) to ground-truth current_state on a clean run
+  - [ ] CP2: chaos convergence — at-least-once + watermarked idempotent materialize survives a mid-batch crash (entries stuck in the PEL): XAUTOCLAIM reclaim + forward drain still hit ground truth exactly with XPENDING 0
+  - [ ] CP3: design memo — DESIGN.md defended (control-plane, watermark idempotency, crash recovery, rate shaping, failure modes), CP1+CP2 still green
 
 ## 11-python-concurrency
 

@@ -1,0 +1,13 @@
+[project]
+name = "nosql-patterns"
+version = "0.1.0"
+description = "Module 10: NoSQL patterns over a scraping domain — Redis beyond cache (atomic rate limiter, distributed lock with fencing token, exact-vs-Bloom dedup, Redis Streams consumer groups) and MongoDB vs Postgres JSONB for semi-structured scraped documents (embed vs reference, GIN vs Mongo indexes, aggregation pipelines), capped by a scrape-ingestion control-plane capstone"
+requires-python = ">=3.11"
+dependencies = [
+    "redis>=5.0",
+    "pymongo>=4.9",
+    "psycopg[binary]>=3.2",
+    "numpy>=2",
+    "faker>=30",
+    "pytest>=8",
+]
