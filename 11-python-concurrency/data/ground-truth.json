@@ -1,0 +1,23 @@
+{
+  "seed": 111111,
+  "scale": 1.0,
+  "n_pages": 3000,
+  "categories": [
+    "electronics",
+    "home-goods",
+    "kitchen",
+    "toys",
+    "sporting-goods",
+    "apparel"
+  ],
+  "count": 3000,
+  "price_sum": 324536.21,
+  "per_category_count": {
+    "electronics": 1316,
+    "home-goods": 616,
+    "kitchen": 389,
+    "toys": 279,
+    "sporting-goods": 202,
+    "apparel": 198
+  }
+}

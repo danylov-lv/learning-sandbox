@@ -155,7 +155,18 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 11-python-concurrency
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-event-loop-and-blocking — rescue a fetcher that looks async but is serial and runs a blocking call inline on the loop: fetch every path concurrently AND offload the blocking (GIL-releasing) parse off the event-loop thread so a heartbeat coroutine keeps ticking
+- [ ] 02-taskgroup-structured-concurrency — replace `create_task` + `gather` (leaks siblings on first failure, silently swallows a second one) with `asyncio.TaskGroup`: first failure cancels every sibling, results come back in input order, nothing left alive
+- [ ] 03-cancellation-and-timeouts — a `guarded_operation` that times out without leaking: the timeout releases the resource-pool slot, external cancellation propagates as cancellation (not swallowed), and a shielded finalizer still runs to completion
+- [ ] 04-backpressure-bounded-queue — a bounded `asyncio.Queue` producer/consumer where a slow consumer forces the producer to wait, so peak traced memory tracks `max_in_flight`, not `produce_n` (validator asserts the peak stays flat as `produce_n` 4x's; an unbounded buffer grows ~4x)
+- [ ] 05-semaphore-rate-limiting — bounded concurrency plus a rate cap against the mock peer, never tripping the peer's concurrency/rate gates, no leaked tasks
+- [ ] 06-gil-decision-matrix — implement one CPU-bound and one I/O-bound workload three ways (sequential / ThreadPoolExecutor / ProcessPoolExecutor, plus asyncio for I/O), benchmark on your own hardware via `baseline.py`, and defend a decision matrix; validator asserts only the robust relative truths from your measured numbers (processes beat threads for CPU work — the GIL; concurrency wins big for I/O)
+- [ ] 07-sync-async-bridging — two bridging bugs: offload a blocking call off the loop with a bounded `to_thread`/`run_in_executor` while preserving input order, and drive the async entrypoint from plain synchronous code via `asyncio.run`
+- [ ] 08-profiling-py-spy — profile a LIVE async worker with py-spy (`record` / `dump --pid`) to find a hidden CPU-bound function blocking the loop, name it, and fix it so the event loop stays responsive under load
+- [ ] 09-capstone-async-scraper (capstone)
+  - [ ] CP1: steady state — scrape every corpus page under a hard concurrency cap with backpressure; the aggregate (count, price_sum, per-category count) matches committed ground truth exactly, the cap is held, no tasks leak
+  - [ ] CP2: chaos — with injected 500s and latency jitter, retry + per-request timeout without leaking tasks or connections and still converge to the identical ground-truth aggregate
+  - [ ] CP3: design memo — DESIGN.md defended (bounded concurrency, backpressure, cancellation/timeouts, retry, failure modes), CP1+CP2 still green
 
 ## 12-api-engineering
 

@@ -1,0 +1,13 @@
+[project]
+name = "python-concurrency"
+version = "0.1.0"
+description = "Module 11: asyncio event-loop internals for a production async user — broken-code rescues (blocking-the-loop, leaked tasks), structured concurrency with TaskGroup, cancellation/timeouts without leaks, backpressure via bounded queues, semaphore + rate limiting, the GIL and asyncio-vs-threads-vs-processes benchmarks, sync/async bridging, py-spy profiling, capped by a bounded async scraping-pipeline capstone"
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp>=3.10",
+    "psutil>=6",
+    "py-spy>=0.3.14",
+    "numpy>=2",
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+]
