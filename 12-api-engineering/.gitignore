@@ -1,0 +1,10 @@
+!data/
+data/*
+!data/ground-truth.json
+scratch/
+scratch-*/
+*-local.json
+.venv/
+__pycache__/
+leaky-repo/
+08-secrets-management/service/secrets/

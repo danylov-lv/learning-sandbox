@@ -1,0 +1,20 @@
+[project]
+name = "api-engineering"
+version = "0.1.0"
+description = "Module 12: FastAPI service over a clean, properly-indexed marketplace DB — cursor vs offset pagination, Redis response caching, rate limiting and quotas, background jobs and idempotency, streaming large exports, a SQL injection break-and-fix drill, JWT auth with trap tests, secrets management, load-test bottleneck hunting, capped by a hardened-API capstone"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "psycopg[binary,pool]>=3.2",
+    "redis>=5",
+    "httpx>=0.27",
+    "pyjwt>=2.9",
+    "cryptography>=43",
+    "numpy>=2",
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "anyio>=4",
+    "python-dotenv>=1",
+    "pyyaml>=6",
+]

@@ -1,0 +1,28 @@
+# s12.t08 (half B) -- fix this file in place. As shipped, `worker`'s
+# PG_PASSWORD is a plaintext value baked directly into `environment:`.
+# Replace it with the docker-secrets `*_FILE` convention: a
+# `PG_PASSWORD_FILE` env var pointing at a file mount, plus a top-level
+# `secrets:` block that sources the material from an external file (never
+# an inline value). See ../src/secrets_loader.py and ../README.md.
+#
+# This file is a static fixture for the validator to parse -- you do not
+# need to `docker compose up` it.
+
+services:
+  worker:
+    image: notify-svc-worker:latest
+    environment:
+      PG_HOST: postgres
+      PG_PORT: "5432"
+      PG_USER: notify_svc
+      PG_PASSWORD: "kkT9-hardcoded-pw-4821"
+      PG_DB: notify
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: notify
+      POSTGRES_USER: notify_svc
+      POSTGRES_PASSWORD: "kkT9-hardcoded-pw-4821"
