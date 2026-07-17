@@ -1,0 +1,77 @@
+# Values for the spider-platform chart. Unlike a from-scratch TODO skeleton,
+# these are FILLED sane defaults your templates can reference straight away —
+# your job is to write the templates/ that consume them, not to invent the
+# knobs. Change a value, re-render, and watch the manifest move.
+
+image:
+  # The spider image you build from this module's crawler (task 06's
+  # instrumented `src/serve.py` is the natural pick — it already exposes
+  # /metrics) and load into your kind/k3d node. Left blank on purpose: a
+  # Deployment referencing an empty repository is an obvious "fill me in".
+  repository: ""
+  tag: "dev"
+  # Node-local image loaded via `kind load docker-image` — do NOT use Always
+  # (it forces a registry pull for a tag that only exists on the node).
+  pullPolicy: IfNotPresent
+
+spider:
+  # How many worker replicas at rest. The HPA below can move this on its own
+  # once autoscaling is enabled; this is the floor the Deployment starts at.
+  replicaCount: 2
+  # Target site base URL reachable from INSIDE the cluster. The module's
+  # target runs in host docker-compose on :8313, so from a kind pod this is
+  # the "reach the host" problem — host.docker.internal or a kind
+  # extraPortMappings entry. Record which you used in NOTES.md.
+  targetBaseUrl: "http://host.docker.internal:8313"
+  # Port the spider exposes prometheus_client /metrics on (module convention).
+  metricsPort: 9113
+
+resources:
+  # PLACEHOLDER GUESSES — replace with numbers you MEASURED. Run the spider,
+  # watch `kubectl top pod` (metrics-server) or `docker stats` across a few
+  # crawl cycles under load, then set these and note the raw readings here,
+  # e.g.:  measured: cpu idle ~15m, peak while crawling+parsing ~180m; rss ~110Mi
+  # The validator WARNS (not fails) if these land exactly on the classic
+  # copy-paste 100m/128Mi defaults — so these deliberately do not.
+  requests:
+    cpu: "50m"
+    memory: "96Mi"
+  limits:
+    cpu: "300m"
+    memory: "192Mi"
+
+autoscaling:
+  # CPU utilization is a PROXY here. The signal that actually matters for a
+  # spider pool is crawl-QUEUE DEPTH / pending-URL backlog (the queue_depth
+  # gauge task 06 exposes), not CPU — a production deployment would scale on
+  # that via prometheus-adapter (custom metrics) or KEDA. This chart sticks
+  # to a core-k8s CPU HPA on purpose; the custom-metric path is a separate
+  # adapter/CRD, out of scope for this bonus. Say so in NOTES.md.
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+pdb:
+  # Voluntary-disruption floor (node drains, rolling updates). With 2+
+  # replicas, minAvailable: 1 keeps at least one spider crawling while a pod
+  # is being moved. Pick minAvailable OR maxUnavailable (not both) and say why
+  # in NOTES.md.
+  minAvailable: 1
+
+probes:
+  # /metrics doubles as a liveness/readiness signal here: if the worker's
+  # metrics server answers, its event loop is alive. A dedicated /healthz is
+  # nicer in production — note that in NOTES.md.
+  liveness:
+    path: /metrics
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readiness:
+    path: /metrics
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3

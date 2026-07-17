@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Task 06's scraper runs on the HOST (not in docker-compose -- it's the
+  # learner's own process, like module 12's task apps), exposing a
+  # prometheus_client /metrics endpoint on port 9113 by convention.
+  # host.docker.internal reaches back out of the compose network to that
+  # host port. If a task-06 scaffold ever needs a different port, update
+  # this target and note it in that task's README.
+  - job_name: spider
+    static_configs:
+      - targets: ["host.docker.internal:9113"]
+        labels:
+          service: "scraper"

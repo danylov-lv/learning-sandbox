@@ -96,6 +96,9 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 | 10-nosql-patterns | Postgres | 54310 | `SANDBOX_10_PG_PORT` |
 | 12-api-engineering | Postgres | 54312 | `SANDBOX_12_PG_PORT` |
 | 12-api-engineering | Redis | 6312 | `SANDBOX_12_REDIS_PORT` |
+| 13-scraping-at-scale | Target site (HTTP) | 8313 | `SANDBOX_13_TARGET_PORT` |
+| 13-scraping-at-scale | Prometheus | 9313 | `SANDBOX_13_PROM_PORT` |
+| 13-scraping-at-scale | Grafana | 3313 | `SANDBOX_13_GRAFANA_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 

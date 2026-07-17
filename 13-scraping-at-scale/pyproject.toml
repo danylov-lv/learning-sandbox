@@ -1,0 +1,21 @@
+[project]
+name = "scraping-at-scale"
+version = "0.1.0"
+description = "Module 13: scraping a deliberately hostile local target site over plain HTTP — header/behavioral client fingerprinting (TLS/JA3 out of scope, a planned second-wave module), honeypot traps, token-bucket rate limiting with bans, a headless-render stand-in via a documented XHR endpoint, data-quality contracts with pandera, day-over-day change detection past a volatile nonce, markup-version selector resilience, a cost-modeled budget router, and Prometheus/Grafana observability of the whole scraping pipeline"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "httpx>=0.27",
+    "numpy>=2",
+    "pandas>=2",
+    "pandera>=0.20",
+    "parsel>=1.9",
+    "lxml>=5",
+    "beautifulsoup4>=4.12",
+    "selectolax>=0.3",
+    "prometheus-client>=0.21",
+    "pyarrow>=17",
+    "pyyaml>=6",
+    "pytest>=8",
+]
