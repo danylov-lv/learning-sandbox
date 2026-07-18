@@ -219,7 +219,15 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 15-llm-in-pipelines
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-swappable-llm-client — a pipeline-grade resilience wrapper over `harness.llm`: enforced structured/JSON output with schema validation + bounded reask on invalid output, timeout + bounded retry-with-backoff on transient errors, primary→fallback provider swap on repeated failure, and token/latency accounting; tested with injected fake providers (flaky/returns-junk-then-valid) for the deterministic retry/reask/fallback paths plus one live smoke call against real Ollama
+- [ ] 02-structured-extraction — extract `{name, brand, price, currency, in_stock}` from selector-hostile HTML snippets (prose pricing, attribute-only fields, entity/whitespace noise, malformed tags, cents-only pricing); graded field-level precision/recall/exact-match vs. gold with 7B-realistic thresholds
+- [ ] 03-classification-and-enrichment — classify + enrich records whose title/description signal is deliberately diluted (generic-brand pool, cross-category noun/description noise); accuracy/macro-F1 thresholds, a constant-prediction baseline must fail
+- [ ] 04-embedding-dedup — dedup same-product-different-title listings via `nomic-embed-text` + cosine threshold/clustering; pairwise-F1 threshold, both all-singleton and all-one-cluster degenerate baselines must fail
+- [ ] 05-mini-rag — chunk + embed a small synthetic "Sandbox Handbook" corpus, retrieve top-k, answer with citation; retrieval hit@k as the robust primary metric, answer-contains-fact as a secondary metric
+- [ ] 06-capstone (capstone) — end-to-end enrichment pipeline (extract → classify/enrich → embed-dedup → clean catalog) with a quality/confidence gate routing low-confidence records to quarantine, plus a RAG "explain this product" step
+  - [ ] CP1: steady state — clean inputs, hit quality/confidence thresholds vs. gold across the full pipeline
+  - [ ] CP2: chaos — messier inputs, injected malformed model outputs, forced provider fallback; must degrade gracefully, quarantine correctly, and still converge
+  - [ ] CP3: design memo — `DESIGN.md` filled, then CP1 and CP2 re-run as subprocesses and both still green
 
 ## 16-testing-engineering
 

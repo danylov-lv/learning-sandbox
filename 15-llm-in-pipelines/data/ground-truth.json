@@ -1,0 +1,22 @@
+{
+  "seed": 151515,
+  "scale": 1.0,
+  "categories": [
+    "electronics",
+    "home-goods",
+    "kitchen",
+    "toys",
+    "sporting-goods",
+    "apparel",
+    "books",
+    "garden"
+  ],
+  "n_catalog": 120,
+  "n_extraction": 50,
+  "n_classification": 80,
+  "n_dedup": 55,
+  "n_clusters": 20,
+  "n_corpus_docs": 6,
+  "n_qa": 15,
+  "data_sha": "ad73e0688ccfe83753a57564cc2361bda8ebd9f056578d83fbb11ebde0645e44"
+}

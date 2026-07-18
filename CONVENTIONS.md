@@ -99,6 +99,7 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 | 13-scraping-at-scale | Target site (HTTP) | 8313 | `SANDBOX_13_TARGET_PORT` |
 | 13-scraping-at-scale | Prometheus | 9313 | `SANDBOX_13_PROM_PORT` |
 | 13-scraping-at-scale | Grafana | 3313 | `SANDBOX_13_GRAFANA_PORT` |
+| 15-llm-in-pipelines | Ollama (HTTP API) | 11439 | `SANDBOX_15_OLLAMA_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 
