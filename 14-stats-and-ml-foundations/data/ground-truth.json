@@ -1,0 +1,51 @@
+{
+  "seed": 141414,
+  "scale": 1.0,
+  "n_obs": 60000,
+  "n_products": 7968,
+  "categories": [
+    "electronics",
+    "home-goods",
+    "kitchen",
+    "toys",
+    "sporting-goods",
+    "apparel",
+    "books",
+    "garden"
+  ],
+  "per_category_count": {
+    "electronics": 23673,
+    "home-goods": 11171,
+    "kitchen": 7109,
+    "toys": 5470,
+    "sporting-goods": 4186,
+    "apparel": 3012,
+    "books": 2665,
+    "garden": 2714
+  },
+  "per_category_count_valid": {
+    "electronics": 22184,
+    "home-goods": 10487,
+    "kitchen": 6629,
+    "toys": 5133,
+    "sporting-goods": 3954,
+    "apparel": 2807,
+    "books": 2480,
+    "garden": 2546
+  },
+  "n_parsing_errors": 2700,
+  "parsing_error_kind_counts": {
+    "negative": 675,
+    "zero": 675,
+    "missing_decimal": 675,
+    "nan": 675
+  },
+  "n_non_usd": 1138,
+  "n_nan_price": 675,
+  "valid_price_sum": 6459299.47,
+  "valid_price_mean": 114.89,
+  "valid_price_median": 53.79,
+  "valid_price_p99": 874.19,
+  "n_genuine_outliers": 285,
+  "data_sha": "e2c7e74ebd5acadaa798eec02c7c4c7de847cf9c0bc1e820594ad41d9d8dc5a3"
+}

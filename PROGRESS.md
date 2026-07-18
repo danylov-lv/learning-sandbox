@@ -200,7 +200,22 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 14-stats-and-ml-foundations
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-vectorization-and-broadcasting — rewrite a colleague's row-by-row Python loops (per-category z-score, rolling mean, per-group min-max) as vectorized numpy/broadcasting; validator checks correctness against the provided naive baseline and asserts a machine-relative per-function speedup (`baseline.py` writes a gitignored `baseline-local.json`)
+- [ ] 02-eda-scraped-prices — first-pass EDA of the scraped dataset computed BOTH in pandas and polars and proven to agree (the polars-vs-pandas taste) plus an EDA figure; validator grades facts (counts, missingness, valid-price median/mean, busiest day) against ground truth / an independent recompute
+- [ ] 03-matplotlib-fundamentals — a 4-panel dashboard (log-scale price histogram, price-by-category boxplot, daily-median time series, per-source-site bar) with every axis labeled; validator structurally checks 4 axes + labels + log scale via `require_figure` and grades a facts dict
+- [ ] 04-price-distributions-not-normal — quantify that scraped prices are heavily right-skewed (skew/kurtosis, normaltest) and show a log transform normalizes them, with histograms/Q-Q plots; validator recomputes the scipy stats independently and asserts log-is-more-normal
+- [ ] 05-outliers-vs-parsing-errors — separate planted price PARSING ERRORS (negative/zero/NaN/missing-decimal x100) from GENUINE OUTLIERS (the real expensive tail) using robust stats + a whole-dollar/divide-by-100 signature; validator grades per-kind recall with a ZERO genuine-outlier-false-positive gate (a naive 3-sigma rule fails it)
+- [ ] 06-confidence-intervals — Student t confidence interval for a mean price from a fixed 200-page sample plus the 1/sqrt(n) width law; validator reproduces the pinned sample, recomputes the reference CI via scipy, and checks population-mean containment and the width ratio
+- [ ] 07-bootstrap — percentile bootstrap CI for the MEDIAN price (where no analytic SE exists), with a pinned resampling recipe; validator reproduces the reference bootstrap CI and checks it brackets the population median
+- [ ] 08-ab-test-scraping-strategies — a pooled two-proportion z-test comparing two scraping strategies' extraction success (p-value, effect size, decision) over a fixed fixture; validator recomputes the test via scipy and confirms the significant branch fires
+- [ ] 09-correlation-vs-causation — expose the discount/units_sold correlation (~0.79) as a category-confounded Simpson's-paradox artifact: pooled vs within-category correlations, identify the confounder, a colored scatter, and an `ANSWER.md` writeup; validator grades the correlations + confounder + gated writeup
+- [ ] 10-sklearn-pipeline-leakage — reproduce an inflated held-out R^2 from a target-encoded (`product_id`) feature computed over all rows, then measure the honest R^2 with the encoding fit on train only inside a proper sklearn Pipeline; validator asserts the leak gap and a minimum honest R^2 on the fixed split
+- [ ] 11-feature-engineering — beat a deliberately weak baseline (R^2 ~ 0) by engineering features from raw scraped fields (category/site one-hot, calendar parts, title text / TF-IDF) to predict log price; validator asserts an R^2 gain and minimum over the fixed split
+- [ ] 12-pytorch-tensors-autograd — torch tensors + autograd on toy examples: gradient-check autograd against finite differences and analytic gradients, then fit a linear regressor by manual gradient descent and confirm convergence to the closed-form OLS solution, with a loss-curve plot
+- [ ] 13-capstone-text-classifier (capstone) — predict product category from the scraped title
+  - [ ] CP1: classical baseline — TF-IDF / bag-of-words + a linear classifier on the fixed stratified split reaching macro-F1 >= threshold on held-out
+  - [ ] CP2: PyTorch classifier — an embedding / bag-of-words torch model on the same split reaching a higher macro-F1 threshold on held-out
+  - [ ] CP3: design memo — `DESIGN.md` (data/labels, text representation, architecture, training/eval, per-class error analysis, scaling) filled, then CP1 and CP2 re-run as subprocesses and both still green
 
 ## 15-llm-in-pipelines
 

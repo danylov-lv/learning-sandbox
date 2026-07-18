@@ -1,0 +1,8 @@
+!data/
+data/*
+!data/ground-truth.json
+scratch/
+scratch-*/
+*-local.json
+.venv/
+__pycache__/
