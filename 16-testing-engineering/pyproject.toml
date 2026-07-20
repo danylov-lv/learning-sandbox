@@ -1,0 +1,17 @@
+[project]
+name = "testing-engineering"
+version = "0.1.0"
+description = "Module 16: testing engineering for a production scraper/API stack — property-based testing with Hypothesis (parser invariants, stateful models), integration tests against real service containers via testcontainers (Postgres, Redis), contract tests against a module-12-style API, and mutation testing to check whether a test suite would actually catch a regression. Inversion: the learner writes tests against a GIVEN correct implementation, graded by a mutant-killing protocol, capped by a scrape-to-serve capstone test suite"
+requires-python = ">=3.11"
+dependencies = [
+    "hypothesis>=6",
+    "pytest>=8",
+    "testcontainers>=4",
+    "psycopg[binary]>=3",
+    "redis>=5",
+    "fastapi>=0.115",
+    "httpx>=0.27",
+    "jsonschema>=4",
+    "numpy>=2",
+    "cosmic-ray>=8.4.6",
+]

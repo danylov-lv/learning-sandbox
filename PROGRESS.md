@@ -231,7 +231,18 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 16-testing-engineering
 
-- [ ] (tasks are added when the module is generated)
+The inversion: the sandbox ships a GIVEN correct `src/impl.py`; you write the TEST SUITE. Grading is mutant-killing — your suite must pass against the correct impl AND fail against every seeded mutant (a hidden bank under `.authoring/mutants/`). `.authoring/` is off-limits until you finish. Tasks 03/04/07 need Docker (testcontainers).
+
+- [ ] 01-property-based-parsing — Hypothesis property tests for a given price/currency parser (`parse_price`/`format_price`): round-trip, idempotence, output-range, and error-typing invariants; must kill 6 mutants (dropped currency, separator confusion, sign/abs bug, silent-None-instead-of-raise, cents truncation, currency-case)
+- [ ] 02-stateful-and-metamorphic — a `RuleBasedStateMachine` + metamorphic relations against a given LRU-cache-with-TTL (injected deterministic clock, no sleeps); must kill 6 mutants (FIFO-not-LRU, TTL off-by-one, capacity off-by-one, get/re-put recency bugs, expired-counted-in-len)
+- [ ] 03-integration-postgres-testcontainers — integration tests against a real ephemeral `postgres:16` for a given `PriceRepo` (idempotent upsert, watermark incremental load, keyset pagination); must kill 7 mutants (wrong ON CONFLICT, DO NOTHING, missing commit, cursor off-by-one, watermark >/>=, dropped id tiebreak, limit off-by-one)
+- [ ] 04-integration-redis-testcontainers — integration tests against a real ephemeral `redis:7` for a given atomic `RateLimiter` + `DedupFilter`; must kill 7 mutants (TTL never set, non-atomic check-then-set, dropped namespace, boundary off-by-one, EXPIRE-every-call, dedup missing NX, dedup missing EX)
+- [ ] 05-contract-tests-api — consumer contract tests (httpx + jsonschema) against a given module-12-style FastAPI catalog; must kill 8 mutants (field rename, wrong error status, next_cursor edge polarity, id/price type drift, error-envelope shape, dropped cache header)
+- [ ] 06-mutation-testing-taste — the reflexive one: run a real mutation tool (cosmic-ray) on a given module + a given weak-but-green suite, read the survivors, and strengthen the tests until the survivor count reaches zero (graded by the tool, not the custom harness)
+- [ ] 07-capstone-scrape-to-serve-test-suite (capstone) — a layered suite for a given one-file scrape->serve stack (parser + Postgres repo + Redis cache + FastAPI)
+  - [ ] CP1: unit + property layer — kills the pure-parser mutant subset, no containers
+  - [ ] CP2: integration + contract layer — testcontainers Postgres+Redis + ASGI/jsonschema; kills the stateful DB/cache/API mutant subset
+  - [ ] CP3: test-strategy memo — `DESIGN.md` (testing pyramid, what each layer catches, where mutation testing found gaps, extending to CI) filled, then CP1 and CP2 re-run as subprocesses and both still green
 
 ## 17-system-design
 

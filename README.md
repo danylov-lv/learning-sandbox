@@ -39,7 +39,7 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 | 13 | 13-scraping-at-scale | Hostile local target site; data-quality platform, change detection, selector resilience, cost model, Prometheus/Grafana | 7–8 |
 | 14 | 14-stats-and-ml-foundations | numpy/pandas/viz, applied stats on scraped prices, sklearn + PyTorch taste | 6–7 |
 | 15 | 15-llm-in-pipelines | Local Ollama 7B: structured extraction, enrichment, embedding dedup, mini-RAG | 4–5 |
-| 16 | 16-testing-engineering | Hypothesis property tests, testcontainers, contract tests, mutation testing | 3–4 |
+| 16 | 16-testing-engineering | Inverted: you write the tests against a given impl, graded by mutant-killing — Hypothesis property/stateful tests, testcontainers (Postgres/Redis), contract tests, cosmic-ray mutation testing | 5–6 |
 | 17 | 17-system-design | 5–6 written design exercises with answer templates and hostile-interviewer self-review files (ongoing, alongside other modules) | 5–6 |
 | any | 18-rust-track | 7–8 projects: CSV→Parquet converter, URL health checker, TUI dashboard, bitcask KV store, toy interpreter | independent pace |
 | any | 19-ts-track | Advanced type system, type-safe SDK for module 12 API, type-challenges, monorepo contracts | 3–4 |
