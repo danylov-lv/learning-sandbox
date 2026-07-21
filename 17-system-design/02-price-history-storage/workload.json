@@ -1,0 +1,15 @@
+{
+  "tracked_products": 1138452,
+  "observations_per_product_per_day": 4.35,
+  "price_change_fraction": 0.083,
+  "avg_row_bytes": 87,
+  "compression_ratio": 6.4,
+  "retention_years": 5,
+  "hot_tier_days": 97,
+  "hot_tier_price_usd_per_gb_month": 0.023,
+  "cold_tier_price_usd_per_gb_month": 0.0041,
+  "good_key_scan_overhead_factor": 1.18,
+  "bad_key_scan_overhead_factor": 1.35,
+  "category_count": 34,
+  "daily_analytics_queries": 2384
+}

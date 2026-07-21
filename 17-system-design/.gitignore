@@ -1,0 +1,5 @@
+scratch/
+scratch-*/
+*-local.json
+.venv/
+__pycache__/

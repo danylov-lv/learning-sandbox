@@ -1,0 +1,37 @@
+{
+  "tiers": {
+    "gold": {
+      "client_count": 40,
+      "records_per_client_per_day": 50000,
+      "freshness_deadline_minutes": 15,
+      "monthly_availability_target_pct": 99.5,
+      "delivery_batch_size": 500,
+      "penalty_usd_per_breach": 250
+    },
+    "silver": {
+      "client_count": 150,
+      "records_per_client_per_day": 20000,
+      "freshness_deadline_minutes": 60,
+      "monthly_availability_target_pct": 99.0,
+      "delivery_batch_size": 1000,
+      "penalty_usd_per_breach": 75
+    },
+    "bronze": {
+      "client_count": 600,
+      "records_per_client_per_day": 5000,
+      "freshness_deadline_minutes": 240,
+      "monthly_availability_target_pct": 98.0,
+      "delivery_batch_size": 2000,
+      "penalty_usd_per_breach": 20
+    }
+  },
+  "peak_hour_concentration_factor": 4.0,
+  "per_record_delivery_cost_usd": 0.00004,
+  "total_pipeline_drain_capacity_rps": 300,
+  "outage_minutes": 90,
+  "observed_breaches": {
+    "gold": 6,
+    "silver": 14,
+    "bronze": 30
+  }
+}

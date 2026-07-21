@@ -1,0 +1,50 @@
+{
+  "acquisition": {
+    "total_tracked_urls": 8400000,
+    "tiers": {
+      "hot":  { "fraction": 0.04, "refresh_interval_minutes": 20 },
+      "warm": { "fraction": 0.26, "refresh_interval_minutes": 180 },
+      "cold": { "fraction": 0.70, "refresh_interval_minutes": 1440 }
+    },
+    "avg_fetch_bytes": 118000,
+    "avg_fetch_latency_ms": 640,
+    "success_rate_first_attempt": 0.89,
+    "max_attempts": 3,
+    "worker_concurrency_per_pod": 80
+  },
+  "parsing": {
+    "parse_cpu_ms_per_page": 42
+  },
+  "storage": {
+    "avg_row_bytes_raw": 1450,
+    "avg_row_bytes_normalized": 260,
+    "retention_years": 5,
+    "hot_tier_window_days": 90,
+    "hot_compression_ratio": 2.0,
+    "cold_compression_ratio": 6.5
+  },
+  "analytics": {
+    "queries_per_day": 42000,
+    "avg_bytes_scanned_per_query": 850000000
+  },
+  "clients": {
+    "tenant_count": 640,
+    "tiers": [
+      { "name": "enterprise", "weight": 0.12, "sla_minutes": 15,  "records_per_delivery": 50000, "deliveries_per_day": 24 },
+      { "name": "standard",   "weight": 0.38, "sla_minutes": 60,  "records_per_delivery": 8000,  "deliveries_per_day": 6  },
+      { "name": "self_serve", "weight": 0.50, "sla_minutes": 240, "records_per_delivery": 1200,  "deliveries_per_day": 2  }
+    ]
+  },
+  "cost": {
+    "compute_usd_per_pod_hour": 0.096,
+    "proxy_usd_per_gb": 4.35,
+    "egress_usd_per_gb": 0.07,
+    "storage_hot_usd_per_gb_month": 0.023,
+    "storage_cold_usd_per_gb_month": 0.0036
+  },
+  "ops": {
+    "target_utilization": 0.70,
+    "peak_hour_factor": 2.6,
+    "growth_multiplier_10x": 10
+  }
+}

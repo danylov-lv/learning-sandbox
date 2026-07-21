@@ -246,7 +246,17 @@ The inversion: the sandbox ships a GIVEN correct `src/impl.py`; you write the TE
 
 ## 17-system-design
 
-- [ ] (tasks are added when the module is generated)
+The writing module, and it runs ongoing alongside the others. Each task is graded on two gates: a `DESIGN.md` checked structurally (required sections, no leftover placeholders, grounding vocabulary, quantitative claims, hostile-review questions actually answered) and a back-of-the-envelope capacity model in `src/estimate.py` checked numerically against the validator's own independent recomputation across several perturbed workloads — so hardcoded constants fail. No Docker, no ports.
+
+- [ ] 01-price-monitoring-10k-sites — crawl architecture and freshness tiers for ~10k sites; capacity model sizes the worker fleet (Little's law at peak) and the proxy budget
+- [ ] 02-price-history-storage — five years of price history serving both a per-product range read and a per-category analytical read; layout, ordering key, change-only storage, hot/cold tiering, storage cost
+- [ ] 03-delivery-with-client-slas — per-client feed delivery under contractual SLAs; error budgets, prioritization under a shared crawl budget, backfill drain after an outage, money at risk
+- [ ] 04-multi-tenant-platform — opening the platform to paying tenants on shared infrastructure; isolation boundaries, admission control, weighted max-min fair share, noisy-neighbour containment, cost attribution
+- [ ] 05-outage-postmortem-redesign — inverted: a given `INCIDENT.md` with evidence but no analysis; reconstruct the causal chain, quantify retry amplification and pool exhaustion, then redesign for blast-radius containment
+- [ ] 06-capstone-design-review (capstone) — the whole price-intelligence platform as a staff-level design-review packet
+  - [ ] CP1: requirements and capacity — scope, SLIs/SLOs, workload characterization, capacity and cost models (the numeric gate)
+  - [ ] CP2: architecture, data flow and failure — components, contracts, storage/serving layout, multi-tenancy, failure modes, degradation ladder, 10x, plus three ADRs with rejected alternatives argued
+  - [ ] CP3: defence — twelve hostile-review questions answered, a risk register, a `REVIEW.md` self-critique, then CP1 and CP2 re-run as subprocesses and both still green
 
 ## 18-rust-track
 

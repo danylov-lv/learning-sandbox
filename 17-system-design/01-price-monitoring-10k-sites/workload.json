@@ -1,0 +1,17 @@
+{
+  "total_tracked_urls": 2143780,
+  "tiers": {
+    "hot":  { "fraction": 0.062, "refresh_interval_minutes": 15 },
+    "warm": { "fraction": 0.318, "refresh_interval_minutes": 240 },
+    "cold": { "fraction": 0.620, "refresh_interval_minutes": 1440 }
+  },
+  "avg_response_size_bytes": 96412,
+  "avg_fetch_latency_ms": 587,
+  "parse_cpu_ms_per_page": 38,
+  "success_rate_first_attempt": 0.913,
+  "max_attempts": 4,
+  "worker_concurrency_per_pod": 96,
+  "target_utilization": 0.72,
+  "proxy_cost_usd_per_gb": 4.85,
+  "peak_hour_factor": 2.35
+}

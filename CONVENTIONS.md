@@ -105,6 +105,8 @@ Future modules extend this table when generated — pick the next free block (e.
 
 Exception: module 20-kubernetes uses a kind/k3d local cluster instead of docker-compose, so it has no host-port row here.
 
+Exception: module 17-system-design is a writing module — its validators are pure-Python document and capacity-model checks with no services at all, so it has no host-port row and no `docker-compose.yml`.
+
 Exception: module 16-testing-engineering uses `testcontainers`, which starts ephemeral Postgres/Redis containers on random host ports managed per test run, so it has no fixed-port row and no `docker-compose.yml`.
 
 ## `.authoring/` directories

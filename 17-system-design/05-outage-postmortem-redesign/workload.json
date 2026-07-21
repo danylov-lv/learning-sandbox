@@ -1,0 +1,31 @@
+{
+  "steady_state_ingest_rps": 60,
+  "failure_onset_fraction": 0.35,
+  "retry_max_attempts": 5,
+  "retry_backoff_base_ms": 0,
+  "retry_backoff_factor": 2.0,
+  "retry_requeue_immediate": true,
+  "baseline_worker_count": 11,
+  "worker_count": 20,
+  "concurrency_per_worker": 4,
+  "avg_attempt_seconds": 0.65,
+  "db_connection_hold_ms": 220,
+  "db_pool_size": 22,
+  "initial_queue_depth": 800,
+  "observed_queue_depth_probes": {
+    "0": 800,
+    "15": 19631,
+    "40": 51015,
+    "70": 88677,
+    "100": 126338,
+    "130": 164000
+  },
+  "onset_to_fix_minutes": 130,
+  "incident_duration_minutes": 245,
+  "drain_capacity_rps": 310,
+  "delivery_api_rps": 85,
+  "delivery_api_availability_target": 0.999,
+  "delivery_api_error_rate_during_incident": 0.65,
+  "delivery_api_impact_minutes": 95,
+  "days_per_month": 30
+}
