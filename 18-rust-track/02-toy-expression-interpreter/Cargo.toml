@@ -1,0 +1,12 @@
+[package]
+name = "t02-toy-expression-interpreter"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t02_toy_expression_interpreter"
+path = "src/lib.rs"
+
+[dev-dependencies]
+sandbox18-harness = { workspace = true }

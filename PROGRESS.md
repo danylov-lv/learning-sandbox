@@ -260,7 +260,20 @@ The writing module, and it runs ongoing alongside the others. Each task is grade
 
 ## 18-rust-track
 
-- [ ] (tasks are added when the module is generated)
+Rust projects, independent pace, no chapter binding. A Cargo workspace (edition 2024, `rust-version 1.95`) replaces Docker/ports/pyproject — no services here. The module's one CONVENTIONS exception: each task is graded by the GIVEN cargo integration tests under its own `tests/` directory, so **`cargo test -p <package>` is the validator** (a failing assertion exits non-zero and prints its explanatory message, which satisfies the repo's clean-fail rule). Every task README lists the idioms it must cement (ownership, `Result`/`?`, iterators, traits, threads). No async until tasks 07–08. Data (`data/access.log`, `data/products.csv`) is generated deterministically by `sandbox18-datagen`; only `data/ground-truth.json` is committed.
+
+- [ ] 01-log-parser-aggregations — parse a Combined-Log-Format-ish access log (with an appended response-time field), skip malformed lines, reproduce the ground-truth aggregates; cements ownership/borrowing, iterator chains, a custom error enum with `From`, `HashMap` aggregation
+- [ ] 02-toy-expression-interpreter — a tokenizer + recursive-descent parser + evaluator for a small expression language; `enum Expr` recursion, exhaustive `match`, precedence, an error type carrying a source position; self-contained example-based tests
+- [ ] 03-csv-to-parquet — read a dirty products CSV, build an arrow `RecordBatch`, write Parquet (SNAPPY, row-group size) via `parquet`; typed schema mapping, `impl Trait` row iterator, error conversion across the csv/arrow boundary; grading reads the Parquet back
+- [ ] 04-url-health-checker (no async) — concurrent health checks over a fixed thread pool against the harness fixture server; `thread::scope`, `mpsc`, `Arc<Mutex>`, a `HealthCheck: Send + Sync` seam, per-request timeouts, retry against `fail_first(n)`
+- [ ] 05-bitcask-kv-store — a log-structured KV store: framed append-only records, an in-memory keydir, log replay on startup (crash recovery), `compact()`; binary framing with `to_le_bytes`, `Drop` for a clean close; the crash-recovery test truncates the log mid-record
+- [ ] 06-tui-log-dashboard — a ratatui live dashboard over a pure `App` state seam driven by `enum Event`; tests drive `App::handle_event` and render into a `TestBackend` buffer, never a real terminal
+- [ ] 07-async-fetch-pipeline (tokio) — fetch a batch under a hard concurrency cap: `JoinSet` + `Semaphore` (checked structurally, `max_concurrency <= cap`), per-request `timeout`, exponential-backoff retry, structured shutdown
+- [ ] 08-capstone-price-watch (capstone) — async ingest -> parse -> bitcask persistence -> periodic Parquet export
+  - [ ] CP1: ingest + bitcask persistence (`cargo test -p t08-capstone-price-watch --test cp1`)
+  - [ ] CP2: adds Parquet export + end-to-end freshness (`--test cp2`)
+  - [ ] CP3: adds concurrency-cap + crash-recovery checks and a `DESIGN.md` memo, re-running CP1/CP2 (`--test cp3`)
+- [ ] proc-macro-bonus (optional) — a `#[derive(Builder)]` macro via syn/quote/proc-macro2; graded by integration tests that apply the derive and assert on generated behavior, not on generated source text
 
 ## 19-ts-track
 

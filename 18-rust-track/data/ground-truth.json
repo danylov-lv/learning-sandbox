@@ -1,0 +1,213 @@
+{
+  "seed": 828927532781,
+  "scale": 1.0,
+  "log": {
+    "total_lines": 200000,
+    "well_formed_lines": 197032,
+    "malformed_lines": 2968,
+    "status_class_counts": {
+      "2xx": 177320,
+      "3xx": 5863,
+      "4xx": 9899,
+      "5xx": 3950
+    },
+    "method_counts": {
+      "DELETE": 3866,
+      "GET": 167453,
+      "POST": 19843,
+      "PUT": 5870
+    },
+    "path_counts": {
+      "/": 58718,
+      "/about": 1767,
+      "/api/cart": 6039,
+      "/api/cart/checkout": 5214,
+      "/api/categories": 6939,
+      "/api/orders": 1892,
+      "/api/orders/1": 1871,
+      "/api/products": 17806,
+      "/api/products/1": 12751,
+      "/api/products/2": 10108,
+      "/api/products/3": 8070,
+      "/api/search": 4709,
+      "/api/users/me": 4227,
+      "/contact": 1720,
+      "/favicon.ico": 2907,
+      "/health": 2492,
+      "/index.html": 27545,
+      "/login": 2330,
+      "/logout": 2085,
+      "/register": 2025,
+      "/robots.txt": 2756,
+      "/sitemap.xml": 2494,
+      "/static/css/main.css": 3814,
+      "/static/img/logo.png": 3155,
+      "/static/js/app.js": 3598
+    },
+    "top_paths": [
+      {
+        "path": "/",
+        "count": 58718
+      },
+      {
+        "path": "/index.html",
+        "count": 27545
+      },
+      {
+        "path": "/api/products",
+        "count": 17806
+      },
+      {
+        "path": "/api/products/1",
+        "count": 12751
+      },
+      {
+        "path": "/api/products/2",
+        "count": 10108
+      },
+      {
+        "path": "/api/products/3",
+        "count": 8070
+      },
+      {
+        "path": "/api/categories",
+        "count": 6939
+      },
+      {
+        "path": "/api/cart",
+        "count": 6039
+      },
+      {
+        "path": "/api/cart/checkout",
+        "count": 5214
+      },
+      {
+        "path": "/api/search",
+        "count": 4709
+      }
+    ],
+    "unique_ips": 300,
+    "error_rate_5xx": 0.020047504973811362,
+    "response_time_ms": {
+      "mean_ms": 38.36,
+      "p50_ms": 29.94,
+      "p95_ms": 95.3,
+      "p99_ms": 152.35,
+      "max_ms": 709.55
+    }
+  },
+  "csv": {
+    "total_rows": 500000,
+    "valid_rows": 490122,
+    "dirty_rows": 9878,
+    "in_stock_count": 402145,
+    "out_of_stock_count": 87977,
+    "category_counts": {
+      "Automotive": 28534,
+      "Beauty": 30801,
+      "Books": 43665,
+      "Clothing": 38009,
+      "Electronics": 99912,
+      "Grocery": 26774,
+      "Health": 22263,
+      "Home & Garden": 65659,
+      "Office": 25094,
+      "Pet Supplies": 23777,
+      "Sports": 33967,
+      "Toys": 51667
+    },
+    "category_price_stats": {
+      "Automotive": {
+        "count": 28534,
+        "min": 0.99,
+        "max": 876.54,
+        "mean": 35.19,
+        "sum": 1004056.3
+      },
+      "Beauty": {
+        "count": 30801,
+        "min": 0.99,
+        "max": 599.4,
+        "mean": 35.4,
+        "sum": 1090239.99
+      },
+      "Books": {
+        "count": 43665,
+        "min": 0.99,
+        "max": 788.6,
+        "mean": 35.19,
+        "sum": 1536760.18
+      },
+      "Clothing": {
+        "count": 38009,
+        "min": 0.99,
+        "max": 925.43,
+        "mean": 35.2,
+        "sum": 1337824.76
+      },
+      "Electronics": {
+        "count": 99912,
+        "min": 0.99,
+        "max": 882.85,
+        "mean": 35.14,
+        "sum": 3511375.0
+      },
+      "Grocery": {
+        "count": 26774,
+        "min": 0.99,
+        "max": 922.94,
+        "mean": 35.24,
+        "sum": 943613.28
+      },
+      "Health": {
+        "count": 22263,
+        "min": 0.99,
+        "max": 758.12,
+        "mean": 35.23,
+        "sum": 784394.13
+      },
+      "Home & Garden": {
+        "count": 65659,
+        "min": 0.99,
+        "max": 707.31,
+        "mean": 35.14,
+        "sum": 2307531.84
+      },
+      "Office": {
+        "count": 25094,
+        "min": 0.99,
+        "max": 869.62,
+        "mean": 35.18,
+        "sum": 882836.2
+      },
+      "Pet Supplies": {
+        "count": 23777,
+        "min": 1.03,
+        "max": 928.78,
+        "mean": 35.36,
+        "sum": 840862.1
+      },
+      "Sports": {
+        "count": 33967,
+        "min": 0.99,
+        "max": 1099.9,
+        "mean": 35.45,
+        "sum": 1204147.52
+      },
+      "Toys": {
+        "count": 51667,
+        "min": 0.99,
+        "max": 828.77,
+        "mean": 35.44,
+        "sum": 1830878.15
+      }
+    },
+    "overall_price_stats": {
+      "count": 490122,
+      "min": 0.99,
+      "max": 1099.9,
+      "mean": 35.25,
+      "sum": 17274519.45
+    }
+  }
+}

@@ -1,0 +1,22 @@
+[package]
+name = "t08-capstone-price-watch"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t08_capstone_price_watch"
+path = "src/lib.rs"
+
+[[bin]]
+name = "t08-capstone-price-watch"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { workspace = true }
+arrow = { workspace = true }
+parquet = { workspace = true }
+sandbox18-harness = { workspace = true, features = ["async"] }
+
+[dev-dependencies]
+tempfile = { workspace = true }

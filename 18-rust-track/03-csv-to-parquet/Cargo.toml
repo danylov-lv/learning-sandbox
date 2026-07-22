@@ -1,0 +1,17 @@
+[package]
+name = "t03-csv-to-parquet"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t03_csv_to_parquet"
+path = "src/lib.rs"
+
+[dependencies]
+arrow = { workspace = true }
+parquet = { workspace = true }
+sandbox18-harness = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

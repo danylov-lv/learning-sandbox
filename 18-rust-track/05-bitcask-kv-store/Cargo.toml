@@ -1,0 +1,13 @@
+[package]
+name = "t05-bitcask-kv-store"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t05_bitcask_kv_store"
+path = "src/lib.rs"
+
+[dev-dependencies]
+tempfile = { workspace = true }
+sandbox18-harness = { workspace = true }

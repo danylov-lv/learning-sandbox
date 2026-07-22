@@ -1,0 +1,12 @@
+[package]
+name = "t01-log-parser-aggregations"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t01_log_parser_aggregations"
+path = "src/lib.rs"
+
+[dependencies]
+sandbox18-harness = { workspace = true }

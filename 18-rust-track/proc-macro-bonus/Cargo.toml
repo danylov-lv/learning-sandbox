@@ -1,0 +1,15 @@
+[package]
+name = "t09-proc-macro-bonus"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t09_proc_macro_bonus"
+path = "src/lib.rs"
+proc-macro = true
+
+[dependencies]
+syn = { workspace = true }
+quote = { workspace = true }
+proc-macro2 = { workspace = true }

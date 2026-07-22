@@ -1,0 +1,7 @@
+!data/
+data/*
+!data/ground-truth.json
+target/
+scratch/
+scratch-*/
+*-local.json

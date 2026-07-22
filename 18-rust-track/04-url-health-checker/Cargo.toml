@@ -1,0 +1,16 @@
+[package]
+name = "t04-url-health-checker"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t04_url_health_checker"
+path = "src/lib.rs"
+
+[[bin]]
+name = "t04-url-health-checker"
+path = "src/main.rs"
+
+[dev-dependencies]
+sandbox18-harness = { workspace = true }

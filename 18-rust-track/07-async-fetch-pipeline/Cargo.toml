@@ -1,0 +1,19 @@
+[package]
+name = "t07-async-fetch-pipeline"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t07_async_fetch_pipeline"
+path = "src/lib.rs"
+
+[[bin]]
+name = "t07-async-fetch-pipeline"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { workspace = true }
+
+[dev-dependencies]
+sandbox18-harness = { workspace = true, features = ["async"] }

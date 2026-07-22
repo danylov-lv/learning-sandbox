@@ -1,0 +1,17 @@
+[package]
+name = "t06-tui-log-dashboard"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "t06_tui_log_dashboard"
+path = "src/lib.rs"
+
+[[bin]]
+name = "t06-tui-log-dashboard"
+path = "src/main.rs"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }

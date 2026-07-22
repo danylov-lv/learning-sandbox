@@ -109,6 +109,8 @@ Exception: module 17-system-design is a writing module — its validators are pu
 
 Exception: module 16-testing-engineering uses `testcontainers`, which starts ephemeral Postgres/Redis containers on random host ports managed per test run, so it has no fixed-port row and no `docker-compose.yml`.
 
+Exception: module 18-rust-track is a Cargo workspace, not a Python/Docker module — it has no `docker-compose.yml`, no `pyproject.toml`, and no host-port row. Its tests' fixture HTTP servers (`sandbox18-harness`) bind `127.0.0.1:0` (ephemeral) per test. The validator is `cargo test -p <package>`: a failing/panicking test exits non-zero and prints its assertion's explanatory message, which is this module's documented stand-in for the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule.
+
 ## `.authoring/` directories
 
 Modules may contain an `.authoring/` directory holding generation notes with spoilers: planted defects, intended query plans, the reasoning behind a task's design. These are needed so a future generation session can resume or extend a module without re-deriving everything from scratch.
