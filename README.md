@@ -42,7 +42,7 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 | 16 | 16-testing-engineering | Inverted: you write the tests against a given impl, graded by mutant-killing — Hypothesis property/stateful tests, testcontainers (Postgres/Redis), contract tests, cosmic-ray mutation testing | 5–6 |
 | 17 | 17-system-design | Six written design exercises (crawl capacity, price-history storage, SLA delivery, multi-tenancy, an outage postmortem, capstone design review) graded on two gates: a structurally checked design doc plus a numerically checked capacity model; hostile-interviewer questions to defend against (ongoing, alongside other modules) | 6–7 |
 | any | 18-rust-track | 7–8 projects: CSV→Parquet converter, URL health checker, TUI dashboard, bitcask KV store, toy interpreter | independent pace |
-| any | 19-ts-track | Advanced type system, type-safe SDK for module 12 API, type-challenges, monorepo contracts | 3–4 |
+| any | 19-ts-track | Advanced type system: type-challenges progression, zod-validated SDK for a module-12-shaped API, contract-first monorepo capstone | 6–9 |
 | any | 20-kubernetes | Manifests from zero → own Helm charts → ops/debugging → networking/state → Argo CD internals → optional operator on kopf; kind/k3d local cluster | 12–15 |
 | — | ci-meta | GitHub Actions CI for the sandbox itself: changed-module detection + service containers | 1 |
 

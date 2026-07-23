@@ -1,0 +1,16 @@
+{
+  "name": "@t3/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sandbox19/harness": "workspace:*",
+    "@t3/contracts": "workspace:*"
+  }
+}

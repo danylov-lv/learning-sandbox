@@ -111,6 +111,8 @@ Exception: module 16-testing-engineering uses `testcontainers`, which starts eph
 
 Exception: module 18-rust-track is a Cargo workspace, not a Python/Docker module — it has no `docker-compose.yml`, no `pyproject.toml`, and no host-port row. Its tests' fixture HTTP servers (`sandbox18-harness`) bind `127.0.0.1:0` (ephemeral) per test. The validator is `cargo test -p <package>`: a failing/panicking test exits non-zero and prints its assertion's explanatory message, which is this module's documented stand-in for the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule.
 
+Exception: module 19-ts-track is a pnpm workspace, not a Python/Docker module — it has no `docker-compose.yml`, no `pyproject.toml`, and no host-port row. Its fixture HTTP mock server (`@sandbox19/harness`) binds `127.0.0.1:0` (ephemeral) per test. The validators are `pnpm --filter <pkg> run typecheck` (`tsc --noEmit`, strict) and `pnpm --filter <pkg> run test` (`vitest run`): a type error or failing assertion exits non-zero with a clean human-readable message, which is this module's documented stand-in for the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule.
+
 ## `.authoring/` directories
 
 Modules may contain an `.authoring/` directory holding generation notes with spoilers: planted defects, intended query plans, the reasoning behind a task's design. These are needed so a future generation session can resume or extend a module without re-deriving everything from scratch.

@@ -1,0 +1,19 @@
+{
+  "name": "@t3/e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sandbox19/harness": "workspace:*",
+    "@t3/contracts": "workspace:*",
+    "@t3/api": "workspace:*",
+    "@t3/worker": "workspace:*",
+    "@t3/web": "workspace:*"
+  }
+}

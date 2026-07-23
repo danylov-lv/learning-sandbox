@@ -1,0 +1,5 @@
+packages:
+  - packages/*
+  - 01-type-challenges
+  - 02-type-safe-sdk-client
+  - 03-capstone-monorepo-contracts/packages/*

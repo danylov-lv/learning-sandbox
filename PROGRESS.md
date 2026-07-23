@@ -277,7 +277,12 @@ Rust projects, independent pace, no chapter binding. A Cargo workspace (edition 
 
 ## 19-ts-track
 
-- [ ] (tasks are added when the module is generated)
+- [ ] 01-type-challenges — a 12-challenge type-level progression (MyPick, DeepReadonly, TupleToUnion, First/Last, EventByTag + assertNever, Getters, PartialBy, ReplaceReturnType, MyAwaited, ExtractParams, Flatten, Brand); graded by `pnpm --filter @sandbox19/t01 run typecheck` + `run test`
+- [ ] 02-type-safe-sdk-client — zod schemas with `z.infer`-derived types, a validated `request` core, cursor pagination with an async iterator, auth with rotating refresh, malformed routes must throw; graded by `pnpm --filter @sandbox19/t02 run test` (+ `run typecheck`)
+- [ ] 03-capstone-monorepo-contracts (capstone) — one `@t3/contracts` package (zod schemas, inferred types, versioned job envelope) consumed by `@t3/api`, `@t3/worker`, `@t3/web`; given `@t3/e2e` checkpoint suites
+  - [ ] CP1: contracts + api agree, type-level and runtime (`pnpm --filter @t3/e2e run test cp1`)
+  - [ ] CP2: worker round-trips a contract-typed job, exhaustive over job kinds (`... run test cp2`)
+  - [ ] CP3: web client end-to-end with anti-cast validation + filled `DESIGN.md` (`... run test cp3`)
 
 ## 20-kubernetes
 
