@@ -1,0 +1,32 @@
+# TODO(you): write the main workload Deployment here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: t17-workload
+#     labels:
+#       app.kubernetes.io/name: t17-workload
+#     annotations:
+#       argocd.argoproj.io/sync-wave: "1"
+#   spec:
+#     replicas: <your choice, a small positive integer, e.g. 2>
+#     selector:
+#       matchLabels:
+#         app.kubernetes.io/name: t17-workload
+#     template:
+#       metadata:
+#         labels:
+#           app.kubernetes.io/name: t17-workload
+#       spec:
+#         containers:
+#           - name: sandbox20-app
+#             image: sandbox20-app:1.0
+#             imagePullPolicy: IfNotPresent
+#             ports:
+#               - containerPort: 8080
+#
+# Do NOT set metadata.namespace -- Argo CD fills it in from the
+# Application's spec.destination.namespace (t17) at sync time. The
+# sync-wave value here (wave 1) must run *after* the hook Job's wave
+# (wave 0, see hook-job.yaml) -- that ordering is the point of this file.

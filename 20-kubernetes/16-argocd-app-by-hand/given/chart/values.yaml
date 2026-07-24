@@ -1,0 +1,11 @@
+replicaCount: 1
+
+image:
+  repository: sandbox20-app
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+
+resources: {}

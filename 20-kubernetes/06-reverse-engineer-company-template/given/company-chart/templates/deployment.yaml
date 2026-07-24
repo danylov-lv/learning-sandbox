@@ -1,0 +1,65 @@
+{{- range $name, $component := .Values.components }}
+{{- if $component.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "svc-platform.componentFullname" (dict "root" $ "name" $name) }}
+  labels:
+    {{- include "svc-platform.componentSelectorLabels" (dict "root" $ "name" $name) | nindent 4 }}
+spec:
+  replicas: {{ $component.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "svc-platform.componentSelectorLabels" (dict "root" $ "name" $name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "svc-platform.componentSelectorLabels" (dict "root" $ "name" $name) | nindent 8 }}
+      {{- if $component.podAnnotations }}
+      annotations:
+        {{- tpl (toYaml $component.podAnnotations) $ | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "svc-platform.serviceAccountName" (dict "root" $ "name" $name) }}
+      {{- with $.Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: {{ include "svc-platform.image" (dict "root" $ "component" $component) }}
+          # Always guarantees a rollout/restart can never be blocked by a
+          # stale cached layer -- fine on its own, but see the image helper
+          # above for what this means when `image.tag` is left unset.
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: {{ $component.service.targetPort }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "svc-platform.fullname" $ }}-shared
+            - secretRef:
+                name: {{ include "svc-platform.fullname" $ }}-shared
+          env:
+            {{- include "svc-platform.mergedEnv" (dict "root" $ "component" $component) | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: {{ $component.probes.liveness.path }}
+              port: http
+            initialDelaySeconds: {{ $component.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ $component.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ $component.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ $component.probes.liveness.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ $component.probes.readiness.path }}
+              port: http
+            initialDelaySeconds: {{ $component.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ $component.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ $component.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ $component.probes.readiness.failureThreshold }}
+          resources:
+            {{- toYaml $component.resources | nindent 12 }}
+{{- end }}
+{{- end }}

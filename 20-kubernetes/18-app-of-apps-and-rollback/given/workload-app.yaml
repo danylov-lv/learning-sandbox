@@ -1,0 +1,23 @@
+# Applied directly by tests/validate_cp2.py -- not learner-authored. This
+# Application tracks sandbox20/t18-workload.git; the git revert exercise
+# is what you do, not what you write here.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: t18-workload-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-http.argocd.svc.cluster.local:3000/sandbox20/t18-workload.git
+    targetRevision: main
+    path: .
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: t18
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

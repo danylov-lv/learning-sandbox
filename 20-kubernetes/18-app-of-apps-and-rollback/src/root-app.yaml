@@ -1,0 +1,27 @@
+# TODO(you): write the PARENT Argo CD Application here (the "app of apps").
+#
+# This Application's own source is a *directory of other Application
+# manifests* -- not a Helm chart. Its job is only to get Argo CD to apply
+# src/apps/*.yaml for you; the actual workloads are each child's problem.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: argoproj.io/v1alpha1
+#   kind: Application
+#   metadata:
+#     name: t18-root
+#     namespace: argocd
+#   spec:
+#     project: default
+#     source:
+#       repoURL: http://gitea-http.argocd.svc.cluster.local:3000/sandbox20/t18-apps.git
+#       targetRevision: main
+#       path: .
+#       directory:
+#         recurse: false
+#     destination:
+#       server: https://kubernetes.default.svc
+#       namespace: argocd
+#     syncPolicy:
+#       automated:
+#         prune: true
+#         selfHeal: true

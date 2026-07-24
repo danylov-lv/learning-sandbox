@@ -1,0 +1,56 @@
+# TODO(you): default values for every knob this chart exposes.
+#
+# See README.md "What's required" for the full values contract this chart
+# is graded against. Shape to fill in (defaults only -- values-dev.yaml /
+# values-prod.yaml override a subset of these per environment):
+#
+# target:
+#   enabled: true
+#   replicas: <int>
+#   image:
+#     repository: sandbox20-app
+#     tag: "1.0"
+#     pullPolicy: IfNotPresent
+#   port: 8080
+#
+# queue:
+#   image:
+#     repository: redis
+#     tag: "7-alpine"
+#     pullPolicy: IfNotPresent
+#   port: 6379
+#   key: sandbox20:queue
+#
+# producer:
+#   enabled: true
+#   replicas: <int>
+#   image:
+#     repository: sandbox20-app
+#     tag: "1.0"
+#     pullPolicy: IfNotPresent
+#   ratePerS: <number>
+#
+# workers:
+#   replicas: <int>
+#   processMs: <int>
+#   image:
+#     repository: sandbox20-app
+#     tag: "1.0"
+#     pullPolicy: IfNotPresent
+#   resources: {}   # values-prod.yaml must override this to a non-empty
+#                   # requests/limits block; leaving it {} here is fine
+#   probes:
+#     readiness:
+#       path: /readyz
+#       port: 8080
+#       initialDelaySeconds: <int>
+#       periodSeconds: <int>
+#       timeoutSeconds: <int>
+#       failureThreshold: <int>
+#     liveness:
+#       path: /healthz
+#       port: 8080
+#       initialDelaySeconds: <int>
+#       periodSeconds: <int>
+#       timeoutSeconds: <int>
+#       failureThreshold: <int>

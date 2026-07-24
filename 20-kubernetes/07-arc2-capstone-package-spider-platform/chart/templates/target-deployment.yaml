@@ -1,0 +1,30 @@
+# TODO(you): Deployment for the `target` component.
+#
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: <fullname>-target (or similar, must start with the release's fullname)
+#     labels: <standard labels + app.kubernetes.io/component: target>
+#   spec:
+#     replicas: {{ .Values.target.replicas }}
+#     selector:
+#       matchLabels: <selector labels + component: target>
+#     template:
+#       metadata:
+#         labels: <same as selector, full label set>
+#       spec:
+#         containers:
+#           - name: target
+#             image: "{{ .Values.target.image.repository }}:{{ .Values.target.image.tag }}"
+#             imagePullPolicy: {{ .Values.target.image.pullPolicy }}
+#             env:
+#               - name: WORK_MODE
+#                 value: "server"
+#               - name: PORT
+#                 value: "{{ .Values.target.port }}"
+#             ports:
+#               - containerPort: {{ .Values.target.port }}
+#
+# Guard this whole document with {{ if .Values.target.enabled }} / {{ end }}
+# -- CP1 renders with --set target.enabled=false and expects NOTHING with
+# component label "target" in the output.

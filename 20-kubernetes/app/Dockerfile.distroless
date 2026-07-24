@@ -1,0 +1,18 @@
+# Distroless variant: no shell, no package manager inside the final image.
+# Used by the ephemeral-containers debugging task -- `kubectl exec` won't
+# work here, only `kubectl debug --target` with an ephemeral container.
+FROM python:3.11-slim AS builder
+RUN pip install --no-cache-dir --target=/deps redis==5.* pika==1.*
+
+FROM gcr.io/distroless/python3-debian12
+
+ARG APP_VERSION=distroless
+ENV APP_VERSION=${APP_VERSION}
+ENV PYTHONPATH=/deps
+
+WORKDIR /app
+COPY --from=builder /deps /deps
+COPY app.py .
+
+EXPOSE 8080
+CMD ["app.py"]

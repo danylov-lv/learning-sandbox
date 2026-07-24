@@ -1,0 +1,35 @@
+# TODO(you): write a Deployment here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: rightsize-me
+#   spec:
+#     replicas: 1
+#     selector:
+#       matchLabels:
+#         app: rightsize-me
+#     template:
+#       metadata:
+#         labels:
+#           app: rightsize-me
+#       spec:
+#         containers:
+#           - name: <your choice>
+#             image: sandbox20-app:1.0
+#             imagePullPolicy: IfNotPresent   # this image is not in any registry
+#             ports:
+#               - containerPort: 8080
+#             env:
+#               - name: MEM_MB
+#                 value: "180"
+#               - name: CPU_BURN_THREADS
+#                 value: "1"
+#             resources:
+#               requests:
+#                 cpu: <your choice, based on what you measured>
+#                 memory: <your choice, based on what you measured>
+#               limits:
+#                 cpu: <your choice -- policy cap 1500m>
+#                 memory: <your choice -- policy cap 320Mi>

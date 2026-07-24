@@ -1,0 +1,35 @@
+# TODO(you): the worker Deployment.
+#
+# - name via the fullname helper, labels via the labels helper (both on the
+#   Deployment's own metadata AND the pod template's metadata.labels --
+#   the Service's selector needs the pod template ones to match).
+# - spec.replicas: .Values.replicaCount.
+# - pod template annotation `checksum/config` = sha256 of this chart's
+#   rendered ConfigMap contents -- render the configmap.yaml template as a
+#   string with `include`/`$.Template.BasePath` and pipe it through the
+#   `sha256sum` Sprig function (see hints if the mechanism isn't familiar).
+#   So that any change to config.greeting produces a new annotation value,
+#   which forces a pod roll on the next apply/upgrade even though nothing
+#   else about the Deployment changed -- the pattern behind every
+#   "config change didn't roll my pods" bug you'll debug at work.
+# - one container:
+#     image: "<image.repository>:<image.tag>" (interpolated, not literal)
+#     imagePullPolicy: .Values.image.pullPolicy
+#     containerPort: 8080
+#     resources: .Values.resources, passed through as-is
+#     env, at minimum:
+#       CONFIG_GREETING   <- configMapKeyRef into this chart's ConfigMap
+#       APP_SECRET_TOKEN  <- secretKeyRef into this chart's Secret, ONLY
+#                            when .Values.secret.enabled is true
+#       REQUIRED_ENV      <- a literal, comma-separated list of exactly the
+#                            env var names actually wired above (this list
+#                            must change depending on secret.enabled --
+#                            hardcoding both names here crashes the app
+#                            whenever secret.enabled is false, see
+#                            app/app.py's check_required_env)
+#       extraEnv          <- range over .Values.extraEnv (a map), one env
+#                            entry per key
+#
+# This file renders to nothing until you fill it in. `helm template` on
+# the stock chart should produce zero Deployment docs -- that is exactly
+# what the validator expects to see fail first.

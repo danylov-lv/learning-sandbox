@@ -1,0 +1,28 @@
+# TODO(you): Deployment for the `queue` component (plain redis:7-alpine,
+# see given/queue-deployment.yaml for the unparameterized shape).
+#
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: <fullname>-queue
+#     labels: <standard labels + component: queue>
+#   spec:
+#     replicas: 1
+#     selector:
+#       matchLabels: <selector labels + component: queue>
+#     template:
+#       metadata:
+#         labels: <same as selector>
+#       spec:
+#         containers:
+#           - name: queue
+#             image: "{{ .Values.queue.image.repository }}:{{ .Values.queue.image.tag }}"
+#             imagePullPolicy: {{ .Values.queue.image.pullPolicy }}
+#             ports:
+#               - containerPort: {{ .Values.queue.port }}
+#
+# No enabled toggle on this one -- producer/workers have nothing to drain
+# without it. Keep this resource's pod template stable across values-dev.yaml
+# <-> values-prod.yaml (nothing about the queue container should change
+# between them) -- CP2 asserts this pod is NOT restarted by the
+# dev->prod `helm upgrade`.

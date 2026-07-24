@@ -1,0 +1,36 @@
+# TODO(you): re-apply a fixed `catalog-peer` Service into namespace t12.
+#
+# Root cause (confirm it yourself, don't take this comment's word for it):
+# this Service is headless (`clusterIP: None`). Selector and targetPort are
+# both already correct -- `kubectl get endpoints catalog-peer` shows the
+# right pod IPs on the right port. But headless means kube-proxy never
+# programs a VIP for it: an in-cluster DNS lookup of catalog-peer's name
+# resolves straight to a pod IP instead of a stable virtual IP, and nothing
+# translates the Service's declared port to the pod's real port for you.
+# Compare this against `kubectl describe svc catalog` (once fixed) to see
+# the difference: one has an "IP:" that stays constant no matter which pod
+# answers, the other doesn't have one at all.
+#
+# IMPORTANT gotcha: `spec.clusterIP` is immutable once a Service exists --
+# `kubectl apply`/`patch` cannot flip a Service from headless back to a
+# normal ClusterIP in place. You (or whatever applies this file) must
+# delete the existing `catalog-peer` Service before re-applying this fixed
+# version. (The validator does this for you when it applies your fixes; if
+# you're testing by hand, run `kubectl -n t12 delete svc catalog-peer`
+# first.)
+#
+# Write this file as a COMPLETE, standalone Service object (every field),
+# not a bare patch.
+#
+# Required shape:
+#   apiVersion: v1
+#   kind: Service
+#   metadata:
+#     name: catalog-peer
+#   spec:
+#     selector:
+#       app: catalog-backend
+#     ports:
+#       - port: 80
+#         targetPort: 8080
+#     # no clusterIP field at all -- let Kubernetes allocate a normal one

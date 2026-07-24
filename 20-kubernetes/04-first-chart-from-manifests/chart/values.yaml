@@ -1,0 +1,26 @@
+# TODO(you): default values for the `worker` chart.
+#
+# Fill in at least these keys (exact paths -- see the task README for the
+# full contract each one has to satisfy):
+#
+#   image.repository   default: sandbox20-app
+#   image.tag          default: "1.0"
+#   image.pullPolicy   default: IfNotPresent
+#   replicaCount       an integer
+#   service.port       the Service's port (targetPort is always 8080)
+#   config.greeting    a string, rendered into a ConfigMap and consumed by
+#                       the container as env CONFIG_GREETING
+#   resources          empty by default ({}); passed straight through to
+#                       the container's `resources:` field, whatever shape
+#                       it is
+#   extraEnv           a map of extra env vars (e.g. {}); rendered into the
+#                       container's env list with `range`
+#   secret.enabled      bool; when true, render a Secret and an
+#                       APP_SECRET_TOKEN env var sourced from it
+#   secret.token        the Secret's value when secret.enabled is true
+#                       (leave empty here -- real values come from
+#                       values-prod.yaml / --set at install time, never
+#                       commit a real token to this file)
+#
+# This file renders to nothing useful until you fill it in -- that's
+# expected on the stock chart.

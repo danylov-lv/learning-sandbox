@@ -1,0 +1,114 @@
+# The scraping fleet someone deployed on Friday. Five pods, none running.
+# Applied by setup.sh into namespace t09. Do not read this file before
+# writing your diagnosis -- see README.md "What's given".
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-a
+  labels:
+    app: pod-a
+spec:
+  containers:
+    - name: worker
+      image: sandbox20-app:1.0
+      imagePullPolicy: Never
+      resources:
+        requests:
+          cpu: "100"
+          memory: "64Mi"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-b
+  labels:
+    app: pod-b
+spec:
+  nodeSelector:
+    disktype: ssd
+  containers:
+    - name: worker
+      image: sandbox20-app:1.0
+      imagePullPolicy: Never
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "64Mi"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-c
+  labels:
+    app: pod-c
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                  - eu-central-1a
+  containers:
+    - name: worker
+      image: sandbox20-app:1.0
+      imagePullPolicy: Never
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "64Mi"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-d
+  labels:
+    app: pod-d
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: sandbox20-worker2
+  containers:
+    - name: worker
+      image: sandbox20-app:1.0
+      imagePullPolicy: Never
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "64Mi"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zoo-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-e
+  labels:
+    app: pod-e
+spec:
+  containers:
+    - name: worker
+      image: sandbox20-app:1.0
+      imagePullPolicy: Never
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "64Mi"
+      volumeMounts:
+        - name: data
+          mountPath: /data
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: zoo-data

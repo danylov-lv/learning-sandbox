@@ -1,0 +1,29 @@
+# TODO(you): write an Argo CD Application here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: argoproj.io/v1alpha1
+#   kind: Application
+#   metadata:
+#     name: t17-app
+#     namespace: argocd
+#   spec:
+#     project: default
+#     source:
+#       repoURL: http://gitea-http.argocd.svc.cluster.local:3000/sandbox20/t17-app.git
+#       targetRevision: main
+#       path: .
+#     destination:
+#       server: https://kubernetes.default.svc
+#       namespace: t17
+#     syncPolicy:
+#       automated:
+#         prune: true
+#         selfHeal: true
+#       syncOptions:
+#         - CreateNamespace=true
+#
+# selfHeal: true is the whole point of this task -- it's what makes Argo CD
+# revert out-of-band drift on its own, without anyone running `argocd app
+# sync`. An automated syncPolicy with selfHeal left false (or omitted) will
+# fail the drift check below: it only auto-syncs when *git* changes, not
+# when someone mutates the live cluster.

@@ -1,0 +1,12 @@
+# TODO(you): write a ConfigMap here.
+#
+# Required shape:
+#   apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: <your choice>
+#   data:
+#     <key of your choice>: <non-empty value of your choice>
+#
+# The key you pick here is the one deployment.yaml's CONFIG_GREETING env
+# var must reference via configMapKeyRef. See README.md "What's required".

@@ -1,0 +1,23 @@
+# TODO(you): write an Argo CD Application here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: argoproj.io/v1alpha1
+#   kind: Application
+#   metadata:
+#     name: t16-app
+#     namespace: argocd
+#   spec:
+#     project: default
+#     source:
+#       repoURL: http://gitea-http.argocd.svc.cluster.local:3000/sandbox20/platform-charts.git
+#       targetRevision: main
+#       path: .
+#     destination:
+#       server: https://kubernetes.default.svc
+#       namespace: t16
+#     syncPolicy:
+#       automated:
+#         prune: true
+#         selfHeal: true
+#       syncOptions:
+#         - CreateNamespace=true

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workers
+  template:
+    metadata:
+      labels:
+        app: workers
+    spec:
+      containers:
+        - name: workers
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: WORK_MODE
+              value: "consumer"
+            - name: QUEUE_BACKEND
+              value: "redis"
+            - name: REDIS_HOST
+              value: "redis"   # hardcoded -- see given/README.md
+            - name: REDIS_PORT
+              value: "6379"
+            - name: QUEUE_KEY
+              value: "sandbox20:queue"
+            - name: PROCESS_MS
+              value: "100"
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 2
+            periodSeconds: 5

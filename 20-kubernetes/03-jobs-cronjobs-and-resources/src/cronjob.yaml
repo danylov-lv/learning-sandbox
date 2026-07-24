@@ -1,0 +1,31 @@
+# TODO(you): write a CronJob here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: batch/v1
+#   kind: CronJob
+#   metadata:
+#     name: scheduled-scrape
+#   spec:
+#     schedule: "* * * * *"
+#     concurrencyPolicy: Forbid
+#     successfulJobsHistoryLimit: 2
+#     failedJobsHistoryLimit: 1
+#     startingDeadlineSeconds: <your choice -- a reasonable positive number>
+#     jobTemplate:
+#       spec:
+#         completions: 1
+#         template:
+#           spec:
+#             restartPolicy: Never
+#             containers:
+#               - name: <your choice>
+#                 image: sandbox20-app:1.0
+#                 imagePullPolicy: IfNotPresent   # this image is not in any registry
+#                 command: ["python3", "-c", "<sleep a few seconds, print, exit 0>"]
+#                 resources:
+#                   requests:
+#                     cpu: 50m
+#                     memory: 64Mi
+#                   limits:
+#                     cpu: 200m
+#                     memory: 128Mi

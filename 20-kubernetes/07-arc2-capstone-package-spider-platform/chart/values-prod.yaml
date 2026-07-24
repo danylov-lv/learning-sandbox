@@ -1,0 +1,18 @@
+# TODO(you): prod overrides -- three workers, real resources.requests AND
+# resources.limits (both cpu and memory, non-empty -- CP1 checks this file
+# specifically), a faster producer than values-dev.yaml, still with
+# headroom under the new (larger) drain capacity.
+#
+# workers:
+#   replicas: 3
+#   processMs: <int>
+#   resources:
+#     requests:
+#       cpu: <string>
+#       memory: <string>
+#     limits:
+#       cpu: <string>
+#       memory: <string>
+#
+# producer:
+#   ratePerS: <number>   # greater than values-dev.yaml's, still under capacity

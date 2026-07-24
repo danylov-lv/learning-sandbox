@@ -1,0 +1,11 @@
+# TODO(you): dev overrides -- cheap: one worker, a slow producer, generous
+# headroom between producer.ratePerS and workers' drain capacity
+# (workers.replicas * 1000 / workers.processMs). See README.md's rate
+# contract and given/README.md before picking numbers.
+#
+# workers:
+#   replicas: 1
+#   processMs: <int>
+#
+# producer:
+#   ratePerS: <number>   # must stay well under the capacity above

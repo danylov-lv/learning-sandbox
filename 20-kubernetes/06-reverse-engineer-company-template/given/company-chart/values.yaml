@@ -1,0 +1,161 @@
+# svc-platform -- company-wide service template.
+# Default values. A team onboarding a service copies values-example.yaml,
+# not this file, and overrides only what its service needs.
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Fields under `global` are visible to every subchart-style component below
+# and are NOT per-component -- changing global.env or global.registry
+# affects every component in one sync.
+global:
+  # Container registry prefix. Every component's image reference is built
+  # as "<global.registry>/<component.image.repository>:<tag>".
+  registry: registry.internal.example.com
+
+  # Pulled into every pod's imagePullSecrets.
+  imagePullSecrets:
+    - name: registry-creds
+
+  # Merged into every component's own `env` (component keys win on
+  # conflict). This is how the platform team pushes a fleet-wide setting
+  # (log format, feature-flag default, tracing endpoint) without editing
+  # every team's values file.
+  env:
+    LOG_LEVEL: info
+    ENVIRONMENT: production
+    OTEL_EXPORTER_ENDPOINT: http://otel-collector.observability:4317
+
+# One entry per component this release runs. The chart ranges over this
+# map to produce one Deployment + Service (+ optional HPA) per entry --
+# add a component by adding a key here, not by editing a template.
+components:
+  api:
+    enabled: true
+    replicaCount: 2
+
+    image:
+      repository: platform/svc-platform-api
+      # Leave empty to track this chart's appVersion (1.4.2). Set
+      # explicitly to pin a specific build during a migration or rollback.
+      tag: ""
+
+    service:
+      port: 80
+      targetPort: 8080
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+
+    autoscaling:
+      enabled: false
+      minReplicas: 2
+      maxReplicas: 6
+      targetCPUUtilizationPercentage: 75
+
+    probes:
+      # Liveness checks DB + queue connectivity through the app's deep
+      # health endpoint, so a pod only stays live while its dependencies
+      # are actually reachable.
+      liveness:
+        path: /health/deep
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 3
+        failureThreshold: 3
+      readiness:
+        path: /readyz
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        timeoutSeconds: 3
+        failureThreshold: 3
+
+    # Component-specific env, merged over global.env.
+    env:
+      SERVICE_ROLE: api
+
+    # Extra pod annotations, merged with the chart's own. Values here may
+    # contain template expressions -- they're rendered with `tpl` so a
+    # team can reference .Release.Name / .Chart.Version in an annotation
+    # without forking the Deployment template.
+    podAnnotations: {}
+
+  worker:
+    enabled: true
+    replicaCount: 3
+
+    image:
+      repository: platform/svc-platform-worker
+      tag: ""
+
+    service:
+      port: 80
+      targetPort: 8080
+
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 1
+        memory: 512Mi
+
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 70
+
+    probes:
+      liveness:
+        path: /health/deep
+        initialDelaySeconds: 15
+        periodSeconds: 10
+        timeoutSeconds: 3
+        failureThreshold: 3
+      readiness:
+        path: /readyz
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        timeoutSeconds: 3
+        failureThreshold: 3
+
+    env:
+      SERVICE_ROLE: worker
+      QUEUE_NAME: svc-platform-jobs
+
+    podAnnotations: {}
+
+# One ConfigMap shared by every component in the release (mounted via
+# envFrom). Use this for settings every component agrees on; a
+# component-specific setting belongs in that component's own `env` block
+# above instead.
+sharedConfig:
+  data:
+    APP_TIMEOUT_MS: "5000"
+    FEATURE_FLAGS: "new-billing=off"
+
+# One Secret shared by every component in the release (mounted via
+# envFrom, same as sharedConfig). Holds credentials common to the whole
+# service -- e.g. the shared upstream API token every component calls out
+# with. Component-specific credentials should get their own Secret instead
+# of being added here.
+sharedSecret:
+  data:
+    API_TOKEN: changeme
+    DB_PASSWORD: changeme
+
+serviceAccount:
+  create: true
+  annotations: {}
+
+rbac:
+  # When true, each component gets a namespaced Role + RoleBinding
+  # granting read access to Pods/ConfigMaps in its own namespace (enough
+  # for a component to introspect its own siblings; nothing cluster-wide).
+  create: true

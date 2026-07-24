@@ -1,0 +1,20 @@
+# TODO(you): write the Service fronting the Deployment here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: v1
+#   kind: Service
+#   metadata:
+#     name: t17-workload
+#     labels:
+#       app.kubernetes.io/name: t17-workload
+#     annotations:
+#       argocd.argoproj.io/sync-wave: "1"
+#   spec:
+#     selector:
+#       app.kubernetes.io/name: t17-workload
+#     ports:
+#       - port: 8080
+#         targetPort: 8080
+#
+# Same wave as the Deployment (they land together, both after the hook
+# Job's wave 0) -- do NOT set metadata.namespace here either.

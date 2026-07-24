@@ -1,0 +1,49 @@
+# TODO(you): Deployment for the `workers` component -- the one CP1/CP2
+# check most closely.
+#
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: <fullname>-workers
+#     labels: <standard labels + component: workers>
+#   spec:
+#     replicas: {{ .Values.workers.replicas }}
+#     selector:
+#       matchLabels: <selector labels + component: workers>
+#     template:
+#       metadata:
+#         labels: <same as selector>
+#         annotations:
+#           checksum/config: {{ include (print $.Template.BasePath "/workers-configmap.yaml") . | sha256sum }}
+#       spec:
+#         containers:
+#           - name: workers
+#             image: "{{ .Values.workers.image.repository }}:{{ .Values.workers.image.tag }}"
+#             imagePullPolicy: {{ .Values.workers.image.pullPolicy }}
+#             envFrom:
+#               - configMapRef:
+#                   name: <same ConfigMap name as workers-configmap.yaml>
+#             resources: {{ toYaml .Values.workers.resources | nindent 14 }}
+#             readinessProbe:
+#               httpGet:
+#                 path: {{ .Values.workers.probes.readiness.path }}
+#                 port: {{ .Values.workers.probes.readiness.port }}
+#               initialDelaySeconds: {{ .Values.workers.probes.readiness.initialDelaySeconds }}
+#               periodSeconds: {{ .Values.workers.probes.readiness.periodSeconds }}
+#               timeoutSeconds: {{ .Values.workers.probes.readiness.timeoutSeconds }}
+#               failureThreshold: {{ .Values.workers.probes.readiness.failureThreshold }}
+#             livenessProbe:
+#               httpGet:
+#                 path: {{ .Values.workers.probes.liveness.path }}
+#                 port: {{ .Values.workers.probes.liveness.port }}
+#               initialDelaySeconds: {{ .Values.workers.probes.liveness.initialDelaySeconds }}
+#               periodSeconds: {{ .Values.workers.probes.liveness.periodSeconds }}
+#               timeoutSeconds: {{ .Values.workers.probes.liveness.timeoutSeconds }}
+#               failureThreshold: {{ .Values.workers.probes.liveness.failureThreshold }}
+#             ports:
+#               - containerPort: {{ .Values.workers.probes.readiness.port }}
+#
+# Every probe field above must actually come from .Values -- CP1 flips
+# workers.probes.readiness.periodSeconds via --set and checks the rendered
+# number changes. A hardcoded number anywhere in this block fails that
+# check even if the default value happens to match.

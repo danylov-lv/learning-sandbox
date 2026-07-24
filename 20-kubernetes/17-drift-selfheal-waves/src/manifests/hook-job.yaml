@@ -1,0 +1,29 @@
+# TODO(you): write the PreSync hook Job here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: batch/v1
+#   kind: Job
+#   metadata:
+#     name: t17-preflight
+#     labels:
+#       app.kubernetes.io/name: t17-hook
+#     annotations:
+#       argocd.argoproj.io/hook: PreSync
+#       argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+#       argocd.argoproj.io/sync-wave: "0"
+#   spec:
+#     backoffLimit: 0
+#     template:
+#       spec:
+#         restartPolicy: Never
+#         containers:
+#           - name: preflight
+#             image: busybox:1.36
+#             command: ["sh", "-c", "echo preflight ok"]
+#
+# argocd.argoproj.io/hook: PreSync is what makes Argo CD run this Job to
+# completion BEFORE it applies the main Sync-phase resources (the
+# Deployment/Service in this app) -- that's the ordering this task grades.
+# hook-delete-policy matters too: without it, a completed hook Job sticks
+# around and the *next* sync (including a self-heal-triggered one) fails
+# trying to create a Job with a name that already exists.

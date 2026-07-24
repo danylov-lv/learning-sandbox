@@ -1,0 +1,16 @@
+# TODO(you): Service for the `queue` component -- this is the Service
+# whose rendered name `producer`'s and `workers`' REDIS_HOST must reference
+# (see producer-deployment.yaml / workers-configmap.yaml TODOs). Do not
+# hardcode this Service's name anywhere else in the chart; template both
+# sides from the same helper so they can never drift.
+#
+#   apiVersion: v1
+#   kind: Service
+#   metadata:
+#     name: <fullname>-queue
+#     labels: <standard labels + component: queue>
+#   spec:
+#     selector: <selector labels + component: queue>
+#     ports:
+#       - port: {{ .Values.queue.port }}
+#         targetPort: {{ .Values.queue.port }}

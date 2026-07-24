@@ -1,0 +1,10 @@
+apiVersion: v2
+name: sandbox20-worker
+description: Sandbox20 scrape-worker chart -- consumer mode, backed by a queue-chart dependency (task 05).
+type: application
+version: 0.1.0
+appVersion: "1.0"
+
+# TODO(you): add the queue-chart dependency here. See README.md "What's
+# required" step 1 for the exact fields (name/version/repository/condition).
+dependencies: []

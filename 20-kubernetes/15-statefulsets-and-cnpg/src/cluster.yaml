@@ -1,0 +1,18 @@
+# TODO(you): write a CNPG Cluster custom resource here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: postgresql.cnpg.io/v1
+#   kind: Cluster
+#   metadata:
+#     name: pg-cluster
+#   spec:
+#     instances: 3
+#     imageName: ghcr.io/cloudnative-pg/postgresql:17.6
+#     storage:
+#       size: <your choice, e.g. 1Gi>
+#       storageClass: standard
+#
+# This is a CustomResourceDefinition provided by the CNPG operator
+# (scripts/install.sh), not a builtin Kubernetes object -- `kubectl apply`
+# against the bare comment block above applies nothing (no error, no
+# object) until you replace it with the real CR.

@@ -1,0 +1,30 @@
+# TODO(you): write CHILD Application #1 here.
+#
+# This file (and app-b.yaml next to it) is what the validator pushes,
+# byte-for-byte, into the repo root of sandbox20/t18-apps.git -- the
+# parent Application you wrote in src/root-app.yaml then discovers both
+# files there and asks Argo CD to apply them as ordinary Application
+# objects. Nothing here talks to Gitea directly; you're just writing
+# another Application manifest.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: argoproj.io/v1alpha1
+#   kind: Application
+#   metadata:
+#     name: t18-child-a
+#     namespace: argocd
+#   spec:
+#     project: default
+#     source:
+#       repoURL: http://gitea-http.argocd.svc.cluster.local:3000/sandbox20/t18-child-chart.git
+#       targetRevision: main
+#       path: .
+#     destination:
+#       server: https://kubernetes.default.svc
+#       namespace: t18
+#     syncPolicy:
+#       automated:
+#         prune: true
+#         selfHeal: true
+#       syncOptions:
+#         - CreateNamespace=true

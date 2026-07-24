@@ -1,0 +1,28 @@
+# TODO(you): write the fixed Deployment `web` here.
+#
+# Start from given/broken-deployment.yaml and fix it -- do not start from
+# scratch. Requirements (see README.md for the full contract):
+#
+# - Same app, same image family (sandbox20-app), 3 replicas.
+# - Keep `env: START_DELAY_S: "8"` -- that knob is the point of this task,
+#   not something to delete.
+# - Add a startupProbe that actually covers an 8s slow start before
+#   liveness/readiness get a vote.
+# - Add a readinessProbe hitting /readyz so the Service never sends traffic
+#   to a pod whose app hasn't bound its port yet.
+# - Give livenessProbe sane timing -- it should only fire for a pod that is
+#   genuinely stuck, never for one that's still inside its normal startup
+#   window.
+# - Deal with TERM_IGNORE: either remove it so the app's default graceful
+#   SIGTERM handling applies, or add a `lifecycle.preStop` sleep (with a
+#   `terminationGracePeriodSeconds` long enough to cover it) so the Service
+#   has time to stop routing to a terminating pod before it actually stops
+#   accepting connections. Either approach is acceptable; what's graded is
+#   the outcome (zero dropped requests during a rollout), not which path
+#   you took.
+# - Set a rolling update strategy that never drops below full capacity
+#   (maxUnavailable: 0, maxSurge >= 1) -- the opposite of the given
+#   maxSurge: 0 / maxUnavailable: 50%.
+#
+# This file must be a real Deployment manifest (apiVersion/kind/metadata/
+# spec) before the validator can do anything with it.

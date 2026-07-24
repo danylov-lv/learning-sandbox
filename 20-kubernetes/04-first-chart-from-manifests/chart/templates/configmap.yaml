@@ -1,0 +1,9 @@
+# TODO(you): the worker ConfigMap.
+#
+# - name via the fullname helper, labels via the labels helper.
+# - one data key holding .Values.config.greeting -- the Deployment's
+#   CONFIG_GREETING env var reads this key via configMapKeyRef.
+#
+# The Deployment's checksum/config annotation (see deployment.yaml) should
+# hash THIS resource's own rendered contents, so that changing
+# config.greeting rolls the pods on the next install/upgrade.

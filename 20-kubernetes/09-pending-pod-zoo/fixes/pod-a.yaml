@@ -1,0 +1,7 @@
+# TODO(you): corrected pod-a.
+#
+# Same Pod name (pod-a). Diagnose the real problem from
+# `kubectl describe pod pod-a` / `kubectl get events` first -- see
+# README.md and DIAGNOSIS.md. Once you know the root cause, write a
+# working Pod here (same name, same container image) that actually
+# schedules and reaches Running/Ready.

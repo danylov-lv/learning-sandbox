@@ -1,0 +1,20 @@
+# TODO(you): write an Ingress here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: networking.k8s.io/v1
+#   kind: Ingress
+#   metadata:
+#     name: app
+#   spec:
+#     ingressClassName: nginx
+#     rules:
+#       - host: app.sandbox20.test
+#         http:
+#           paths:
+#             - path: /
+#               pathType: Prefix
+#               backend:
+#                 service:
+#                   name: backend
+#                   port:
+#                     number: 80

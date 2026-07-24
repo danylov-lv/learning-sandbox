@@ -1,0 +1,60 @@
+# The public-facing component (WORK_MODE=server, the app's default). Its
+# request-handling code never touches Redis at all -- but ops added a
+# blanket policy a while back: every pipeline component validates the full
+# shared config contract at boot via REQUIRED_ENV, fail-fast, even vars a
+# given component doesn't functionally use itself. That policy is why this
+# component is exposed to the same incident as `worker` below.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: pipeline-config
+          env:
+            - name: REQUIRED_ENV
+              value: "REDIS_HOST,QUEUE_KEY"
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            periodSeconds: 3
+            timeoutSeconds: 2
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+spec:
+  selector:
+    app: api
+  ports:
+    - port: 80
+      targetPort: http

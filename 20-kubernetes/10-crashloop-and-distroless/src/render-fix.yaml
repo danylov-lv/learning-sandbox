@@ -1,0 +1,65 @@
+# TODO(you): re-apply a fixed `render` Deployment into namespace t10.
+#
+# Root cause: figure it out using an EPHEMERAL debug container against the
+# `render-debug-target` Pod (given/broken.yaml) -- that pod runs the exact
+# same broken image/config and is never replaced by your fix, so it stays
+# available and inspectable throughout. `render-debug-target`'s container
+# has no shell (gcr.io/distroless/python3-debian12), so you cannot `kubectl
+# exec` into it directly:
+#
+#   kubectl -n t10 debug -it render-debug-target \
+#     --image=sandbox20-app:1.0 --image-pull-policy=IfNotPresent \
+#     --target=render -- sh
+#
+# An ephemeral container shares the target container's network + process
+# namespace, so from inside it you can curl the app's real listen address
+# (localhost:<port>) and/or read /proc/1/environ to see what PORT it
+# actually started with. Do NOT swap render's own image to something with a
+# shell to dodge this -- the validator checks render still runs
+# sandbox20-app:distroless.
+#
+# Once you know the real port, fix whichever side is wrong: change
+# containerPort/readinessProbe to match the app's real PORT, or set PORT
+# back to what containerPort/the probe already expect. Either is a valid
+# fix -- the render Service's targetPort is name-based (`http`), so it
+# doesn't need editing either way as long as the container's port entry
+# keeps the name `http` pointed at wherever the app is actually listening.
+#
+# Same three-way-merge gotcha as ingest-fix.yaml: write this as a COMPLETE
+# standalone Deployment, not a bare patch, or `kubectl apply` will strip
+# fields you didn't re-list.
+#
+# Required shape:
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: render
+#     labels:
+#       app: render
+#   spec:
+#     replicas: 1
+#     selector:
+#       matchLabels:
+#         app: render
+#     template:
+#       metadata:
+#         labels:
+#           app: render
+#       spec:
+#         containers:
+#           - name: render
+#             image: sandbox20-app:distroless   # must stay distroless
+#             imagePullPolicy: IfNotPresent
+#             env:
+#               - name: PORT
+#                 value: "..."                  # whatever you decide it should be
+#             ports:
+#               - name: http
+#                 containerPort: ...             # must match the real listen port
+#             readinessProbe:
+#               httpGet:
+#                 path: /readyz
+#                 port: ...                      # must match the real listen port
+#               periodSeconds: 3
+#               timeoutSeconds: 1
+#               failureThreshold: 3

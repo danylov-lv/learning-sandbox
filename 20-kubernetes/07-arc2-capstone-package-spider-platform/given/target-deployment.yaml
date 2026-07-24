@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: target
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: target
+  template:
+    metadata:
+      labels:
+        app: target
+    spec:
+      containers:
+        - name: target
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: WORK_MODE
+              value: "server"
+            - name: PORT
+              value: "8080"
+          ports:
+            - containerPort: 8080

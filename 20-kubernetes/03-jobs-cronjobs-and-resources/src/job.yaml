@@ -1,0 +1,26 @@
+# TODO(you): write a Job here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: batch/v1
+#   kind: Job
+#   metadata:
+#     name: rescrape
+#   spec:
+#     completions: 4
+#     parallelism: 2
+#     backoffLimit: 2
+#     template:
+#       spec:
+#         restartPolicy: Never
+#         containers:
+#           - name: <your choice>
+#             image: sandbox20-app:1.0
+#             imagePullPolicy: IfNotPresent   # this image is not in any registry
+#             command: ["python3", "-c", "<sleep a few seconds, print, exit 0>"]
+#             resources:
+#               requests:
+#                 cpu: 50m
+#                 memory: 64Mi
+#               limits:
+#                 cpu: 200m
+#                 memory: 128Mi

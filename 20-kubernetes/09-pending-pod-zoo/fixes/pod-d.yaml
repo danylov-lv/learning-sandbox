@@ -1,0 +1,7 @@
+# TODO(you): corrected pod-d.
+#
+# Same Pod name (pod-d). Diagnose the real problem from
+# `kubectl describe pod pod-d` / `kubectl get events` first -- see
+# README.md and DIAGNOSIS.md. This one is NOT a "remove the constraint"
+# fix: pod-d must still end up running on sandbox20-worker2 specifically.
+# The fix is something you add to the pod spec, not something you delete.

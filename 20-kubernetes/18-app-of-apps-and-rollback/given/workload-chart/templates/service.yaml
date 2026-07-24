@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "t18-workload.fullname" . }}
+  labels:
+    {{- include "t18-workload.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "t18-workload.selectorLabels" . | nindent 4 }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 8080

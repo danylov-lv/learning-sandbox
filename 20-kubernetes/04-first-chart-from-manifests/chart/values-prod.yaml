@@ -1,0 +1,10 @@
+# TODO(you): prod overlay for the `worker` chart.
+#
+# - replicaCount: 3
+# - resources: set real requests/limits (the fixture app is light -- small
+#   values are fine, the point is that the field is non-empty and deliberate)
+# - secret.enabled: true
+#
+# Do NOT commit a real secret.token here -- that's supplied at
+# install/upgrade time via `--set secret.token=...`. This overlay only
+# turns the Secret ON; the value comes from the command line.

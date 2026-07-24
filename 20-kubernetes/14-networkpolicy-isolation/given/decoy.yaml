@@ -1,0 +1,46 @@
+# An internal-only service that happens to share namespace t14 with worker,
+# but is NOT one of worker's allowed targets. If worker can reach this, or if
+# this can reach worker, your isolation isn't real -- it's just "nothing in
+# this namespace talks to anything by accident". Same fixture image, plain
+# WORK_MODE=server.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decoy
+  labels:
+    app: decoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: decoy
+  template:
+    metadata:
+      labels:
+        app: decoy
+    spec:
+      containers:
+        - name: decoy
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            periodSeconds: 3
+            timeoutSeconds: 2
+            failureThreshold: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: decoy
+spec:
+  selector:
+    app: decoy
+  ports:
+    - port: 80
+      targetPort: http

@@ -1,0 +1,17 @@
+# TODO(you): ConfigMap holding the `workers` component's queue-connection
+# and processing config -- this is the object the checksum annotation on
+# workers-deployment.yaml's pod template must hash, so a values change here
+# (e.g. workers.processMs) forces a pod restart on the next `helm upgrade`.
+#
+#   apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: <fullname>-workers-config
+#     labels: <standard labels + component: workers>
+#   data:
+#     WORK_MODE: "consumer"
+#     QUEUE_BACKEND: "redis"
+#     REDIS_HOST: "<queue Service name, same reference as producer-deployment.yaml>"
+#     REDIS_PORT: "{{ .Values.queue.port }}"
+#     QUEUE_KEY: "{{ .Values.queue.key }}"
+#     PROCESS_MS: "{{ .Values.workers.processMs }}"

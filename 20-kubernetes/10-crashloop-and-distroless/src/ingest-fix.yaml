@@ -1,0 +1,67 @@
+# TODO(you): re-apply a fixed `ingest` Deployment (and its ConfigMap, if you
+# choose to source the missing value from there) into namespace t10.
+#
+# Root cause (confirm it yourself with `kubectl logs`/`kubectl describe`,
+# don't take this comment's word for it): the ingest container declares
+# REQUIRED_ENV=CONFIG_DB_URL,CONFIG_QUEUE_URL but only CONFIG_DB_URL is ever
+# set -- the app's own startup check logs one FATAL line naming the missing
+# var and exits 1, and the kubelet dutifully restarts it into a
+# CrashLoopBackOff forever.
+#
+# IMPORTANT gotcha about how you write this file: `kubectl apply` computes a
+# three-way merge against whatever was last applied. given/broken.yaml was
+# applied first. If your fix file only lists the ONE field you're changing
+# (say, just the new env entry) and omits everything else the container had
+# (image, ports, the other env vars, ...), apply will read those omissions
+# as "the user deleted this" and strip them from the live object. Write this
+# file as a COMPLETE, standalone Deployment (every field the container
+# needs), not a bare patch -- same rule applies to the ConfigMap if you
+# touch it (re-list every existing key, not just the one you're adding).
+#
+# Required shape:
+#   apiVersion: v1
+#   kind: ConfigMap                  # only if you source CONFIG_QUEUE_URL from here
+#   metadata:
+#     name: ingest-config
+#   data:
+#     DB_URL: "..."                  # keep the existing key -- see gotcha above
+#     QUEUE_URL: "..."               # your new key
+#   ---
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: ingest
+#     labels:
+#       app: ingest
+#   spec:
+#     replicas: 1
+#     selector:
+#       matchLabels:
+#         app: ingest
+#     template:
+#       metadata:
+#         labels:
+#           app: ingest
+#       spec:
+#         containers:
+#           - name: ingest
+#             image: sandbox20-app:1.0
+#             imagePullPolicy: IfNotPresent
+#             ports:
+#               - containerPort: 8080
+#             env:
+#               - name: CONFIG_DB_URL
+#                 valueFrom:
+#                   configMapKeyRef:
+#                     name: ingest-config
+#                     key: DB_URL
+#               - name: CONFIG_QUEUE_URL
+#                 valueFrom:            # or a plain `value:` literal -- your call
+#                   configMapKeyRef:
+#                     name: ingest-config
+#                     key: QUEUE_URL
+#               - name: REQUIRED_ENV
+#                 value: "CONFIG_DB_URL,CONFIG_QUEUE_URL"   # keep this exact string --
+#                       # weakening REQUIRED_ENV instead of supplying the missing
+#                       # value is not the fix this task is asking for, and the
+#                       # validator checks this field is unchanged

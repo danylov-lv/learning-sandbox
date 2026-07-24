@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "svc-platform.fullname" . }}-shared
+  labels:
+    {{- include "svc-platform.labels" . | nindent 4 }}
+data:
+  {{- range $k, $v := .Values.sharedConfig.data }}
+  {{ $k }}: {{ $v | quote }}
+  {{- end }}

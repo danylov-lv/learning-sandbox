@@ -1,0 +1,54 @@
+# The consumer (WORK_MODE=consumer), draining pipeline-config's queue.
+# Same REQUIRED_ENV contract as api.yaml -- this component functionally
+# needs both REDIS_HOST and QUEUE_KEY to do its job at all.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  labels:
+    app: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: pipeline-config
+          env:
+            - name: WORK_MODE
+              value: "consumer"
+            - name: PROCESS_MS
+              value: "200"
+            - name: REQUIRED_ENV
+              value: "REDIS_HOST,QUEUE_KEY"
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            periodSeconds: 3
+            timeoutSeconds: 2
+            failureThreshold: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker
+spec:
+  selector:
+    app: worker
+  ports:
+    - port: 80
+      targetPort: http

@@ -1,0 +1,19 @@
+{{- range $name, $component := .Values.components }}
+{{- if $component.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "svc-platform.componentFullname" (dict "root" $ "name" $name) }}
+  labels:
+    {{- include "svc-platform.componentSelectorLabels" (dict "root" $ "name" $name) | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "svc-platform.componentSelectorLabels" (dict "root" $ "name" $name) | nindent 4 }}
+  ports:
+    - name: http
+      port: {{ $component.service.port }}
+      targetPort: http
+{{- end }}
+{{- end }}

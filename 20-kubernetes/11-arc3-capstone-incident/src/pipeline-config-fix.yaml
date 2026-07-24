@@ -1,0 +1,11 @@
+# TODO(you): a corrected ConfigMap named `pipeline-config`, applied with
+# `kubectl apply -f` ON TOP of given/pipeline-config.yaml (already live in
+# t11) -- a same-named object here replaces the broken one wholesale.
+#
+# Don't guess. Read given/pipeline-config.yaml, then read what api.yaml,
+# worker.yaml, and producer.yaml each actually expect from it (their
+# envFrom + REQUIRED_ENV). Compare byte-for-byte, not by eye from memory.
+#
+# This file must be a real ConfigMap manifest (apiVersion/kind/metadata/
+# data) before the validator can do anything with it -- an empty/comment-
+# only file fails kubectl apply cleanly rather than silently no-opping.

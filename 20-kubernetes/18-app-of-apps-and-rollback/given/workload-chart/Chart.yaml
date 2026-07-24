@@ -1,0 +1,6 @@
+apiVersion: v2
+name: t18-workload
+description: Rollback-exercise chart for cp2. Pushed into sandbox20/t18-workload.git by tests/validate_cp2.py at a known-good revision (image sandbox20-app:1.0); a scripted bad commit and your git revert both happen on top of this history.
+type: application
+version: 0.1.0
+appVersion: "1.0"

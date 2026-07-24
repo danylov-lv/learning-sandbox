@@ -1,0 +1,38 @@
+# TODO(you): Deployment for the `producer` component.
+#
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: <fullname>-producer
+#     labels: <standard labels + component: producer>
+#   spec:
+#     replicas: {{ .Values.producer.replicas }}
+#     selector:
+#       matchLabels: <selector labels + component: producer>
+#     template:
+#       metadata:
+#         labels: <same as selector>
+#       spec:
+#         containers:
+#           - name: producer
+#             image: "{{ .Values.producer.image.repository }}:{{ .Values.producer.image.tag }}"
+#             imagePullPolicy: {{ .Values.producer.image.pullPolicy }}
+#             env:
+#               - name: WORK_MODE
+#                 value: "producer"
+#               - name: QUEUE_BACKEND
+#                 value: "redis"
+#               - name: REDIS_HOST
+#                 value: "<name of the queue Service template above, via the
+#                          SAME helper/reference queue-service.yaml uses --
+#                          never a second literal "redis" typed here>"
+#               - name: REDIS_PORT
+#                 value: "{{ .Values.queue.port }}"
+#               - name: QUEUE_KEY
+#                 value: "{{ .Values.queue.key }}"
+#               - name: RATE_PER_S
+#                 value: "{{ .Values.producer.ratePerS }}"
+#
+# Guard this whole document with {{ if .Values.producer.enabled }} / {{ end }}
+# -- CP1 renders with --set producer.enabled=false and expects NOTHING with
+# component label "producer" in the output.

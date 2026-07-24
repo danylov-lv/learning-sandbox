@@ -1,0 +1,36 @@
+# Given: the queue consumer. Applied as-is by the validator into t19; you
+# don't edit this file -- src/hpa.yaml (which you write) is what scales it.
+# Each replica processes about 2 items/s (PROCESS_MS=500), matching the
+# producer's baseline rate 1:1 so the queue sits near empty until the
+# validator deliberately raises producer throughput.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue-consumer
+  labels: {app: queue-consumer}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: queue-consumer}
+  template:
+    metadata:
+      labels: {app: queue-consumer}
+    spec:
+      containers:
+        - name: app
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: WORK_MODE, value: "consumer"}
+            - {name: QUEUE_BACKEND, value: "rabbitmq"}
+            - {name: RABBIT_HOST, value: "rabbitmq.t19-infra.svc.cluster.local"}
+            - {name: RABBIT_PORT, value: "5672"}
+            - {name: RABBIT_USER, value: "sandbox"}
+            - {name: RABBIT_PASS, value: "sandboxpass"}
+            - {name: QUEUE, value: "sandbox20-queue"}
+            - {name: PROCESS_MS, value: "500"}
+          ports:
+            - {containerPort: 8080}
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 250m, memory: 128Mi}

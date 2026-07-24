@@ -1,0 +1,12 @@
+[project]
+name = "sandbox-20-kubernetes"
+version = "0.1.0"
+description = "Module 20: Kubernetes -- raw manifests, hand-written Helm charts, operational debugging (OOMKill, CrashLoopBackOff, pending-pod triage), networking (Services, Ingress, NetworkPolicy, StatefulSets/CNPG), Argo CD internals, and an optional kopf operator, all against a local kind cluster (sandbox20) with Calico for real NetworkPolicy enforcement."
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6",
+    "requests>=2.31",
+    "kopf>=1.37",
+    "kubernetes>=30",
+    "pytest>=8",
+]

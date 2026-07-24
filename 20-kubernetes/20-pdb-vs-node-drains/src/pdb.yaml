@@ -1,0 +1,28 @@
+# TODO(you): write a PodDisruptionBudget that keeps the `web` Deployment
+# safe through a node drain.
+#
+# The contract the validator enforces (see README.md "What's required"):
+#   - It must SELECT the web pods (selector matchLabels app: web) -- a PDB
+#     that matches nothing protects nothing and fails.
+#   - It must keep at least 3 of the 4 web replicas available at all times:
+#     minAvailable: 3, or equivalently maxUnavailable: 1 (a percentage that
+#     works out to the same, e.g. maxUnavailable: 25%, is fine too).
+#   - Too weak (minAvailable: 0/1/2) fails: it wouldn't protect availability
+#     during the drain.
+#   - Too strict (minAvailable: 4, == the replica count) also fails: it
+#     forbids ALL voluntary eviction, so the drain can never make progress
+#     and blocks forever. Leave exactly one disruption of headroom.
+#
+# Applied with `kubectl apply -n t20 -f src/pdb.yaml` (and by
+# tests/validate.py itself).
+#
+# Required shape:
+#   apiVersion: policy/v1
+#   kind: PodDisruptionBudget
+#   metadata:
+#     name: web-pdb
+#   spec:
+#     minAvailable: ...          # or maxUnavailable: ...
+#     selector:
+#       matchLabels:
+#         app: web

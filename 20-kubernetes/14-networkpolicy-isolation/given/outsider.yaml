@@ -1,0 +1,45 @@
+# Lives in a separate namespace (t14-external, not t14) -- stands in for
+# "some other team's service in the cluster". worker must not be able to
+# reach it, and it must not be able to reach worker either. Applied into
+# t14-external, not t14 -- see given/setup.sh.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outsider
+  labels:
+    app: outsider
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: outsider
+  template:
+    metadata:
+      labels:
+        app: outsider
+    spec:
+      containers:
+        - name: outsider
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            periodSeconds: 3
+            timeoutSeconds: 2
+            failureThreshold: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: outsider
+spec:
+  selector:
+    app: outsider
+  ports:
+    - port: 80
+      targetPort: http

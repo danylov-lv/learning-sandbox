@@ -1,0 +1,38 @@
+# Given, ready to apply as-is -- this is the scripted OOMKill fixture. You do
+# not edit this file; the validator applies it exactly as it is. Read
+# app/app.py's LEAK_MB_PER_S knob before running it: this container grows its
+# own resident memory by 5MiB every second, forever, with no cap of its own
+# -- the only thing that can stop it is the pod's own memory limit.
+#
+# Apply it yourself first and watch it die before you ever run the validator:
+#
+#   kubectl --context kind-sandbox20 create namespace t08 --dry-run=client -o yaml | kubectl --context kind-sandbox20 apply -f -
+#   kubectl --context kind-sandbox20 -n t08 apply -f given/leak-pod.yaml
+#   kubectl --context kind-sandbox20 -n t08 get pod leak-victim -w
+#   kubectl --context kind-sandbox20 -n t08 describe pod leak-victim
+#
+# See hint-3.md and NOTES.md for what to look for in that output, and
+# given/observe-oomkill.sh for a scripted version of the same walkthrough.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: leak-victim
+  labels:
+    app: leak-victim
+spec:
+  restartPolicy: Never
+  containers:
+    - name: app
+      image: sandbox20-app:1.0
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 8080
+      env:
+        - name: LEAK_MB_PER_S
+          value: "5"
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          memory: 128Mi

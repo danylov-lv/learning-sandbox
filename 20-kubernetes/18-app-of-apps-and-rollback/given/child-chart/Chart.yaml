@@ -1,0 +1,6 @@
+apiVersion: v2
+name: t18-child
+description: Fixture chart deployed by the two child Applications in cp1's app-of-apps tree. Pushed into sandbox20/t18-child-chart.git by tests/validate_cp1.py; not written by the learner.
+type: application
+version: 0.1.0
+appVersion: "1.0"

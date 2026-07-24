@@ -1,0 +1,30 @@
+# Values for the sandbox20-worker chart. Structure the validator relies on
+# -- do not rename these top-level keys, the templates you write should
+# read them exactly as shown below.
+
+replicas: 1
+
+image:
+  repository: sandbox20-app
+  tag: "1.0"
+
+resources:
+  requests:
+    cpu: "50m"
+    memory: "64Mi"
+  limits:
+    cpu: "200m"
+    memory: "128Mi"
+
+# Gates the queue-chart dependency via its `condition:` in Chart.yaml.
+queue:
+  enabled: true
+  # QUEUE_KEY the worker and the queue-init hook both use -- this must be
+  # wired through templating (.Values.queue.key), not hardcoded twice.
+  key: "scrape:queue"
+  # Number of items the pre-install/pre-upgrade hook seeds into redis.
+  seedCount: 5
+
+# Values passed down to the queue-chart dependency. Empty here means "use
+# queue-chart's own defaults" -- see given/queue-chart/values.yaml.
+queue-chart: {}

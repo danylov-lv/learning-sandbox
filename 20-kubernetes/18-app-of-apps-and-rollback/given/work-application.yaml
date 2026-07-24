@@ -1,0 +1,79 @@
+# A realistic "work" Argo CD Application -- the kind a platform team ships
+# in a real umbrella-chart PR. You are not deploying this (it references a
+# fictional cluster and Helm repo that don't exist in this sandbox); it is
+# reading material for MAPPING.md. Every field on it is something a real
+# reviewer would ask you to explain.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-checkout-prod
+  namespace: argocd
+  labels:
+    team: checkout
+    tier: prod
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: checkout-team
+
+  sources:
+    - repoURL: https://charts.example.internal/checkout
+      chart: checkout-umbrella
+      targetRevision: 4.2.0
+      helm:
+        valueFiles:
+          - $values/checkout/prod/values.yaml
+          - $values/checkout/prod/values-region-us.yaml
+    - repoURL: https://git.example.internal/platform/checkout-values.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    name: prod-us-east
+    namespace: checkout
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - ApplyOutOfSyncOnly=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
+
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: checkout-api
+      namespace: checkout
+      jsonPointers:
+        - /spec/replicas
+    - group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+    - group: ""
+      kind: ConfigMap
+      name: checkout-runtime-flags
+      namespace: checkout
+      managedFieldsManagers:
+        - checkout-flags-operator
+
+  revisionHistoryLimit: 5
+
+  info:
+    - name: Owning team
+      value: "checkout (#checkout-oncall)"
+    - name: Runbook
+      value: "https://runbooks.example.internal/checkout"

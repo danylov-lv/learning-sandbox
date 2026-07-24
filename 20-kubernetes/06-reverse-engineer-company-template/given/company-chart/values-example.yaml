@@ -1,0 +1,66 @@
+# Example team override for svc-platform, as a team would actually commit
+# it to their Argo CD app's values file. Only what differs from
+# values.yaml's defaults needs to be here -- Helm merges this on top.
+
+global:
+  registry: registry.internal.example.com
+  env:
+    LOG_LEVEL: info
+    ENVIRONMENT: production
+    OTEL_EXPORTER_ENDPOINT: http://otel-collector.observability:4317
+
+components:
+  api:
+    enabled: true
+    replicaCount: 3
+    image:
+      repository: teams/orders/orders-api
+      tag: "2026.07.10-3f9a1c2"
+    resources:
+      requests:
+        cpu: 150m
+        memory: 192Mi
+      limits:
+        cpu: 750m
+        memory: 384Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 8
+      targetCPUUtilizationPercentage: 70
+    env:
+      SERVICE_ROLE: api
+      ORDERS_DB_HOST: orders-db.internal
+
+  worker:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: teams/orders/orders-worker
+      tag: "2026.07.10-3f9a1c2"
+    resources:
+      requests:
+        cpu: 250m
+        memory: 320Mi
+      limits:
+        cpu: 1
+        memory: 640Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 12
+      targetCPUUtilizationPercentage: 65
+    env:
+      SERVICE_ROLE: worker
+      QUEUE_NAME: orders-jobs
+      ORDERS_DB_HOST: orders-db.internal
+
+sharedConfig:
+  data:
+    APP_TIMEOUT_MS: "8000"
+    FEATURE_FLAGS: "new-billing=on,express-checkout=off"
+
+sharedSecret:
+  data:
+    API_TOKEN: "REPLACED-AT-DEPLOY-BY-SEALED-SECRETS"
+    DB_PASSWORD: "REPLACED-AT-DEPLOY-BY-SEALED-SECRETS"

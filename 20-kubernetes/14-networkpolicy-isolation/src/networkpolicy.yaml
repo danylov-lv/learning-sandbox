@@ -1,0 +1,43 @@
+# TODO(you): write a NetworkPolicy that isolates `worker` (namespace t14) so
+# it can reach only `queue` and `target`, on the ports they actually listen
+# on, and nothing else. Nothing else in the cluster should be able to reach
+# worker either. Applied with `kubectl apply -n t14 -f src/networkpolicy.yaml`
+# (and by tests/validate.py itself).
+#
+# Ground rules (confirm each yourself against given/*.yaml, don't take this
+# comment's word for it):
+#   - worker's pods are labeled app: worker (given/worker.yaml).
+#   - queue listens on 6379 (given/queue.yaml); target listens on 8080, not
+#     the Service's port 80 -- NetworkPolicy `ports` match the actual
+#     container port traffic arrives on the pod at, not the Service port
+#     that gets DNAT'd to it before your policy is ever evaluated.
+#   - decoy (same namespace, t14) and outsider (a different namespace,
+#     t14-external) are both in the cluster and both reachable from worker
+#     right now, with no policy at all. Neither should be reachable once
+#     you're done, in either direction.
+#   - worker resolves `queue` and `target` by DNS Service name before it can
+#     connect to either -- an egress policy that only allows the redis/http
+#     ports and forgets to allow DNS to CoreDNS (kube-system, port 53,
+#     UDP and TCP) will break the very traffic you meant to allow. Check
+#     CoreDNS's actual labels in this cluster yourself
+#     (`kubectl -n kube-system get pods -o wide`) rather than assuming.
+#
+# Required shape (a single NetworkPolicy is enough; you may split it into
+# more than one if you prefer, as long as the net effect is the same):
+#
+#   apiVersion: networking.k8s.io/v1
+#   kind: NetworkPolicy
+#   metadata:
+#     name: worker-isolation
+#   spec:
+#     podSelector:
+#       matchLabels:
+#         app: worker           # scope this to worker only -- not the whole namespace
+#     policyTypes:
+#       - Ingress
+#       - Egress
+#     ingress: []                # nothing is allowed to initiate a connection to worker
+#     egress:
+#       - to: [...]              # allow -> queue, on its actual port
+#       - to: [...]              # allow -> target, on its actual port
+#       - to: [...]              # allow -> DNS (kube-system), UDP+TCP 53

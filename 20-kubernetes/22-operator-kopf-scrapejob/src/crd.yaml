@@ -1,0 +1,26 @@
+# TODO(you): the ScrapeJob CustomResourceDefinition.
+#
+# See README.md "Schema contract" for the exact fields the validators and
+# operator.py depend on. Summary:
+#
+#   group:    sandbox20.dev
+#   version:  v1
+#   kind:     ScrapeJob
+#   plural:   scrapejobs
+#   singular: scrapejob
+#   scope:    Namespaced
+#
+# spec.versions[0].schema.openAPIV3Schema must describe an object with a
+# `spec` whose properties are exactly:
+#
+#   replicas   integer, minimum 1, default 1
+#   image      string,  default "sandbox20-app:1.0"
+#   processMs  integer, minimum 1, default 100
+#
+# Fill in spec.group / spec.names / spec.scope / spec.versions below --
+# metadata.name is already right (it must always be "<plural>.<group>").
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: scrapejobs.sandbox20.dev
+spec: {}

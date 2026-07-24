@@ -1,0 +1,8 @@
+# TODO(you): the worker Service.
+#
+# - name via the fullname helper, labels via the labels helper.
+# - selector matching the Deployment's pod template labels (keep these two
+#   in sync -- a mismatch here is a classic Service-with-zero-endpoints bug).
+# - type: ClusterIP (the default -- explicit or implicit, your call).
+# - port: .Values.service.port -> targetPort: 8080 (the container's fixed
+#   listen port, see app/app.py).

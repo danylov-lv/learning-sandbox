@@ -1,0 +1,16 @@
+# TODO(you): Service for the `target` component.
+#
+#   apiVersion: v1
+#   kind: Service
+#   metadata:
+#     name: <fullname>-target
+#     labels: <standard labels + component: target>
+#   spec:
+#     selector: <selector labels + component: target>
+#     ports:
+#       - port: {{ .Values.target.port }}
+#         targetPort: {{ .Values.target.port }}
+#
+# Wrap this whole document in the same "if target.enabled" guard as
+# target-deployment.yaml -- both must disappear together when the flag is
+# off.

@@ -1,0 +1,40 @@
+# TODO(you): write a Deployment here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: worker
+#   spec:
+#     replicas: 2
+#     selector:
+#       matchLabels:
+#         app: worker
+#     template:
+#       metadata:
+#         labels:
+#           app: worker
+#       spec:
+#         containers:
+#           - name: worker
+#             image: sandbox20-app:1.0
+#             imagePullPolicy: IfNotPresent   # this image is not in any registry
+#             ports:
+#               - containerPort: 8080
+#             env:
+#               - name: CONFIG_GREETING
+#                 valueFrom:
+#                   configMapKeyRef:
+#                     name: <your ConfigMap name>
+#                     key: <your ConfigMap key>
+#               - name: APP_SECRET_TOKEN
+#                 valueFrom:
+#                   secretKeyRef:
+#                     name: <your Secret name>
+#                     key: <your Secret key>
+#               - name: APP_POD_NAME
+#                 valueFrom:
+#                   fieldRef:
+#                     fieldPath: metadata.name
+#               - name: REQUIRED_ENV
+#                 value: "CONFIG_GREETING,APP_SECRET_TOKEN"

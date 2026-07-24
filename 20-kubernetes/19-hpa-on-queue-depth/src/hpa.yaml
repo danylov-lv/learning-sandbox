@@ -1,0 +1,32 @@
+# TODO(you): write a HorizontalPodAutoscaler (autoscaling/v2) here.
+#
+# It must scale the given Deployment "queue-consumer" (in this namespace)
+# using the External metric that scripts/install.sh's prometheus-adapter
+# already exposes -- see README.md "What's required" for the exact metric
+# name, its label, and how to query it yourself before writing this.
+#
+# Required shape:
+#   apiVersion: autoscaling/v2
+#   kind: HorizontalPodAutoscaler
+#   metadata:
+#     name: queue-consumer-hpa
+#   spec:
+#     scaleTargetRef:
+#       apiVersion: apps/v1
+#       kind: Deployment
+#       name: queue-consumer
+#     minReplicas: <your choice>
+#     maxReplicas: <your choice, > minReplicas>
+#     metrics:
+#       - type: External
+#         external:
+#           metric:
+#             name: <the external metric name>
+#             selector:
+#               matchLabels: {queue: <the queue name>}
+#           target:
+#             type: AverageValue
+#             averageValue: "<your choice -- see README for how to pick this>"
+#
+# `kubectl apply -f` against the bare comment block above applies nothing
+# (no error, no object) until you replace it with a real HPA.

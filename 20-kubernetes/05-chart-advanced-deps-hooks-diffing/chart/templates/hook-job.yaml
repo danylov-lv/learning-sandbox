@@ -1,0 +1,39 @@
+# TODO(you): write the "queue-init" pre-install/pre-upgrade hook Job here.
+#
+# Required shape (see README.md "What's required" step 2 for the full
+# contract):
+#   apiVersion: batch/v1
+#   kind: Job
+#   metadata:
+#     name: queue-init
+#     annotations:
+#       "helm.sh/hook": pre-install,pre-upgrade
+#       "helm.sh/hook-weight": "-5"
+#       "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+#   spec:
+#     backoffLimit: 2
+#     template:
+#       spec:
+#         restartPolicy: Never
+#         containers:
+#           - name: queue-init
+#             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+#             imagePullPolicy: IfNotPresent
+#             command: [...]   # <- your seeding script: push .Values.queue.seedCount
+#                               #    items into the REDIS_HOST/REDIS_PORT list named
+#                               #    QUEUE_KEY, using the `redis` package already
+#                               #    installed in this image (see app/Dockerfile)
+#             env:
+#               - name: REDIS_HOST
+#                 value: {{ include "queue-chart.fullname" . }}
+#               - name: REDIS_PORT
+#                 value: "6379"
+#               - name: QUEUE_KEY
+#                 value: {{ .Values.queue.key | quote }}
+#               - name: SEED_COUNT
+#                 value: {{ .Values.queue.seedCount | quote }}
+#
+# Why this matters: without hook-weight this job has no defined order
+# relative to other hooks at the same phase; without hook-delete-policy
+# a failed or stale run from a previous install/upgrade could linger and
+# confuse the next one.

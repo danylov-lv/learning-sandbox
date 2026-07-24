@@ -100,10 +100,13 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 | 13-scraping-at-scale | Prometheus | 9313 | `SANDBOX_13_PROM_PORT` |
 | 13-scraping-at-scale | Grafana | 3313 | `SANDBOX_13_GRAFANA_PORT` |
 | 15-llm-in-pipelines | Ollama (HTTP API) | 11439 | `SANDBOX_15_OLLAMA_PORT` |
+| 20-kubernetes | kind apiserver | 6320 | `SANDBOX_20_APISERVER_PORT` |
+| 20-kubernetes | ingress HTTP | 8320 | `SANDBOX_20_INGRESS_HTTP_PORT` |
+| 20-kubernetes | ingress HTTPS | 9320 | `SANDBOX_20_INGRESS_HTTPS_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 
-Exception: module 20-kubernetes uses a kind/k3d local cluster instead of docker-compose, so it has no host-port row here.
+Exception: module 20-kubernetes runs a kind cluster named `sandbox20` instead of `docker-compose`, so its ports above are fixed in `cluster/kind-config.yaml` (not env-overridable via a `docker-compose.yml`) and it has no `docker-compose.yml`.
 
 Exception: module 17-system-design is a writing module — its validators are pure-Python document and capacity-model checks with no services at all, so it has no host-port row and no `docker-compose.yml`.
 

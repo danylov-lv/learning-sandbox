@@ -1,37 +1,180 @@
 # 20 - Kubernetes
 
-The real Kubernetes track: from raw manifests written by hand, through designing your own Helm charts, to operations, debugging, networking, state, Argo CD internals, and an optional taste of writing an operator. This stub carries the condensed full spec — future generation sessions build the module from this file.
-
-Status: not generated yet (see GENERATION_STATE.md)
+The real Kubernetes track: from raw manifests written by hand, through
+designing your own Helm charts, to operations, debugging, networking,
+state, Argo CD internals, and an optional taste of writing an operator.
 
 ## Calibration
 
-The learner deploys to Kubernetes daily at work — but only via existing charts and an Argo CD template someone else designed. He fills templates; he does not design manifests or charts. Theory is familiar from a course, hands-on experience is thin. Therefore: fundamentals are NOT skipped, but paced fast — practice-first, minimal theory recaps — building toward deep operational skills. Local cluster via kind or k3d. The module is a wide, easy-to-hard progression structured as a ladder of arcs: each arc is several single-evening tasks; later arcs' capstones span multiple evenings.
+At work you deploy to Kubernetes daily -- but only via existing charts and
+an Argo CD template someone else designed. You fill in `values.yaml` and
+move on; you don't design manifests or charts, and the theory from a course
+a while back has faded against thin hands-on practice. This module doesn't
+re-teach fundamentals from scratch, but doesn't skip them either: it moves
+fast through the basics and spends most of its weight on the operational
+skills that never come up when someone else's chart already works --
+debugging a Pending pod, tracing why a rollout dropped requests, reading
+what Argo CD's sync status is actually telling you.
 
-Verification style throughout: scripted broken/target cluster states plus validator scripts that assert the fixed/deployed state. Hints 1-3 per task, no reference solutions anywhere (global repo rules apply).
+The module is a ladder of six arcs, each a handful of single-evening tasks,
+easy to hard. Verification throughout is scripted: a validator deploys or
+mutates cluster state, and your fix (or your diagnosis) is checked
+behaviorally against a running cluster -- not by reading your YAML for
+style. Every task has three escalating hints and no reference solution
+anywhere in this repository.
 
-## Arc ladder
+## Prerequisites
 
-### Arc 1 — Manifests from zero (foundation, fast pace)
+- **Docker Desktop** (or another Docker Engine) running, with enough
+  resources allotted for a 3-node kind cluster plus whatever the current
+  task installs (Argo CD, CNPG, Prometheus, ...). 4 CPUs / 8 GiB RAM
+  dedicated to Docker is a comfortable floor.
+- **kind** -- `https://kind.sigs.k8s.io/docs/user/quick-start/#installation`
+- **kubectl** -- `https://kubernetes.io/docs/tasks/tools/#kubectl`
+- **helm** -- `https://helm.sh/docs/intro/install/`
+- **uv** -- `https://docs.astral.sh/uv/getting-started/installation/`
 
-Raw YAML by hand, no Helm. Deployment for a provided worker app, Service, ConfigMap/Secret, liveness/readiness/startup probes — including a task where wrong probes cause a rolling-update outage: observe it, then fix it. Resource requests/limits. Job + CronJob (scraper-flavored scheduled scrape job). Validators assert deployed state and behavior, e.g. a rolling update with zero dropped requests under test load.
+Optional, needed only by specific arcs: the `argocd` CLI (arc 5) and the
+`docker` CLI (already covers image builds).
 
-### Arc 2 — Your own Helm chart (the centerpiece)
+## Cluster lifecycle
 
-Grow the Arc 1 manifests into a chart from scratch: templates, values.yaml design (what is a value vs what is hardcoded — a design task with a review checklist), helpers/_tpl, conditionals and ranges, chart dependencies, hooks, and `helm template` diffing as a debug workflow. Plus: a realistic company-style worker+api+queue umbrella template is provided — reverse-engineer it, explain every decision, find two questionable ones. Capstone: package one of the sandbox's earlier projects (module 06 or 13) as a proper chart with configurable workers, probes, and resources.
+The cluster is long-lived across the whole module -- create it once, keep
+it running, tear it down only when you want to reclaim resources or start
+fresh.
 
-### Arc 3 — Operations and debugging
+```bash
+cd 20-kubernetes
+bash scripts/cluster-up.sh      # once: creates kind cluster "sandbox20" + installs Calico
+bash scripts/build-images.sh    # once: builds & loads the fixture app's 3 images
+uv sync                         # once: installs the validator/harness dependencies
 
-Requests/limits derived from actual measurements: profile a provided workload and right-size it. OOMKill anatomy. QoS classes and eviction. A Pending-pod zoo — resources, affinity, taints, PVC binding — diagnose each case from events alone. CrashLoopBackOff triage methodology. Ephemeral containers for distroless images. Capstone: a "production incident" — a multi-component app is degraded with a scripted hidden root cause; find it from symptoms.
+# work through tasks across many evenings; the cluster survives reboots
+# of individual tasks and of your machine (as long as Docker Desktop is
+# running and the kind cluster's containers weren't removed)
 
-### Arc 4 — Networking and state
+bash scripts/cluster-down.sh    # only when you're done or want a clean slate
+```
 
-Services and kube-proxy from the inside; ingress; DNS failure debug tasks. NetworkPolicy: isolate scraper-style workers so they can reach only the queue and their targets, verified with tests. StatefulSets vs Deployments and why databases on Kubernetes hurt. Postgres via the CloudNativePG operator locally: simulate failover and observe what the operator does.
+`cluster-up.sh` is idempotent: running it again with the cluster already up
+just re-applies Calico and re-checks node health. Calico (not kind's default
+CNI) is required because `NetworkPolicy` enforcement is load-bearing for
+task 14 -- kind's default CNI would silently let denied traffic through.
 
-### Arc 5 — Argo CD demystified
+`build-images.sh` builds `sandbox20-app:1.0`, `sandbox20-app:2.0` (same
+code, different baked `APP_VERSION` -- used by rollout/rollback tasks), and
+`sandbox20-app:distroless` (no shell, used by the ephemeral-containers
+debugging task), then `kind load`s all three. There is no registry: kind's
+containerd only has what was explicitly loaded, so re-run this script
+whenever `app/app.py` changes.
 
-Install Argo CD locally and deploy the Arc 2 chart through it: an Application spec written by hand, sync policies, drift detection (mutate the cluster, watch self-heal), sync waves and hooks, the app-of-apps pattern (recognize it — it is likely what the work template implements), rollback via git revert. Written task: map every field of the work Application template to what it actually does.
+## The fixture app
 
-### Arc 6 — Advanced (optional)
+Every task in this module deploys the same single-file Python app
+(`app/app.py`): an HTTP server (and optional queue consumer/producer) whose
+entire behavior -- startup delay, crash timing, memory leaks, probe
+failures, graceful vs. ungraceful shutdown, required env vars -- is
+controlled by environment variables with safe defaults. Task READMEs tell
+you which knobs are relevant; you write the Kubernetes objects that wire
+those knobs to a realistic failure or success mode.
 
-HPA on custom metrics (queue depth from RabbitMQ/redpanda). PDB behavior vs scripted node drains. A reasoned Helm vs Kustomize comparison. Optional multi-evening capstone: a minimal operator/CRD on kopf — a ScrapeJob CRD that spawns worker deployments and cleans up after itself. The goal is to demystify operators, no more.
+## Namespace convention
+
+Task `NN` deploys into Kubernetes namespace `t{NN}` (e.g. task 8 uses
+`t08`). Validators create and use only their own task's namespace. If
+you're poking around with `kubectl` while working a task, stay inside your
+task's namespace so you don't collide with fixtures another task installed
+cluster-wide (ingress-nginx, Argo CD, CNPG, ...).
+
+## How validation works
+
+Each task directory follows the repo-wide layout (`README.md`, `src/`,
+`tests/`, `hints/hint-{1,2,3}.md`, `NOTES.md`). Run a task's validator from
+inside the task directory:
+
+```bash
+cd 20-kubernetes/01-deployment-service-config
+uv run python tests/validate.py
+```
+
+`uv sync` at the module root (done once above) covers every task's
+dependencies -- there's no per-task `pyproject.toml`. A validator prints
+exactly one line on failure (`NOT PASSED: <reason>`) and `PASSED` on
+success; no raw tracebacks. If a validator tells you the cluster isn't up,
+that's the module's `require_cluster()` check -- run `bash
+scripts/cluster-up.sh` from `20-kubernetes/` and try again.
+
+Hints escalate: `hint-1.md` points in a direction, `hint-2.md` narrows to a
+specific mechanism, `hint-3.md` is close to pseudocode. There are no
+reference solutions anywhere in this module -- not in hints, not in
+`.authoring/`, not in the tests.
+
+## Tasks
+
+22 tasks across 6 arcs (arc 6 optional). Estimated 12-15 evenings total;
+the arc capstones (07, 11, 22) each run several evenings.
+
+| # | Task | Arc | Evenings |
+|---|---|---|:---:|
+| 01 | deployment-service-config | 1 -- Manifests from zero | 1 |
+| 02 | probes-and-zero-downtime | 1 -- Manifests from zero | 1 |
+| 03 | jobs-cronjobs-and-resources | 1 -- Manifests from zero | 1 |
+| 04 | first-chart-from-manifests | 2 -- Your own Helm chart | 1 |
+| 05 | chart-advanced-deps-hooks-diffing | 2 -- Your own Helm chart | 1-2 |
+| 06 | reverse-engineer-company-template | 2 -- Your own Helm chart | 1 |
+| 07 | arc2-capstone-package-spider-platform | 2 -- Your own Helm chart | 2-3 |
+| 08 | rightsizing-and-oomkill | 3 -- Operations and debugging | 1 |
+| 09 | pending-pod-zoo | 3 -- Operations and debugging | 1-2 |
+| 10 | crashloop-and-distroless | 3 -- Operations and debugging | 1 |
+| 11 | arc3-capstone-incident | 3 -- Operations and debugging | 2 |
+| 12 | services-and-dns-debugging | 4 -- Networking and state | 1 |
+| 13 | ingress | 4 -- Networking and state | 1 |
+| 14 | networkpolicy-isolation | 4 -- Networking and state | 1 |
+| 15 | statefulsets-and-cnpg | 4 -- Networking and state | 1-2 |
+| 16 | argocd-app-by-hand | 5 -- Argo CD demystified | 1 |
+| 17 | drift-selfheal-waves | 5 -- Argo CD demystified | 1 |
+| 18 | app-of-apps-and-rollback | 5 -- Argo CD demystified | 1-2 |
+| 19 | hpa-on-queue-depth (optional) | 6 -- Advanced | 1-2 |
+| 20 | pdb-vs-node-drains (optional) | 6 -- Advanced | 1 |
+| 21 | helm-vs-kustomize-writeup (optional) | 6 -- Advanced | 1 |
+| 22 | operator-kopf-scrapejob (optional) | 6 -- Advanced | 2-3 |
+
+### Arc 1 -- Manifests from zero
+
+Raw YAML by hand, no Helm. Deployment for the fixture app, Service,
+ConfigMap/Secret, liveness/readiness/startup probes -- including a task
+where wrong probes cause a rolling-update outage: observe it, then fix it.
+Resource requests/limits. Job + CronJob.
+
+### Arc 2 -- Your own Helm chart
+
+Grow the Arc 1 manifests into a chart from scratch: templates,
+`values.yaml` design, helpers/`_helpers.tpl`, conditionals and ranges,
+chart dependencies, hooks, and `helm template` diffing as a debug workflow.
+Reverse-engineer a realistic company-style umbrella chart and explain every
+decision. Capstone: package an earlier module's app as a proper chart.
+
+### Arc 3 -- Operations and debugging
+
+Right-size requests/limits from actual measurements. OOMKill anatomy. A
+Pending-pod zoo diagnosed from events alone. CrashLoopBackOff triage and
+ephemeral-container debugging of a distroless image. Capstone: a
+"production incident" with a scripted hidden root cause.
+
+### Arc 4 -- Networking and state
+
+Services and DNS debugging. Ingress. NetworkPolicy isolation, enforced for
+real by Calico. StatefulSets vs Deployments, Postgres via the CloudNativePG
+operator, and a simulated failover.
+
+### Arc 5 -- Argo CD demystified
+
+Install Argo CD locally, deploy the Arc 2 chart through a hand-written
+`Application`, watch drift self-heal, work through sync waves and hooks,
+recognize and build the app-of-apps pattern, roll back via `git revert`.
+
+### Arc 6 -- Advanced (optional)
+
+HPA on a custom metric (RabbitMQ queue depth). PDB behavior under scripted
+node drains. A reasoned Helm vs. Kustomize write-up. Optional multi-evening
+capstone: a minimal `kopf` operator for a `ScrapeJob` CRD.

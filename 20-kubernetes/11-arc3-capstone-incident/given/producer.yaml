@@ -1,0 +1,46 @@
+# The producer (WORK_MODE=producer), pushing synthetic jobs into
+# pipeline-config's queue at RATE_PER_S/second. Its own REQUIRED_ENV
+# contract is lighter than api/worker's -- a different team owns this
+# component and never added QUEUE_KEY to its own startup validation, only
+# REDIS_HOST. That asymmetry is why this component does NOT crash during
+# the incident, even though it reads the exact same broken ConfigMap.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer
+  labels:
+    app: producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer
+  template:
+    metadata:
+      labels:
+        app: producer
+    spec:
+      containers:
+        - name: producer
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: pipeline-config
+          env:
+            - name: WORK_MODE
+              value: "producer"
+            - name: RATE_PER_S
+              value: "3"
+            - name: REQUIRED_ENV
+              value: "REDIS_HOST"
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            periodSeconds: 3
+            timeoutSeconds: 2
+            failureThreshold: 2

@@ -1,0 +1,111 @@
+# In-cluster Gitea server, seeded by scripts/install.sh with the chart in
+# given/chart/. Lives in namespace argocd, alongside Argo CD itself, so no
+# NetworkPolicy from another task can come between Argo CD's repo-server
+# and this Service. Not learner-facing -- the learner only ever points
+# their Application's spec.source.repoURL at it.
+#
+# Uses the "-rootless" image variant deliberately: the default (rootful)
+# gitea/gitea image's PID 1 is an s6-overlay supervisor that needs to
+# start as root and drop privileges itself, which breaks the moment a Pod
+# securityContext forces a non-root UID (s6 can't create its own runtime
+# dir). The rootless variant's entrypoint IS the gitea process, built to
+# run as uid/gid 1000 from the start -- which is also what lets
+# `kubectl exec` (used below to seed the admin user) run as the same user
+# the server runs as, instead of inheriting root.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-data
+  namespace: argocd
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: gitea
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gitea
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gitea
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: gitea
+          image: gitea/gitea:1.24.7-rootless
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GITEA__database__DB_TYPE
+              value: sqlite3
+            - name: GITEA__security__INSTALL_LOCK
+              value: "true"
+            - name: GITEA__server__ROOT_URL
+              value: "http://gitea-http.argocd.svc.cluster.local:3000/"
+            - name: GITEA__server__HTTP_PORT
+              value: "3000"
+            - name: GITEA__server__START_SSH_SERVER
+              value: "false"
+            - name: GITEA__service__DISABLE_REGISTRATION
+              value: "true"
+            - name: GITEA__service__REQUIRE_SIGNIN_VIEW
+              value: "false"
+          ports:
+            - name: http
+              containerPort: 3000
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/gitea
+              subPath: data
+            - name: data
+              mountPath: /etc/gitea
+              subPath: config
+          readinessProbe:
+            httpGet:
+              path: /api/healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /api/healthz
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: gitea-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitea-http
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: gitea
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: gitea
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000

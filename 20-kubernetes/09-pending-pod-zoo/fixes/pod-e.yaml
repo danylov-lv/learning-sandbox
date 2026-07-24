@@ -1,0 +1,9 @@
+# TODO(you): corrected zoo-data (PersistentVolumeClaim) + pod-e.
+#
+# Same names (zoo-data, pod-e). Diagnose the real problem from
+# `kubectl describe pod pod-e` / `kubectl describe pvc zoo-data` /
+# `kubectl get events` first -- see README.md and DIAGNOSIS.md. Once you
+# know the root cause, write a working PVC + Pod here (same names, same
+# mount) that actually binds and reaches Running/Ready. Check
+# `kubectl get storageclass` for what's actually available in this cluster
+# before picking a storageClassName.

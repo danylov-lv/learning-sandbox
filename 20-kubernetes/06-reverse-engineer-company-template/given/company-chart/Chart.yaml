@@ -1,0 +1,12 @@
+apiVersion: v2
+name: svc-platform
+description: Company-wide service platform template. One chart, N components, deployed by every team through Argo CD.
+type: application
+version: 1.4.2
+appVersion: "1.4.2"
+keywords:
+  - platform
+  - internal
+maintainers:
+  - name: Platform Team
+    email: platform-team@example.internal

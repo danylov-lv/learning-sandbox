@@ -1,0 +1,14 @@
+# TODO(you): write a Service here.
+#
+# Required shape:
+#   apiVersion: v1
+#   kind: Service
+#   metadata:
+#     name: worker
+#   spec:
+#     type: ClusterIP
+#     selector:
+#       app: worker
+#     ports:
+#       - port: 80
+#         targetPort: 8080

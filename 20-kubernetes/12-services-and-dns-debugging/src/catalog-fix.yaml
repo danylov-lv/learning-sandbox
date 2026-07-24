@@ -1,0 +1,24 @@
+# TODO(you): re-apply a fixed `catalog` Service into namespace t12.
+#
+# Root cause (confirm it yourself with `kubectl get endpoints catalog` and
+# `kubectl describe svc catalog`, don't take this comment's word for it):
+# the Service's selector doesn't match any label that catalog-backend's pods
+# actually carry, so it has zero Endpoints -- kube-proxy has nowhere to send
+# traffic, and any client hitting this Service gets a fast connection
+# refused/reset regardless of what port they ask for.
+#
+# Write this file as a COMPLETE, standalone Service object (every field),
+# not a bare patch -- kubectl apply's three-way merge will silently drop
+# fields you don't re-list.
+#
+# Required shape:
+#   apiVersion: v1
+#   kind: Service
+#   metadata:
+#     name: catalog
+#   spec:
+#     selector:
+#       app: ...              # match catalog-backend's actual pod label
+#     ports:
+#       - port: 80
+#         targetPort: 8080

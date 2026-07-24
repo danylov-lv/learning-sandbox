@@ -1,0 +1,8 @@
+# TODO(you): dev overlay for the `worker` chart.
+#
+# - replicaCount: 1
+# - no resources set (leave the default empty resources in place)
+# - secret.enabled: false
+#
+# Applied as `helm template|install ... -f chart/values-dev.yaml`, merged
+# on top of chart/values.yaml's defaults.

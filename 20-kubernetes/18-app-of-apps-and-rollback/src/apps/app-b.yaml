@@ -1,0 +1,29 @@
+# TODO(you): write CHILD Application #2 here.
+#
+# Same idea as app-a.yaml, same source chart and destination namespace --
+# just a second, independently named Application. Argo CD uses this
+# Application's own metadata.name as the Helm release name when it
+# renders the chart, so app-a and app-b naturally get differently-named
+# Deployments in namespace t18 even though they deploy the same chart.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: argoproj.io/v1alpha1
+#   kind: Application
+#   metadata:
+#     name: t18-child-b
+#     namespace: argocd
+#   spec:
+#     project: default
+#     source:
+#       repoURL: http://gitea-http.argocd.svc.cluster.local:3000/sandbox20/t18-child-chart.git
+#       targetRevision: main
+#       path: .
+#     destination:
+#       server: https://kubernetes.default.svc
+#       namespace: t18
+#     syncPolicy:
+#       automated:
+#         prune: true
+#         selfHeal: true
+#       syncOptions:
+#         - CreateNamespace=true

@@ -1,0 +1,36 @@
+# TODO(you): write the worker Deployment here.
+#
+# Required shape (see README.md "What's required" for the full contract):
+#   apiVersion: apps/v1
+#   kind: Deployment
+#   metadata:
+#     name: worker
+#   spec:
+#     replicas: {{ .Values.replicas }}
+#     selector:
+#       matchLabels:
+#         app: worker
+#     template:
+#       metadata:
+#         labels:
+#           app: worker
+#       spec:
+#         containers:
+#           - name: worker
+#             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+#             imagePullPolicy: IfNotPresent   # this image is not in any registry
+#             ports:
+#               - containerPort: 8080
+#             env:
+#               - name: WORK_MODE
+#                 value: "consumer"
+#               - name: QUEUE_BACKEND
+#                 value: "redis"
+#               - name: REDIS_HOST
+#                 value: {{ include "queue-chart.fullname" . }}   # <- comes from the queue-chart dependency
+#               - name: REDIS_PORT
+#                 value: "6379"
+#               - name: QUEUE_KEY
+#                 value: {{ .Values.queue.key | quote }}          # <- values-driven, not a literal repeated string
+#             resources:
+#               {{- toYaml .Values.resources | nindent 14 }}

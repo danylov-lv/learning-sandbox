@@ -1,0 +1,41 @@
+# Given, ready to apply as-is -- this is NOT the file you edit for this task
+# (that's src/deployment.yaml). This Deployment intentionally sets no
+# resources at all, so it schedules as BestEffort and you can watch its real
+# footprint with `kubectl top` before deciding what to write in src/.
+#
+# Apply it into your own t08 namespace, let it run for ~20-30s so RSS
+# settles, then profile it:
+#
+#   kubectl --context kind-sandbox20 create namespace t08 --dry-run=client -o yaml | kubectl --context kind-sandbox20 apply -f -
+#   kubectl --context kind-sandbox20 -n t08 apply -f given/profile-workload.yaml
+#   kubectl --context kind-sandbox20 -n t08 top pod -l app=profile-me --containers
+#
+# Delete it (or just re-run tests/validate.py, which recreates t08 from
+# scratch) once you're done profiling -- it is not part of what gets graded.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-me
+  labels:
+    app: profile-me
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profile-me
+  template:
+    metadata:
+      labels:
+        app: profile-me
+    spec:
+      containers:
+        - name: app
+          image: sandbox20-app:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MEM_MB
+              value: "180"
+            - name: CPU_BURN_THREADS
+              value: "1"

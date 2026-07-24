@@ -1,0 +1,26 @@
+# TODO(you): re-apply a fixed `catalog-batch` Service into namespace t12.
+#
+# Root cause (confirm it yourself, don't take this comment's word for it):
+# `kubectl get endpoints catalog-batch` shows real pod IPs -- the selector
+# is fine -- but look at the port those Endpoints advertise. Compare it
+# against catalog-backend's actual containerPort (`kubectl get deploy
+# catalog-backend -o yaml`, or its readinessProbe target). The Service's
+# targetPort doesn't have to match a probe's port to exist, but if nothing
+# in the pod is listening there, every connection through this Service gets
+# refused even though DNS resolves fine and Endpoints look populated.
+#
+# Write this file as a COMPLETE, standalone Service object (every field),
+# not a bare patch -- kubectl apply's three-way merge will silently drop
+# fields you don't re-list.
+#
+# Required shape:
+#   apiVersion: v1
+#   kind: Service
+#   metadata:
+#     name: catalog-batch
+#   spec:
+#     selector:
+#       app: catalog-backend
+#     ports:
+#       - port: 80
+#         targetPort: ...     # the port catalog-backend's container actually listens on

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: sandbox20-fixture
+description: Self-contained fixture chart for task 16 -- deploys the sandbox20-app worker. Seeded into the in-cluster Gitea repo by scripts/install.sh; not written by the learner.
+type: application
+version: 0.1.0
+appVersion: "1.0"

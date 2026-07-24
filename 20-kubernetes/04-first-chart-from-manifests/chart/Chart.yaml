@@ -1,0 +1,6 @@
+apiVersion: v2
+name: worker
+description: Sandbox 20 fixture app, packaged as a Helm chart written from scratch.
+type: application
+version: 0.1.0
+appVersion: "1.0"
