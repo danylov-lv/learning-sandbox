@@ -4,11 +4,11 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 
 ## 01-sql-foundations
 
-- [ ] 01-cross-source-price-spread — price spread by root category and source tier
-- [ ] 02-category-tree-rollup — recursive category-tree rollup
-- [ ] 03-currency-normalized-revenue — currency-normalized monthly revenue
-- [ ] 04-price-change-detection — consecutive-snapshot price-drop detection
-- [ ] 05-rolling-price-volatility — 30-day RANGE-framed rolling volatility
+- [x] 01-cross-source-price-spread — price spread by root category and source tier
+- [x] 02-category-tree-rollup — recursive category-tree rollup
+- [x] 03-currency-normalized-revenue — currency-normalized monthly revenue
+- [x] 04-price-change-detection — consecutive-snapshot price-drop detection
+- [x] 05-rolling-price-volatility — 30-day RANGE-framed rolling volatility
 - [ ] 06-top-n-per-group — top-3 products per level-2 category
 - [ ] 07-time-bucketed-trends — weekly trend bucketing with distinct counts
 - [ ] 08-gaps-and-islands — longest out-of-stock streaks
@@ -289,11 +289,13 @@ Rust projects, independent pace, no chapter binding. A Cargo workspace (edition 
 Local `kind` cluster `sandbox20` (3 nodes + Calico for real NetworkPolicy). Create it once: `bash scripts/cluster-up.sh` then `bash scripts/build-images.sh`. Each task validator runs from its own dir via `uv run python tests/validate.py` and uses its own namespace `tNN`.
 
 Arc 1 — Manifests from zero:
-- [ ] 01-deployment-service-config — hand-write Deployment/Service/ConfigMap/Secret; app_version + CONFIG_* sourced from the ConfigMap/Secret, verified through the Service
+
+- [ ] 01-deployment-service-config — hand-write Deployment/Service/ConfigMap/Secret; app*version + CONFIG*\* sourced from the ConfigMap/Secret, verified through the Service
 - [ ] 02-probes-and-zero-downtime — fix wrong liveness/readiness probes so a rolling update drops zero requests under sustained load
 - [ ] 03-jobs-cronjobs-and-resources — a scrape-flavored Job + CronJob (schedule/concurrency policy) with requests+limits on every container
 
 Arc 2 — Your own Helm chart:
+
 - [ ] 04-first-chart-from-manifests — promote the Arc 1 manifests into a from-scratch chart (helpers, values, values-dev/prod); lint + template + install
 - [ ] 05-chart-advanced-deps-hooks-diffing — subchart dependency, a pre-install/upgrade hook, and a `helm template` diff workflow
 - [ ] 06-reverse-engineer-company-template — written: annotate a realistic umbrella-style company chart, explain every decision, find two questionable ones
@@ -303,6 +305,7 @@ Arc 2 — Your own Helm chart:
   - [ ] CP3: DESIGN.md defended, CP1+CP2 re-run green
 
 Arc 3 — Operations & debugging:
+
 - [ ] 08-rightsizing-and-oomkill — profile a workload with metrics-server, set requests/limits within policy caps; recognize a scripted OOMKill (exit 137)
 - [ ] 09-pending-pod-zoo — diagnose five Pending pods (resources, nodeSelector, node affinity, taint/toleration, unbound PVC) from events, then fix each
 - [ ] 10-crashloop-and-distroless — triage a CrashLoopBackOff (missing REQUIRED_ENV) and debug a shell-less distroless pod via an ephemeral container
@@ -311,12 +314,14 @@ Arc 3 — Operations & debugging:
   - [ ] CP2: INCIDENT.md — root cause + cascade written up, CP1 re-run green
 
 Arc 4 — Networking & state:
+
 - [ ] 12-services-and-dns-debugging — fix a broken Service/DNS chain (selector, targetPort, headless misuse); an in-cluster probe Job resolves+curls each
 - [ ] 13-ingress — install ingress-nginx (owning script), write an Ingress; validator curls host 127.0.0.1:8320 with the configured Host header
 - [ ] 14-networkpolicy-isolation — default-deny + allow so a worker reaches only queue+target (and DNS); six probe Jobs prove allowed passes, denied is blocked (Calico)
 - [ ] 15-statefulsets-and-cnpg — install the CNPG operator (owning script), bring up a 3-instance Postgres Cluster, observe a forced-primary failover recover
 
 Arc 5 — Argo CD demystified:
+
 - [ ] 16-argocd-app-by-hand — install Argo CD + in-cluster Gitea (owning script), write an Application CR pointing at the seeded chart repo; Synced/Healthy
 - [ ] 17-drift-selfheal-waves — automated syncPolicy with selfHeal reverts out-of-band drift; sync-wave + PreSync-hook ordering on a multi-resource app
 - [ ] 18-app-of-apps-and-rollback (capstone)
@@ -325,6 +330,7 @@ Arc 5 — Argo CD demystified:
   - [ ] CP3: map every field of a work Application template (doc-gate), CP1+CP2 re-run green
 
 Arc 6 — Advanced (optional):
+
 - [ ] 19-hpa-on-queue-depth — install RabbitMQ + Prometheus + prometheus-adapter (owning script); HPA scales consumers on queue depth up then back down
 - [ ] 20-pdb-vs-node-drains — a PDB keeps a spread Deployment above minAvailable through a real `kubectl drain`; validator always uncordons every node after
 - [ ] 21-helm-vs-kustomize-writeup — written comparison graded on required sections, grounding vocabulary, and hostile-review answers
