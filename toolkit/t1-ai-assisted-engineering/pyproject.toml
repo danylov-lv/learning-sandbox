@@ -1,0 +1,10 @@
+[project]
+name = "sandbox-t1-ai-assisted-engineering"
+version = "0.1.0"
+description = "Toolkit t1: AI-assisted engineering with Claude Code — project memory (CLAUDE.md), custom subagents, hooks and guardrails, headless/CI usage, a minimal MCP server, and verification discipline for AI-generated patches. Six single-evening tasks, no capstone. Every task references real, currently-existing Claude Code mechanisms."
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=8",
+    "mcp>=1.0",
+    "pyyaml>=6",
+]

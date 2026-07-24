@@ -1,0 +1,24 @@
+scratch/
+**/scratch/
+dist/
+**/dist/
+*.egg-info/
+**/*.egg-info/
+build/
+**/build/
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+**/.mypy_cache/
+.ruff_cache/
+**/.ruff_cache/
+
+# Task 01/05 nested project/ dirs manage their own uv-generated lockfile —
+# only the module-root uv.lock is committed.
+01-uv-project-management/project/uv.lock
+05-packaging-internal-library/project/uv.lock

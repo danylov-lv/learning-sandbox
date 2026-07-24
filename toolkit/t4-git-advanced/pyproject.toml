@@ -1,0 +1,8 @@
+[project]
+name = "sandbox-t4-git-advanced"
+version = "0.1.0"
+description = "Toolkit t4: git beyond daily add/commit/push — interactive rebase cleanup, bisect on a scripted regression, worktrees for parallel work, reflog rescue after a deleted branch, and a written commit-granularity/history policy. Every task but the writeup builds a scratch git repo under a gitignored work/ dir and grades the repo-state the learner reaches (commit graph shape, messages, tree/blob equality, branch pointers, recovered SHAs) with a standalone validator — no docker, no database."
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=8.0",
+]

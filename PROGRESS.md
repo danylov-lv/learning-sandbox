@@ -333,6 +333,43 @@ Arc 6 — Advanced (optional):
   - [ ] CP2: update reconcile + delete cleanup + reconcile events in the operator log
   - [ ] CP3: DESIGN.md (reconcile loop, owner refs, idempotency), CP1+CP2 re-run green
 
+# Toolkit track
+
+Small tool-fluency modules, no prescribed order (dip in anytime) — except t1's task 01 (project memory) early, since a good CLAUDE.md improves every other task. No capstones. Non-Docker, no host ports.
+
+## toolkit / t1-ai-assisted-engineering
+
+- [ ] 01-project-memory — write a proper CLAUDE.md for a given toy project; memory vs. rot
+- [ ] 02-custom-subagents — author a test-runner and code-reviewer subagent, plus when NOT to delegate
+- [ ] 03-hooks-and-guardrails — a PostToolUse test hook and a ruff lint hook, both behaviorally graded
+- [ ] 04-headless-and-ci — `claude -p` headless review script and a label-triggered CI review workflow
+- [ ] 05-mcp-server — a tiny stdio MCP server exposing sandbox progress, graded via the real MCP protocol
+- [ ] 06-verification-discipline — review plausible-but-flawed patches; verdicts plus tests that catch the planted bugs
+
+## toolkit / t2-modern-python-toolchain
+
+- [ ] 01-uv-project-management — fix a broken pyproject (missing dep, console entry point, dev group) so `uv sync`/`uv run`/`uv tool run` all work
+- [ ] 02-ruff-lint-and-format — configure ruff (select I/B, line-length, scoped per-file-ignores) and fix real lint/format violations, capped at zero `# noqa`
+- [ ] 03-typing-strict — turn on `mypy --strict` and fix four genuine typing issues while a given pytest suite keeps behavior honest
+- [ ] 04-pre-commit-wiring — write `.pre-commit-config.yaml` wiring ruff + strict mypy + hygiene hooks, validated against clean/bad fixtures in throwaway repos
+- [ ] 05-packaging-internal-library — fix a broken pyproject so `uv build` yields a wheel + sdist whose installed console script runs, proving a real src layout
+
+## toolkit / t3-cli-data-toolkit
+
+- [ ] 01-jq-nested-json — flatten/join/group/reshape nested scraped JSON with jq
+- [ ] 02-ripgrep-and-fd — regex capture group, fd glob exclusion, lookaround pattern, extension census
+- [ ] 03-duckdb-cli-swiss-knife — hive-partitioned aggregate, CSV join, window function via the duckdb CLI
+- [ ] 04-hyperfine-benchmark — honest relative micro-benchmark of two counting approaches, graded self-consistently
+- [ ] 05-gnu-parallel-batch — fan a per-file jq transform across 30 inputs with GNU parallel
+
+## toolkit / t4-git-advanced
+
+- [ ] 01-interactive-rebase-cleanup — clean a messy 8-commit branch into a 5-commit linear history via interactive rebase
+- [ ] 02-bisect-find-regression — find the first commit that broke a pricing calculation in a 14-commit history via `git bisect`
+- [ ] 03-worktrees-parallel — create two `git worktree` checkouts on two feature branches and commit to each in parallel
+- [ ] 04-reflog-rescue — recover a force-deleted branch's exact original commit via `git reflog`
+- [ ] 05-history-design-writeup — write a commit-granularity and history policy (POLICY.md) that survives a 6-question hostile review
+
 ## ci-meta
 
 - [ ] (tasks are added when the module is generated)

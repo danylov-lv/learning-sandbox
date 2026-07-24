@@ -1,0 +1,9 @@
+## toolkit / t2-modern-python-toolchain
+
+Modern Python toolchain: uv (project + tool management), ruff (lint + format), mypy --strict, pre-commit wiring, and packaging an internal library with a src layout. All five validators are behavioral — they shell out to the real tool and check its exit code/output, plus structural config parsing so a passing tool run can't be faked by disabling every rule.
+
+- [ ] 01-uv-project-management — fix a broken `project/pyproject.toml` (missing pyyaml dependency, missing `pricetool` console entry point, missing `dev` dependency group) so `uv sync`, `uv run pricetool`, `uv run pytest`, and `uv tool run --from . pricetool` (the uvx-equivalent tool-management path) all work
+- [ ] 02-ruff-lint-and-format — configure ruff's `select` (defaults plus the non-default `I`/`B` families), `line-length = 100`, and a scoped `per-file-ignores` for `__init__.py`; fix genuine lint and format violations in `report.py` for real (capped at zero `# noqa`)
+- [ ] 03-typing-strict — turn on `mypy --strict` and fix four genuine typing issues (two missing-annotation functions, an Optional misuse that's also a live runtime bug, a function returning `None` from a `-> str` signature), while a given unedited pytest suite keeps behavior honest
+- [ ] 04-pre-commit-wiring — write `.pre-commit-config.yaml` from scratch (it does not exist yet) wiring ruff lint+format, strict mypy, and two basic hygiene hooks; validated against a clean fixture (must pass) and a bad fixture (must fail) in throwaway git repos
+- [ ] 05-packaging-internal-library — fix a broken `project/pyproject.toml` (missing build-system, version, console entry point) so `uv build` produces a wheel + sdist and the installed wheel's console script runs correctly from a throwaway venv, proving the src layout is real

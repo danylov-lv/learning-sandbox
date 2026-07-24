@@ -1,0 +1,12 @@
+[project]
+name = "sandbox-t3-cli-data-toolkit"
+version = "0.1.0"
+description = "Toolkit t3: CLI data toolkit — jq transformations on nested scraped JSON, ripgrep/fd fluency drills, DuckDB CLI as a swiss knife over Parquet+CSV, honest hyperfine micro-benchmarking, and GNU parallel batch processing. Verification is expected-output checks against an independently computed ground truth."
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=8",
+    "numpy",
+    "pandas",
+    "pyarrow",
+    "duckdb",
+]

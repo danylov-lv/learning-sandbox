@@ -1,0 +1,12 @@
+[project]
+name = "normkit"
+version = "0.1.0"
+description = "Normalizes messy scraped price/tag/currency fields."
+requires-python = ">=3.11"
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
