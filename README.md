@@ -54,6 +54,10 @@ Suggested path: 01 first (warm-up), then 02 immediately — it's the priority mo
 - Structural checks are preferred over timing checks wherever possible: e.g. "the EXPLAIN plan must not contain `Seq Scan` on this table," or "the aggregate result must match the reference computation," rather than "this must run in under N ms."
 - Where timing genuinely matters (query optimization, streaming throughput), a baseline script benchmarks the task on *your* machine first and later checks are expressed relative to that local baseline, not an absolute number.
 
+## Continuous integration
+
+Every module ships an unsolved stub with no reference solution, so a task validator failing is the expected starting state, not something CI can treat as red — it would never turn green until a human actually solved it. Instead, `ci-meta` (the repo's own CI, see `ci-meta/README.md`) detects which module a push or PR touched and asserts that module's *authoring contract*: the scaffold is intact, no solution has leaked, and python lock files are valid. For the modules whose `docker-compose.yml` is just Postgres/Redis/Mongo, it also boots those service containers and waits for them to reach healthy.
+
 ## k8s bonus levels
 
 Modules **06**, **07**, and **13** (and optionally **05**) include an optional `k8s-bonus/` level: deploy that module's project to a local `kind`/`k3d` cluster using your own Helm chart, with HPA, PodDisruptionBudgets, and resource limits derived from what you actually measured earlier in the module.

@@ -372,4 +372,21 @@ Small tool-fluency modules, no prescribed order (dip in anytime) — except t1's
 
 ## ci-meta
 
-- [ ] (tasks are added when the module is generated)
+Not a checklist of learner tasks — `ci-meta` is committed CI infrastructure
+for the repository itself, generated complete (see `ci-meta/README.md` for
+why it is the one module that ships with no unsolved stub). What its CI
+actually checks, per push/PR:
+
+- **Changed-module detection** (`detect_changes.py`) — maps the diff
+  against a base ref to the registry module(s) it touches.
+- **Per-module authoring-contract verification** (`run_module_ci.py`, one
+  matrix job per changed module) — required scaffold files present, no
+  reference solution leaked, python lock files valid.
+- **Light-module service-container boot** — for modules whose
+  `docker-compose.yml` is just Postgres/Redis/Mongo (01, 03, 10, 12), CI
+  actually brings the containers up and waits for healthy; heavier stacks
+  (Spark, Airflow, ClickHouse, redpanda, Debezium, MinIO, GPU-bound Ollama)
+  are skipped live with a stated reason, static-checked only.
+- **Repo-wide guards** (`repo_guards.py`) — no tracked junk, no pending
+  `GENERATION_STATE.md` items, the registry matches the real module
+  directories on disk.
