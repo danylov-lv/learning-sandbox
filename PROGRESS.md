@@ -9,7 +9,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 - [x] 03-currency-normalized-revenue — currency-normalized monthly revenue
 - [x] 04-price-change-detection — consecutive-snapshot price-drop detection
 - [x] 05-rolling-price-volatility — 30-day RANGE-framed rolling volatility
-- [ ] 06-top-n-per-group — top-3 products per level-2 category
+- [x] 06-top-n-per-group — top-3 products per level-2 category
 - [ ] 07-time-bucketed-trends — weekly trend bucketing with distinct counts
 - [ ] 08-gaps-and-islands — longest out-of-stock streaks
 - [ ] 09-dedup-latest-snapshot — dedup to latest snapshot per pair
