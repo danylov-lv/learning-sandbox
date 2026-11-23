@@ -2,7 +2,7 @@
 
 ## Profile & hardware (calibrate ALL difficulty to this)
 
-Build a learning sandbox repository `learning-sandbox` for project-based engineering skill development. Calibrate task difficulty to my profile — do NOT dumb it down:
+Maintain and extend the `learning-sandbox` repository for project-based engineering skill development. Calibrate task difficulty to my profile — do NOT dumb it down:
 
 - 2 years of commercial web scraping: 1 year requests/bs4, 1 year Scrapy
 - Daily work with distributed architecture: producer/consumer spiders communicating via RabbitMQ, deployed to Kubernetes via existing Helm charts and an Argo template (I fill templates, I don't design charts — see module 20 spec)
@@ -14,9 +14,13 @@ Meaning: queues, workers, containers, k8s are my daily context. Tasks like "lear
 
 Hardware: Windows machine, 32 GB RAM, RTX 3070 Ti Super 8 GB VRAM, Docker available. I work both inside Docker and natively on Windows. Postgres always in Docker.
 
-## Orchestration rule (critical, follow strictly)
+## Working with Codex
 
-You (the main model) act ONLY as orchestrator and architect: design the structure, decompose the work, write task specs for subagents, review their output, assemble the result. ALL content generation (task texts, seed scripts, datasets, tests, configs, boilerplate) must be delegated to subagents on cheaper models (Haiku / Sonnet) via the Task tool. Do not write files yourself except for final review fixes where a subagent failed. Run subagents in parallel wherever tasks within the current module are independent (e.g., several tasks of one module generated simultaneously). If a subagent produces garbage — give it specific feedback and regenerate; do not redo the work yourself.
+The learner writes the exercise solutions. Codex helps review submitted work, discuss design choices, explain failures, and maintain or extend the learning materials. During a review, report findings and guide the learner without rewriting their solution or revealing reference solutions. Treat `.authoring/` as spoiler-bearing material: consult it only when needed for authoring or validation work, and keep spoilers out of learner-facing feedback.
+
+For authoring work, decompose the requested scope, implement the scaffolding and validators, review the result, and verify it. Delegate independent work only when useful and supported by the current environment; no particular model, provider-specific tool, or fixed agent hierarchy is required. The coordinating agent remains responsible for reviewing and verifying delegated work. Small maintenance changes can be completed directly.
+
+Read the root README, CONVENTIONS.md, and the relevant progress or generation-state entries first. Locate module headings and read only the sections needed for the current request. Avoid full recursive scans and loading all module content into context.
 
 ## Sandbox philosophy
 
@@ -33,7 +37,12 @@ You (the main model) act ONLY as orchestrator and architect: design the structur
 learning-sandbox/
 ├── README.md               # learning map, order, how to work with the sandbox
 ├── PROGRESS.md             # flat checklist of all tasks
-├── GENERATION_STATE.md     # batch generation state
+├── CONVENTIONS.md          # authoring rules
+├── docs/
+│   └── authoring/
+│       ├── SPEC.md
+│       ├── GENERATION_STATE.md
+│       └── prompts/
 ├── 01-sql-foundations/
 ├── 02-sql-optimization/    # PRIORITY #1 — my main gap
 ├── 03-data-modeling/
@@ -78,7 +87,7 @@ NN-task-name/
 ## Quality requirements
 
 - Generate data via scripts (faker/numpy with fixed seeds), realistic distributions; never commit gigabytes to git — generators only.
-- Every docker-compose must actually start; subagents must verify by running, not by eyeballing.
+- Every docker-compose must actually start; verify by running it and report any runtime verification that could not be completed.
 - Root README: recommended order (02 right after warm-up 01), estimated time per module, the rule "one evening per week — one or two tasks, capstones span multiple evenings".
 - PROGRESS.md — flat checklist of all tasks with day-block groupings for capstones.
 - Since k8s/Helm is my daily tool, add an optional `k8s-bonus/` level to modules 06, 07, and 13 (plus a spark-on-k8s taste in module 05 if trivial to include): deploy that module's project to a local cluster (kind/k3d) with your own Helm chart — HPA for consumers, PDB, resource limits based on measurements.
@@ -87,18 +96,19 @@ NN-task-name/
 
 ## Second wave roadmap (out of scope — do NOT generate now)
 
-List the following in the root README under "Planned modules (second wave)" as one-liners, so future sessions can generate them via GENERATION_STATE.md in the same style. Do not create their directories or tasks today:
+List the following in the root README under "Planned modules (second wave)" as one-liners, so future sessions can generate them via `docs/authoring/GENERATION_STATE.md` in the same style. Do not create their directories or tasks today:
 
 - **Network layer for scraping**: TLS fingerprinting (JA3) and how anti-bots see clients, HTTP/1.1 vs HTTP/2 semantics, connection pooling/keep-alive internals, DNS, traffic analysis with mitmproxy.
 - **Deep AI track** (continuation of modules 14–15, after the base is done): fine-tuning small models for extraction tasks, building evals, local serving and inference optimization.
 - **IaC / Terraform**: infrastructure as code, if/when work moves cloudward.
 
-## Generation process (replaces any batch plan)
+## Authoring process
 
-- Work module-by-module in the order of `GENERATION_STATE.md`, ONE module at a time.
-- For each module: read ONLY its section from `SPEC.md` (delimited by `## MODULE:` headings — locate via grep and read that range only, never the whole file), decompose it for subagents, generate, verify (docker-compose must start, tests must run), mark it done in `GENERATION_STATE.md`, then proceed to the next.
-- Context hygiene: subagents write files directly to disk and return only short summaries — never their full output — to the orchestrator. The orchestrator must not read generated task content back into context except spot-checks.
-- When the session's limit approaches: finish the current module cleanly, update `GENERATION_STATE.md`, stop. A fresh session resumes from the state file + this global spec alone.
+- Work on the module or maintenance scope requested by the user. `docs/authoring/GENERATION_STATE.md` records content generation; `PROGRESS.md` records learner completion. An unchecked learner task is not a request to generate or solve it.
+- For module authoring, read only its section in this file, located via `## MODULE:` headings. Plan the work, implement or delegate as appropriate, verify the environment and validators, then update the relevant generation-state entry. Continue to another module only within the authorized scope.
+- Preserve existing exercises, learner solutions, and completion checkboxes during unrelated maintenance. New modules follow the spec-approval process in `docs/authoring/prompts/add-new-module.md`.
+- Keep context bounded. Delegated work should return a short summary, changed paths, verification results, and unresolved issues. Inspect the changes needed to assess correctness.
+- At a session boundary, record unfinished authoring work and verification limits in the generation state. A fresh session reads the global spec, the relevant state entry, and only the requested module's section.
 
 ---
 
@@ -214,14 +224,16 @@ The **toolkit track** is a family of small modules (3–5 single-evening tasks e
 │   └── t4-git-advanced/
 ```
 
-**t1 — AI-assisted engineering (the priority of this track).** My level: I use Claude Code daily and understand correct usage at a working level — target advanced practice, not "what is a prompt". IMPORTANT for generation: consult current Claude Code documentation while generating this module (features evolve fast); tasks must reference real, currently existing mechanisms, not invented ones. Tasks, roughly easy→hard:
-1. **Project memory done right** — write a proper CLAUDE.md for this very sandbox repo (conventions, verification commands, orchestration rules); measurable goal: a fresh session solves a scripted task correctly without re-explaining context. Include guidance on what belongs in memory vs what rots.
+**t1 — AI-assisted engineering (the priority of this track).** My level: I use Codex daily and understand correct usage at a working level — target advanced practice, not "what is a prompt". IMPORTANT for generation: consult current Codex documentation while generating this module (features evolve fast); tasks must reference real, currently existing mechanisms, not invented ones. Tasks, roughly easy→hard:
+1. **Project memory done right** — write a grounded AGENTS.md for the given toy project; grade its structure locally and optionally try discovery in an isolated fresh session. Do not install the exercise template at the sandbox root. Include guidance on what belongs in memory vs what rots.
 2. **Custom subagents** — design 2–3 project subagents (e.g., a test-runner/verifier agent, a code-reviewer agent with my review checklist); task includes when NOT to delegate.
-3. **Hooks & guardrails** — a hook that auto-runs the relevant module's tests after edits and blocks on failure; a formatting/lint hook (ties into t2).
-4. **Headless & CI** — `claude -p` in scripts; one task wiring an AI review step into the ci-meta GitHub Actions workflow (label-triggered, not on every push).
+3. **Hooks & guardrails** — a local PostToolUse hook that runs checks after apply_patch and reports failed checks without claiming to undo the edit; a formatting/lint hook (ties into t2).
+4. **Headless & CI** — `codex exec --json` in scripts; one task wiring an AI review step into the ci-meta GitHub Actions workflow (label-triggered, not on every push).
 5. **A minimal MCP server** — write a tiny Python MCP server exposing sandbox progress (reads PROGRESS.md, reports next recommended task); connect it and use it. Demystifies MCP by building one.
 6. **Verification discipline** — a written+practical task on reviewing AI-generated code: I take a deliberately plausible-but-flawed generated patch (subagents: create 2–3 such patches with subtle bugs — a race, an off-by-one in pagination, a silent type coercion) and must find the flaws before "merging". This is the core skill of AI-assisted work.
 Verification for t1: artifact-based where possible (hook fires, MCP server responds, CI step runs); the review task has hidden-bug ground truth.
+
+Codex artifacts: task 01 uses an isolated AGENTS.md draft; task 02 uses .codex/agents/*.toml (name, description, developer_instructions); task 03 uses synchronous .codex/hooks.json handlers and Codex payloads; task 04 requires explicit read-only execution and JSONL output. Local validators do not certify model compliance or hosted CI execution.
 
 **t2 — Modern Python toolchain.** My stack is Python-first; modernize the workflow: uv (project + tool management, replacing pip/venv habits), ruff (lint + format, custom rule config), pyright or mypy strict on a real module of the sandbox (fix what it finds — generate code with genuine typing issues), pre-commit wiring it all, packaging a small internal library properly (pyproject, src layout). Verification — CI-style check scripts must pass.
 
@@ -229,7 +241,7 @@ Verification for t1: artifact-based where possible (hook fires, MCP server respo
 
 **t4 — Git advanced.** Beyond daily add/commit/push: interactive rebase to clean a messy generated history, bisect to find a scripted regression (generate a repo with a hidden breaking commit), worktrees for parallel work (natural fit with AI-assisted flows — link to t1), reflog rescue task ("the branch is gone — recover it"), meaningful history design (written task: commit granularity policy). Verification — repo-state validators.
 
-Update the root README learning map (toolkit track listed separately, "dip in anytime" — no prescribed order except t1 task 1 early, since CLAUDE.md improves all other sandbox work) and PROGRESS.md.
+Update the root README learning map (toolkit track listed separately, "dip in anytime" — no prescribed order except t1 task 1 early, since AGENTS.md improves all other sandbox work) and PROGRESS.md.
 
 ## MODULE: ci-meta
 

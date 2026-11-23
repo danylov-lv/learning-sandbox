@@ -81,3 +81,9 @@ than hanging the validator.
 `.authoring/` (at the module root) documents this module's grading
 contract across all six tasks -- spoilers, in general. Read it after
 finishing this task, if at all.
+
+## Optional Codex client trial
+
+After the protocol validator passes, register the completed stdio server in an isolated project using the documented Codex MCP configuration. Verify that Codex discovers and calls next_recommended_task. Use an absolute server path and the module environment; do not change the sandbox's active MCP configuration. This client trial is not graded by the protocol validator.
+
+Reference: https://developers.openai.com/codex/mcp

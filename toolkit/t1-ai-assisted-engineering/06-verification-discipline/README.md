@@ -2,7 +2,7 @@
 
 ## Backstory
 
-Every other task in this module is about using Claude Code well. This
+Every other task in this module is about using Codex well. This
 one is about the skill that matters most once you do: reviewing AI-
 generated (or anyone else's) code you didn't write, that comes with a
 plausible-sounding description of what it does, and deciding whether to

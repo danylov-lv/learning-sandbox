@@ -24,7 +24,7 @@ Concretely, for each required section:
   `is None`, not truthiness" is grounded in the actual contract.
 
 - **Memory vs rot.** This is not a section about priceparser. It's a
-  section about the CLAUDE.md file itself: which of the facts you just
+  section about the AGENTS.md file itself: which of the facts you just
   wrote above are stable (a function's contract, a directory layout) and
   which categories of fact you deliberately left OUT because they'd go
   stale fast (a current bug count, a specific line number, "we're

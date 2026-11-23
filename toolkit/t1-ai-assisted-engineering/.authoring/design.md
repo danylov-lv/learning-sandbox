@@ -1,152 +1,34 @@
-# Design notes -- toolkit/t1-ai-assisted-engineering
+# Authoring contracts: toolkit/t1-ai-assisted-engineering
 
-Off-limits to the learner before attempting a task -- this file holds
-grading-contract detail and, for task 06, planted-bug ground truth.
-Read a task's section only after finishing that task, if at all.
+Learner off-limits before attempting a task. Task 06 contains grading ground truth.
 
 ## Shared conventions
 
-- Every validator: `guarded` + `not_passed`/`passed` from
-  `harness/common.py`, single-line output, exit 0/1, no tracebacks.
-- No reference solutions committed anywhere (src, hints, tests,
-  `.authoring`). Every throwaway reference used to prove the pass path
-  during generation was written, run once, and reverted byte-identical
-  (see `notes-live-verification.md`).
-- No `docker-compose.yml`, no host ports for this module -- pure Python,
-  no services. Consistent with the `CONVENTIONS.md` exceptions already
-  documented for modules 16/17/18/19.
+Validators use harness/common.py for PASSED / NOT PASSED output and exit 0/1. The module has no services or host ports. Learner deliverables remain unsolved; active agent configuration belongs outside the exercise templates. Dependency versions come from pyproject.toml and uv.lock.
 
 ## 01-project-memory
 
-Pure doc-gate on `deliverable/CLAUDE.md`: 5 required `##` sections
-(`Commands`, `Conventions`, `Architecture`, `What NOT to do`, `Memory vs
-rot`), per-section minimum length, no `[fill in`/`TODO:` placeholders,
->=6 grounding keywords specific to the given `sample-project`
-(`priceparser`)'s actual contract (money-as-cents, `None`-on-failure,
-currency normalization -- not generic Python advice), a regex check that
-the file names `sample-project`'s real test invocation
-(`pytest\s+tests`), and a separate keyword check on the "Memory vs rot"
-section specifically for reflection vocabulary (rot, stale, volatile,
-secret, drift, ...).
-
-`sample-project` itself is real, complete, correct code (not a stub) --
-`uv run pytest tests -q` from `01-project-memory/sample-project/` passes
-8/8 as shipped.
+Grade deliverable/AGENTS.md using the five required sections, per-section length checks, placeholder detection, sample-project grounding, its pytest command, and the memory-versus-rot reflection vocabulary. The exact rubric lives in tests/validate.py. The draft is not active instructions for sample-project; optional discovery trials use a temporary project.
 
 ## 02-custom-subagents
 
-Structural: every `.claude/agents/*.md` under `deliverable/` must have
-valid YAML frontmatter (`name` + `description` required; `tools`/`model`
-well-formed if present) via `harness.common.read_frontmatter`. Requires
-an agent with `name: test-runner` and one with `name: code-reviewer`
-(exact match -- pinned for determinism, not left to the learner's
-naming). `code-reviewer`'s body must have >=6 non-placeholder Markdown
-bullet lines (the review checklist). `WHEN-NOT-TO-DELEGATE.md` is doc-
-gated the same way as task 01 (3 sections, length, keywords).
+Parse deliverable/.codex/agents/*.toml. Require unique test-runner and code-reviewer names, non-placeholder name/description/developer_instructions strings, and at least six reviewer checklist bullets. Optional model settings are strings; omit them for inheritance. Reject fields outside the task subset. Apply the document gate to WHEN-NOT-TO-DELEGATE.md. These checks do not spawn agents or validate model availability.
 
 ## 03-hooks-and-guardrails
 
-Structural + behavioral. `settings.json`'s `PostToolUse` array must have
-an entry per required hook filename (`run-tests.py`, `lint.py`, matched
-by extracting the last `*.py` token from the `command` string and
-resolving `$CLAUDE_PROJECT_DIR`/`${CLAUDE_PROJECT_DIR}` against
-`deliverable/`), each with a `matcher` that's tested as a REAL regex via
-`re.fullmatch` against both the literal strings `"Edit"` and `"Write"`
-(not a substring check -- a learner writing `matcher: "Edit"` alone,
-missing `Write`, fails this even though the substring "Edit" trivially
-appears).
+Read synchronous PostToolUse handlers from deliverable/.codex/hooks.json. Commands reference .codex/hooks/run-tests.py and .codex/hooks/lint.py relative to the project root. Match apply_patch or both Edit/Write aliases.
 
-Behavioral: each hook script is spawned directly (`[sys.executable,
-script_path]`, `harness.common.run_hook`), fed a realistic
-`PostToolUse` JSON payload on stdin, against 4 fixture dirs under
-`tests/fixtures/` (`tests-passing`, `tests-failing`, `lint-clean`,
-`lint-dirty`; verified live to actually pass/fail with plain `pytest -q`
-/ `ruff check` run with no path args from inside each fixture dir). A
-hook "signals failure" if either its exit code is non-zero OR its stdout
-parses as JSON with `"decision": "block"` -- both are accepted, matching
-the real range of valid Claude Code hook behavior; the reference
-implementation used during verification took the JSON path (exit 0
-always, block JSON printed on failure), since that's the mechanistically
-correct one for `PostToolUse` (which cannot literally undo a completed
-Edit/Write).
+Invoke each script with a Codex apply_patch JSON payload against the passing/failing pytest fixtures and clean/dirty ruff fixtures. The payload carries cwd and tool_input.command. Clean fixtures require exit 0 without block feedback. Bad fixtures require exit 2 with stderr feedback or exit 0 with decision:block and a non-empty reason. A crash is not valid feedback; a completed edit cannot be undone by this event.
 
 ## 04-headless-and-ci
 
-Purely structural, no live `claude` call, no live GitHub Actions run.
-`ai-review.sh`: regex-extracts every `claude` invocation line and
-requires each to include `-p`/`--print`; requires `--output-format` and
-literal `git diff` somewhere in the file; rejects an interactive `read`
-builtin at line start; rejects the shipped stub's exact placeholder
-markers.
-
-`ai-review.yml`: YAML-parsed via PyYAML. Load-bearing gotcha documented
-in both the validator and the task README/hints: PyYAML's default
-(YAML 1.1) resolver reads an unquoted `on:` key as the boolean `True`,
-not the string `"on"` -- confirmed empirically during generation
-(`yaml.safe_load` on the stub workflow produces `{True: {...}, "jobs":
-{...}}`). The validator reads `workflow.get("on", workflow.get(True))`
-for exactly that reason. Checks: rejects `push` trigger without a
-`pull_request`/`pull_request_target` sibling; requires `types:` on that
-trigger to include `"labeled"`; requires some job/step `run:`/`uses:`
-containing `claude` + `-p` (or a claude-code-action-shaped `uses:`); and
-requires a job- or step-level `if:` whose text contains the substring
-`"label"` (case-insensitive) as a proxy for "this actually checks which
-label fired the event," not just "any label at all."
-
-A second real gotcha hit while authoring the stub workflow: a `run:`
-value that starts unquoted (e.g. `echo "TODO: not implemented"`) but
-contains an embedded `": "` inside its own double-quoted portion is
-itself invalid YAML (`ScannerError: mapping values are not allowed
-here`) -- PyYAML treats the whole thing as a plain scalar since it
-doesn't start with a quote, and a colon-space inside a plain scalar is
-ambiguous with a nested mapping key. Fixed by removing the colon from
-the stub's placeholder message rather than quoting the whole `run:`
-value, so the stub stays trivially readable.
+Structurally inspect the script for git diff, non-interactive codex exec, --json, and explicit --sandbox read-only without conflicting flags. Output is JSONL. Parse the workflow with PyYAML, accepting its boolean True representation of the on key. Require only pull_request/types:[labeled], a specific-label equality on the actual review job or step, and a supported review invocation with read-only settings. These checks do not run the model or hosted CI.
 
 ## 05-mcp-server
 
-Naming gotcha, load-bearing: the fixture directory is `fixture/`, not
-`data/`, even though the original task brief said `05-mcp-server/data/
-PROGRESS-fixture.md`. The repo root `.gitignore` has `**/data/`
-(intentionally, for the repo-wide convention that generated/seed data
-under a `data/` dir is never committed -- see `CONVENTIONS.md`). That
-pattern matches ANY directory literally named `data` at any depth, so a
-`05-mcp-server/data/` fixture would have been silently gitignored and
-never committed -- confirmed empirically with `git check-ignore -v`
-before this was caught. Renamed to `fixture/` (not covered by any root
-`.gitignore` pattern) to keep the fixture a real, committed, deterministic
-file rather than accidentally-untracked content.
+Use fixture/PROGRESS-fixture.md rather than a data directory, since generated data directories are gitignored. Grade the stdio handshake, tool discovery, and next_recommended_task response through the official MCP Python client with a 20-second timeout. Compute the answer from the fixed fixture, independently of the learner's implementation and the repository's changing progress.
 
-Fully behavioral, via the official `mcp` Python SDK client
-(`mcp.client.stdio.stdio_client` + `mcp.ClientSession`), never by
-importing the learner's `server.py`. `StdioServerParameters(command=
-sys.executable, args=[str(SERVER_PATH)], cwd=str(TASK_DIR))`, wrapped in
-`asyncio.wait_for(..., timeout=20)`.
-
-Load-bearing implementation note (see the long comment in
-`tests/validate.py`): every "expected" grading failure inside the async
-protocol exchange (missing tool, tool error, empty content, mismatch)
-must be reported by RETURNING a `{"ok": bool, ...}` dict, never by
-calling `not_passed()` (which calls `sys.exit`) from inside the `async
-with stdio_client(...) / async with ClientSession(...)` blocks. Verified
-empirically during generation: those context managers run their own
-internal task groups, and Python 3.11+ `TaskGroup.__aexit__` wraps ANY
-exception escaping the body -- including a deliberate `SystemExit` --
-in an `ExceptionGroup`/`BaseExceptionGroup`, which produced two garbled
-`NOT PASSED`-shaped lines instead of one clean one on the first attempt.
-Only truly unexpected failures (subprocess never starting, protocol
-hang) are handled via a single try/except wrapped around the top-level
-`asyncio.run(...)` call in `main()`, outside any task group, with an
-explicit `except BaseExceptionGroup` branch alongside the plain
-`except Exception` one.
-
-The fixture (`fixture/PROGRESS-fixture.md`) is fixed and small (4 modules,
-9 tasks) specifically so the expected answer never depends on the real
-repo's PROGRESS.md. First unchecked task, by construction, is
-`02-sql-optimization/02-index-design -- choosing and validating
-indexes` -- deliberately not the first line of the file or the first
-module, so a server that just returns the first task line unconditionally
-(ignoring the checkbox) fails.
+Return expected protocol failures as result dictionaries from inside async context managers; report NOT PASSED after they exit. Raising SystemExit inside their task groups can wrap it in an exception group and damage the failure output. Keep subprocess startup and timeout handling outside the protocol context.
 
 ## 06-verification-discipline -- GROUND TRUTH (spoilers)
 

@@ -1,0 +1,5 @@
+name = "TODO: test-runner"
+description = "TODO: explain when this agent should be used"
+developer_instructions = """
+TODO: define the scope, verification commands, and concise reporting contract.
+"""

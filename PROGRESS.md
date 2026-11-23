@@ -341,14 +341,14 @@ Arc 6 — Advanced (optional):
 
 # Toolkit track
 
-Small tool-fluency modules, no prescribed order (dip in anytime) — except t1's task 01 (project memory) early, since a good CLAUDE.md improves every other task. No capstones. Non-Docker, no host ports.
+Small tool-fluency modules, no prescribed order (dip in anytime) — except t1's task 01 (project memory) early, since a good AGENTS.md improves every other task. No capstones. Non-Docker, no host ports.
 
 ## toolkit / t1-ai-assisted-engineering
 
-- [ ] 01-project-memory — write a proper CLAUDE.md for a given toy project; memory vs. rot
+- [ ] 01-project-memory — write a proper AGENTS.md for a given toy project; memory vs. rot
 - [ ] 02-custom-subagents — author a test-runner and code-reviewer subagent, plus when NOT to delegate
 - [ ] 03-hooks-and-guardrails — a PostToolUse test hook and a ruff lint hook, both behaviorally graded
-- [ ] 04-headless-and-ci — `claude -p` headless review script and a label-triggered CI review workflow
+- [ ] 04-headless-and-ci — `codex exec --json` headless review script and a label-triggered CI review workflow
 - [ ] 05-mcp-server — a tiny stdio MCP server exposing sandbox progress, graded via the real MCP protocol
 - [ ] 06-verification-discipline — review plausible-but-flawed patches; verdicts plus tests that catch the planted bugs
 

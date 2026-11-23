@@ -1,12 +1,10 @@
 # Toolkit / t1 -- AI-Assisted Engineering
 
-Six single-evening tasks about using Claude Code well, at a working
-level beyond "what is a prompt." Every task references a real,
-currently-existing Claude Code mechanism (project memory, subagents,
-hooks, headless mode, MCP) -- nothing invented for the exercise. There is
-no capstone; the tasks are independent and can be done in any order,
-though task 01 is worth doing first since a good `CLAUDE.md` improves
-every other sandbox task you touch afterward.
+Six single-evening tasks about using Codex well beyond basic prompting:
+project instructions, custom agents, deterministic checks, scripted reviews,
+MCP, and reviewing AI-generated patches. There is no capstone. Tasks are
+independent; task 01 is a useful starting point for learning how to write
+stable project instructions.
 
 This module is pure Python with no services -- no `docker-compose.yml`,
 no host ports (unlike most of the other sandbox modules, see
@@ -14,14 +12,14 @@ no host ports (unlike most of the other sandbox modules, see
 
 ## Tasks
 
-1. **`01-project-memory`** -- write a proper `CLAUDE.md` for a given toy
+1. **`01-project-memory`** -- write a proper `AGENTS.md` for a given toy
    project. What belongs in memory vs. what rots.
 2. **`02-custom-subagents`** -- author a test-runner and a code-reviewer
    subagent, plus when NOT to delegate to either.
 3. **`03-hooks-and-guardrails`** -- a `PostToolUse` hook that runs tests
-   after every edit, and one that runs `ruff check`, both behaviorally
+   after file edits through apply_patch, and one that runs `ruff check`, both behaviorally
    graded against real pass/fail fixtures.
-4. **`04-headless-and-ci`** -- `claude -p` in a headless review script,
+4. **`04-headless-and-ci`** -- `codex exec --json` in a headless review script,
    plus a label-triggered (not push-triggered) GitHub Actions AI review
    step.
 5. **`05-mcp-server`** -- a tiny stdio MCP server exposing sandbox
@@ -48,9 +46,9 @@ accordingly. Read each task's own README.md for what exactly it checks.
 `harness/common.py` -- pass/fail plumbing (`guarded`, `not_passed`,
 `passed`), a Markdown doc-gate (required sections, placeholder
 detection, grounding keywords, quantitative-claim checks, hostile-
-answer-quality checks) used by tasks 01, 02, and 06, a YAML frontmatter
-parser used by task 02, and subprocess grading helpers (`run_pytest`,
-`run_hook`) used by tasks 03 and 06. Copied from and consistent with
+answer-quality checks) used by tasks 01, 02, and 06, and subprocess
+grading helpers (`run_pytest`,
+`run_hook`) used by tasks 03 and 06. Task 02 parses TOML directly. Copied from and consistent with
 `17-system-design/harness/common.py`'s conventions, extended for this
 module's behavioral (subprocess-driven) tasks.
 
@@ -60,3 +58,7 @@ module's behavioral (subprocess-driven) tasks.
 specifically) planted-bug ground truth -- spoilers. Read it after
 finishing the relevant task, not before. Reading `.authoring/design.md`
 before attempting task 06 defeats that task's entire point.
+
+## Codex environment
+
+Tasks 01-04 use AGENTS.md, .codex/agents/*.toml, .codex/hooks.json, and codex exec. Drafts stay inside task deliverables; optional activation happens in an isolated project. Structural and subprocess validators do not require authenticated model calls or modify the sandbox's active configuration. Hooks require a local Codex environment that supports command hooks. See the task READMEs for current official references and verification limits.

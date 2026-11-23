@@ -1,4 +1,4 @@
-No ready-made CLAUDE.md here — just how to check your own draft before you
+No ready-made AGENTS.md here — just how to check your own draft before you
 consider it done.
 
 **Read it as if you'd never seen this project.** Could you run the tests
@@ -21,7 +21,7 @@ for this specific codebase's contract (not wrong in general)?
 
 **For "Memory vs rot," answer concretely, not just in the abstract.**
 Pick at least one specific kind of fact you are choosing NOT to put in
-this CLAUDE.md, and say why — tie it to something about this exact
+this AGENTS.md, and say why — tie it to something about this exact
 project (e.g. something in sample-project's README that you deliberately
 did not copy in verbatim, and why copying it would have been the wrong
 call for a memory file specifically, as opposed to documentation in

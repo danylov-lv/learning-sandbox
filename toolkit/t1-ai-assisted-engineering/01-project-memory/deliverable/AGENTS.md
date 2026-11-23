@@ -32,7 +32,7 @@ make on this project, and the constraint that prevents each one]
 
 ## Memory vs rot
 
-[fill in: your own reflection — what belongs in a CLAUDE.md for a project
+[fill in: your own reflection — what belongs in a AGENTS.md for a project
 like this, what belongs elsewhere (or nowhere), and why. Answer directly:
 what would you leave OUT of this file, and what's the risk of putting it
 in?]

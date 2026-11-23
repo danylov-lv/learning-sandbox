@@ -1,5 +1,5 @@
 # TODO: this workflow must trigger on a PULL REQUEST LABEL (not on every
-# push), and run an AI review step using `claude -p` in headless mode
+# push), and run an AI review step using `codex exec` in headless mode
 # when that specific label is applied. See the task README for the exact
 # grading contract.
 #

@@ -4,13 +4,13 @@
     uv run python 03-hooks-and-guardrails/tests/validate.py
 
 Two gates:
-  1. Structural: settings.json has a PostToolUse entry per hook whose
-     matcher regex actually matches both "Edit" and "Write", and whose
+  1. Structural: hooks.json has a PostToolUse entry per hook whose
+     matcher regex actually matches Codex file edits through apply_patch, and whose
      command references the required hook script filename.
   2. Behavioral: each hook script is invoked as a real subprocess against
      a PASSING and a FAILING fixture project, feeding a realistic
      PostToolUse JSON payload on stdin. A hook signals failure either by
-     a non-zero exit code or by printing {"decision": "block", ...} JSON
+     exit code 2 with stderr feedback or by printing {"decision": "block", ...} JSON
      to stdout; either signal is accepted, matching the real range of
      valid hook behavior.
 """
@@ -26,11 +26,11 @@ TASK_DIR = Path(__file__).resolve().parent.parent
 MODULE_ROOT = TASK_DIR.parent
 sys.path.insert(0, str(MODULE_ROOT))
 
-from harness.common import guarded, not_passed, passed, run_hook  # noqa: E402
+from harness.common import guarded, not_passed, passed, run_hook
 
 DELIVERABLE_DIR = TASK_DIR / "deliverable"
-SETTINGS_PATH = DELIVERABLE_DIR / ".claude" / "settings.json"
-HOOKS_DIR = DELIVERABLE_DIR / ".claude" / "hooks"
+SETTINGS_PATH = DELIVERABLE_DIR / ".codex" / "hooks.json"
+HOOKS_DIR = DELIVERABLE_DIR / ".codex" / "hooks"
 FIXTURES_DIR = TASK_DIR / "tests" / "fixtures"
 
 REQUIRED_HOOK_FILES = {
@@ -45,29 +45,29 @@ _SCRIPT_TOKEN_RE = re.compile(r'"?([^"\s]+\.py)"?')
 
 def _load_settings() -> dict:
     if not SETTINGS_PATH.exists():
-        not_passed(f"settings.json not found: {SETTINGS_PATH}")
+        not_passed(f"hooks.json not found: {SETTINGS_PATH}")
     try:
         data = json.loads(SETTINGS_PATH.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
-        not_passed(f"settings.json is not valid JSON: {e}")
+        not_passed(f"hooks.json is not valid JSON: {e}")
     if not isinstance(data, dict):
-        not_passed("settings.json must be a JSON object")
+        not_passed("hooks.json must be a JSON object")
     return data
 
 
 def _post_tool_use_entries(settings: dict) -> list:
     hooks = settings.get("hooks")
     if not isinstance(hooks, dict):
-        not_passed("settings.json missing top-level 'hooks' object")
+        not_passed("hooks.json missing top-level 'hooks' object")
     entries = hooks.get("PostToolUse")
     if not isinstance(entries, list) or not entries:
-        not_passed("settings.json missing a non-empty 'hooks.PostToolUse' array")
+        not_passed("hooks.json missing a non-empty 'hooks.PostToolUse' array")
     return entries
 
 
 def _matcher_matches_edit_and_write(matcher: str) -> bool:
     try:
-        return bool(re.fullmatch(matcher, "Edit")) and bool(re.fullmatch(matcher, "Write"))
+        return bool(re.search(matcher, "apply_patch")) or (bool(re.search(matcher, "Edit")) and bool(re.search(matcher, "Write")))
     except re.error:
         return False
 
@@ -77,9 +77,6 @@ def _extract_script_path(command: str) -> Path | None:
     if not m:
         return None
     token = m.group(1)
-    token = token.replace("$CLAUDE_PROJECT_DIR", str(DELIVERABLE_DIR)).replace(
-        "${CLAUDE_PROJECT_DIR}", str(DELIVERABLE_DIR)
-    )
     return Path(token)
 
 
@@ -99,10 +96,15 @@ def _find_hook_entry(entries: list, required_filename: str) -> tuple[str, str]:
             command = h.get("command", "")
             script_path = _extract_script_path(command)
             if script_path is not None and script_path.name == required_filename:
+                if h.get("async", False):
+                    not_passed("grading requires synchronous hooks, not async handlers")
+                expected = f".codex/hooks/{required_filename}"
+                if script_path.as_posix() != expected:
+                    not_passed(f"hook command must reference {expected} relative to the project root")
                 return matcher, command
     not_passed(
         f"no PostToolUse hook entry found whose command references '{required_filename}' "
-        f"under .claude/hooks/ (required filename, see README)"
+        f"under .codex/hooks/ (required filename, see README)"
     )
 
 
@@ -110,7 +112,7 @@ def _check_matcher(matcher, label: str) -> None:
     if not isinstance(matcher, str) or not matcher.strip():
         not_passed(f"{label}: matcher must be a non-empty string")
     if not _matcher_matches_edit_and_write(matcher):
-        not_passed(f"{label}: matcher '{matcher}' does not match both 'Edit' and 'Write'")
+        not_passed(f"{label}: matcher '{matcher}' does not match apply_patch or its Edit/Write aliases")
 
 
 def _run_hook_scenario(script_path: Path, project_dir: Path, edited_file: Path, label: str):
@@ -120,27 +122,37 @@ def _run_hook_scenario(script_path: Path, project_dir: Path, edited_file: Path, 
         "session_id": "validator-session",
         "hook_event_name": "PostToolUse",
         "cwd": str(project_dir),
-        "tool_name": "Edit",
-        "tool_input": {"file_path": str(edited_file)},
+        "tool_name": "apply_patch",
+        "tool_use_id": "validator-edit",
+        "tool_input": {"command": f"*** Begin Patch\n*** Update File: {edited_file}\n@@\n-old\n+new\n*** End Patch"},
+        "tool_response": {"success": True},
     }
     result = run_hook(
         [sys.executable, str(script_path)],
         payload,
         cwd=project_dir,
-        env={"CLAUDE_PROJECT_DIR": str(project_dir)},
         timeout=HOOK_TIMEOUT,
     )
+    if "NotImplementedError" in result.stderr:
+        not_passed(f"{label}: hook is still an unsolved stub")
     if result.timed_out:
         not_passed(f"{label}: hook script timed out after {HOOK_TIMEOUT}s")
     return result
 
 
 def _signals_block(result) -> bool:
-    if result.returncode != 0:
-        return True
+    if result.returncode == 2:
+        return bool(result.stderr.strip())
+    feedback = result.decision_json or {}
+    reason = feedback.get("reason")
+    return result.returncode == 0 and feedback.get("decision") == "block" and isinstance(reason, str) and bool(reason.strip())
+
+
+def _check_success(result, label: str) -> None:
+    if result.returncode != 0 or _signals_block(result):
+        not_passed(f"{label}: expected exit 0 without block feedback; stderr={result.stderr[-500:]!r}")
     if result.decision_json and result.decision_json.get("decision") == "block":
-        return True
-    return False
+        not_passed(f"{label}: unexpected block decision")
 
 
 @guarded
@@ -148,7 +160,7 @@ def main() -> None:
     settings = _load_settings()
     entries = _post_tool_use_entries(settings)
     if len(entries) < 2:
-        not_passed(f"settings.json has {len(entries)} PostToolUse entr(y/ies), need at least 2")
+        not_passed(f"hooks.json has {len(entries)} PostToolUse entr(y/ies), need at least 2")
 
     run_tests_matcher, _ = _find_hook_entry(entries, REQUIRED_HOOK_FILES["run-tests"])
     lint_matcher, _ = _find_hook_entry(entries, REQUIRED_HOOK_FILES["lint"])
@@ -164,20 +176,15 @@ def main() -> None:
     r_pass = _run_hook_scenario(
         run_tests_script, passing_proj, passing_proj / "tests" / "test_sample.py", "run-tests.py (passing fixture)"
     )
-    if _signals_block(r_pass):
-        not_passed(
-            "run-tests.py signaled failure (non-zero exit or decision:block) against a PASSING "
-            f"test project — it must exit 0 with no block decision. stdout={r_pass.stdout!r} "
-            f"stderr_tail={r_pass.stderr[-500:]!r}"
-        )
+    _check_success(r_pass, "run-tests.py passing fixture")
 
     r_fail = _run_hook_scenario(
         run_tests_script, failing_proj, failing_proj / "tests" / "test_sample.py", "run-tests.py (failing fixture)"
     )
     if not _signals_block(r_fail):
         not_passed(
-            "run-tests.py did not signal failure (exit 0, no decision:block) against a FAILING "
-            f"test project — it must either exit non-zero or print a decision:block JSON. "
+            "run-tests.py did not return valid block feedback against a FAILING "
+            f"test project — it must either exit 2 with stderr or print decision:block JSON with a reason. "
             f"stdout={r_fail.stdout!r} stderr_tail={r_fail.stderr[-500:]!r}"
         )
 
@@ -185,21 +192,17 @@ def main() -> None:
     dirty_proj = FIXTURES_DIR / "lint-dirty"
 
     l_clean = _run_hook_scenario(lint_script, clean_proj, clean_proj / "sample.py", "lint.py (clean fixture)")
-    if _signals_block(l_clean):
-        not_passed(
-            "lint.py signaled failure against a CLEAN file — it must exit 0 with no block decision. "
-            f"stdout={l_clean.stdout!r} stderr_tail={l_clean.stderr[-500:]!r}"
-        )
+    _check_success(l_clean, "lint.py clean fixture")
 
     l_dirty = _run_hook_scenario(lint_script, dirty_proj, dirty_proj / "sample.py", "lint.py (dirty fixture)")
     if not _signals_block(l_dirty):
         not_passed(
             "lint.py did not signal failure against a file with real ruff violations — it must "
-            f"either exit non-zero or print a decision:block JSON. stdout={l_dirty.stdout!r} "
+            f"either exit 2 with stderr or print decision:block JSON with a reason. stdout={l_dirty.stdout!r} "
             f"stderr_tail={l_dirty.stderr[-500:]!r}"
         )
 
-    passed("settings.json structure OK; both hooks behaviorally verified pass/fail on 4 fixtures")
+    passed("hooks.json structure OK; both hooks behaviorally verified pass/fail on 4 fixtures")
 
 
 if __name__ == "__main__":

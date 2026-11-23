@@ -2,62 +2,25 @@
 
 ## Backstory
 
-Every other task in this module runs Claude interactively. But a
-CLAUDE.md, a subagent, and a hook all still assume a human (or Claude
-itself) is driving turn by turn. `claude -p` drops that assumption: one
-prompt in, one structured result out, no conversation. That's the
-building block for wiring Claude into anything scripted -- a pre-commit
-check, a scheduled job, or (the realistic version, here) a CI step that
-only runs an AI review when someone explicitly asks for one by applying a
-label to a PR, not on every push.
-
-This task ships the actual pattern `ci-meta` (this repo's own CI module)
-will later host for real: a label-triggered review step, not a
-blanket one. Nobody wants an API call and a bot comment on every commit
-to every branch.
+Turn a repeated review request into a script and a GitHub Actions workflow that runs only when a specific PR label requests it. Keep reviews read-only and preserve machine-readable output for inspection.
 
 ## What's given
 
-- `deliverable/scripts/ai-review.sh` -- stub script with the contract in
-  its own comment header.
-- `deliverable/.github/workflows/ai-review.yml` -- stub workflow with a
-  deliberately wrong trigger (`push`) and a placeholder step, so it stays
-  valid YAML while unfinished.
-- `tests/validate.py` -- the validator; read it if you want to see
-  exactly what's checked. No live `claude` call is required or made by
-  the validator.
-- `hints/` -- three levels of hints.
+An unsolved `deliverable/scripts/ai-review.sh`, a deliberately incorrect workflow under `deliverable/.github/workflows/ai-review.yml`, three hints, and a structural validator. These are exercise artifacts, not active repository automation.
 
 ## What's required
 
-1. Implement `ai-review.sh`: build a review prompt from `git diff`, call
-   `claude -p` headless with `--output-format json` and a restricted
-   `--allowedTools`, non-interactively.
-2. Rewrite `ai-review.yml`: trigger on a pull-request LABEL (`types:
-   [labeled]`), gate the actual review job/step on the specific label
-   name via an `if:` condition, and add a step that installs and invokes
-   Claude Code headless against the PR's diff.
+1. Build a review prompt from git diff and invoke `codex exec` with `--json` and explicit `--sandbox read-only`. Keep the script non-interactive and propagate execution errors. The output is a JSONL event stream, not a single JSON document. Treat diff contents as data to review, not instructions to follow.
+2. Use only the pull_request event with types: [labeled]. Gate the review job or the review step with `github.event.label.name == 'your-label'` (choose your label). Invoke the script, invoke codex exec with the same flags, or use openai/codex-action with sandbox: read-only. Put the condition on the actual review job or step, not an unrelated step.
+3. Document the diff base and authentication requirements in your NOTES.md. Do not commit credentials. Keep secrets out of job-wide environments that run repository-controlled code. For the action route, consult its current setup and authentication documentation.
+
+Local script execution needs Codex CLI and an authenticated session; Bash can be provided by Git Bash on Windows. Installing the CLI, making a paid model call, adding secrets, or activating a workflow is not required to run the validator.
 
 ## Completion criteria
 
-Run, from the module root:
+From the module root run `uv run python 04-headless-and-ci/tests/validate.py`.
 
-```bash
-cd toolkit/t1-ai-assisted-engineering
-uv run python 04-headless-and-ci/tests/validate.py
-```
-
-It checks, in order:
-
-- `ai-review.sh` invokes `claude` only with `-p`/`--print` (never bare),
-  references `--output-format` and `git diff`, and has no interactive
-  `read` prompt.
-- `ai-review.yml` parses as YAML, triggers on `pull_request` with
-  `types: [labeled]` (not on `push`), has a job/step `if:` condition
-  naming a specific label, and has a step that invokes `claude` headless
-  (or a claude-code GitHub Action).
-
-Prints `PASSED` or `NOT PASSED: <reason>` and exits accordingly.
+The validator checks the script's invocation, diff source, and lack of interactive reads. It parses the workflow and checks the label event, the condition attached to the review, and read-only execution. No push or pull_request_target trigger is accepted. It does not execute Bash, Codex, or GitHub Actions, validate authentication, or prove that a prompt is actually based on the intended diff. Run an optional live trial only in an isolated project when ready.
 
 ## Estimated evenings
 
@@ -65,19 +28,15 @@ Prints `PASSED` or `NOT PASSED: <reason>` and exits accordingly.
 
 ## Topics to read up on
 
-- Claude Code headless mode: `-p`/`--print`, `--output-format`
-  (text/json/stream-json), and `--allowedTools` permission syntax
-- GitHub Actions trigger shapes: `pull_request` vs `pull_request_target`,
-  the `types:` filter, and `if:` conditions using the `github.event`
-  context
-- Why label-gated automation (vs. "run on every push") matters for cost
-  and signal-to-noise in CI
-- YAML 1.1's boolean-keyword key resolution (`on`, `yes`, `no`, `off`)
-  and why it bites GitHub Actions workflows specifically when parsed by
-  a generic YAML library
+- codex exec, JSONL events, and read-only sandboxing
+- Shell exit-status propagation and choosing a git diff base
+- GitHub Actions label conditions and Codex action authentication
+- YAML parsing of the on key
+
+References:
+- https://learn.chatgpt.com/docs/non-interactive-mode
+- https://learn.chatgpt.com/docs/github-action
 
 ## Off-limits
 
-`.authoring/` (at the module root) documents this module's grading
-contract across all six tasks -- spoilers, in general. Read it after
-finishing this task, if at all.
+The module's `.authoring/` directory contains grading notes and spoilers.

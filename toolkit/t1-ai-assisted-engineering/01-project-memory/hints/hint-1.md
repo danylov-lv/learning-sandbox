@@ -1,8 +1,8 @@
-Don't start by writing prose about what a CLAUDE.md "should" contain in
+Don't start by writing prose about what a AGENTS.md "should" contain in
 the abstract. Start by actually using the sample-project the way a fresh
-Claude Code session would have to: read `sample-project/README.md`, read
+Codex session would have to: read `sample-project/README.md`, read
 `sample-project/src/priceparser/__init__.py` end to end, and run its
-tests yourself. Every fact you put in `CLAUDE.md` should trace back to
+tests yourself. Every fact you put in `AGENTS.md` should trace back to
 something you just verified is true of this project, not something you
 assume is generically true of "a Python project."
 

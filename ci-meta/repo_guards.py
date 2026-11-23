@@ -78,7 +78,7 @@ def check_no_tracked_junk() -> tuple[bool, str]:
 
 
 def check_generation_state_complete() -> tuple[bool, str]:
-    path = REPO_ROOT / "GENERATION_STATE.md"
+    path = REPO_ROOT / "docs" / "authoring" / "GENERATION_STATE.md"
     if not path.is_file():
         return False, "GENERATION_STATE.md not found"
     pending = []

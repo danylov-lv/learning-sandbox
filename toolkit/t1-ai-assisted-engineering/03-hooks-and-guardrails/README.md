@@ -2,82 +2,30 @@
 
 ## Backstory
 
-Project memory (task 01) and a well-scoped subagent (task 02) both rely
-on Claude choosing to do the right thing. A hook doesn't ask -- it's a
-shell command Claude Code runs automatically at a fixed point in the
-tool-use lifecycle (before or after a tool call, at session start/stop,
-etc.), and it can feed structured feedback straight back into the
-conversation. That's the difference between "the memory file says to run
-the tests" and "the tests actually ran, and Claude was told the result,"
-which matters the moment you're moving fast enough to forget the first
-one yourself.
-
-This task builds two real guardrails: one that runs this project's tests
-after every edit and reports failures back to Claude, and one that runs
-`ruff check` the same way. Both use the same mechanism
-(`PostToolUse`, matched on `Edit`/`Write`), so the second is mostly about
-proving you understood the first, not learning something new.
+An edit can look plausible while breaking tests or style checks. Add deterministic feedback after Codex edits, so a failed check becomes visible immediately. A PostToolUse hook runs after the edit and cannot undo it.
 
 ## What's given
 
-- `deliverable/.claude/settings.json` -- wires two `PostToolUse` hook
-  entries to two scripts. The wiring is already correct; you are not
-  editing this file's structure, only the two scripts it points at (you
-  may still open it to see exactly how a hook entry is shaped).
-- `deliverable/.claude/hooks/run-tests.py` -- stub, `raise
-  NotImplementedError`.
-- `deliverable/.claude/hooks/lint.py` -- stub, `raise NotImplementedError`.
-- `tests/fixtures/` -- four tiny fixture projects the validator uses to
-  behaviorally exercise your scripts: `tests-passing/`, `tests-failing/`
-  (for `run-tests.py`), `lint-clean/`, `lint-dirty/` (for `lint.py`).
-  Read them; they're small.
-- `tests/validate.py` -- the validator; read it if you want to see
-  exactly what's checked and how it invokes your scripts.
-- `hints/` -- three levels of hints, including the exact command to test
-  a hook script by hand before running the validator.
+- `deliverable/.codex/hooks.json` wires synchronous handlers to file edits through apply_patch.
+- `.codex/hooks/run-tests.py` and `.codex/hooks/lint.py` inside deliverable are unsolved scripts.
+- Four fixture projects cover passing/failing tests and clean/dirty lint.
+- The validator invokes hooks directly as subprocesses; no model call is required.
 
 ## What's required
 
-Implement both hook scripts under `deliverable/.claude/hooks/`, each
-following the contract documented in its own docstring:
+Implement both scripts. Read JSON from stdin and use its cwd as the project root. Run pytest or ruff check using the current interpreter (`sys.executable -m ...`). The module installs both tools. Resolve the project from the input payload rather than a provider-specific environment variable.
 
-1. **`run-tests.py`** -- read the JSON payload Claude Code sends on
-   stdin, run the project's test suite (`sys.executable -m pytest`,
-   never a bare `python`), and report success/failure back.
-2. **`lint.py`** -- same shape, but runs `ruff check` instead of pytest.
+On success, exit 0 without block feedback. On a failed check, either emit a JSON object with decision `block` and a non-empty reason while exiting 0, or exit 2 with a non-empty feedback message on stderr. A crash with exit 1 is not valid hook feedback. Keep diagnostics concise.
 
-Both must exit `0` on success with no block signal, and on failure either
-exit non-zero or print `{"decision": "block", "reason": "..."}` JSON to
-stdout.
+Keep hooks synchronous. Commands in hooks.json must reference `.codex/hooks/run-tests.py` and `.codex/hooks/lint.py` relative to the project root. The matcher must match apply_patch or both Edit/Write aliases. The actual payload uses tool_name `apply_patch` and tool_input.command containing patch text, not a file_path field. These exercises run from an isolated project's root.
 
-Do not change `deliverable/.claude/settings.json`'s structure or the
-required filenames (`run-tests.py`, `lint.py`) -- the validator locates
-your scripts by matching those exact filenames referenced from the
-hook commands.
+For an optional live trial, copy the completed .codex directory into a temporary fixture project and launch a local Codex session there. Do not activate these hooks in the sandbox itself. Cloud orchestration may not support local command hooks; the direct subprocess checks still work.
 
 ## Completion criteria
 
-Run, from the module root:
+From the module root run `uv run python 03-hooks-and-guardrails/tests/validate.py`.
 
-```bash
-cd toolkit/t1-ai-assisted-engineering
-uv run python 03-hooks-and-guardrails/tests/validate.py
-```
-
-It checks, in order:
-
-- `settings.json` has at least 2 `PostToolUse` entries, one referencing
-  `run-tests.py` and one referencing `lint.py`, each with a `matcher`
-  that actually matches both the strings `"Edit"` and `"Write"` (tested
-  as a real regex, not by substring).
-- `run-tests.py`, invoked as a real subprocess against the
-  `tests-passing` fixture, exits 0 with no block signal.
-- `run-tests.py`, invoked against `tests-failing`, signals failure
-  (non-zero exit or `decision: block` JSON).
-- `lint.py`, invoked against `lint-clean`, exits 0 with no block signal.
-- `lint.py`, invoked against `lint-dirty`, signals failure.
-
-Prints `PASSED` or `NOT PASSED: <reason>` and exits accordingly.
+It checks hook configuration and exercises both scripts against real passing/failing fixture projects. Clean fixtures must exit 0; bad fixtures must produce documented block feedback. Timeouts and infrastructure errors fail. Fixtures must remain unchanged. A passing validator does not certify a live Codex session.
 
 ## Estimated evenings
 
@@ -85,20 +33,13 @@ Prints `PASSED` or `NOT PASSED: <reason>` and exits accordingly.
 
 ## Topics to read up on
 
-- Claude Code hooks: the `PreToolUse` / `PostToolUse` lifecycle, the
-  `matcher` field as a regex against the tool name, and the difference
-  between what each event can and cannot prevent
-- The hook stdin JSON schema and the two ways a hook communicates a
-  result back (process exit code vs. structured JSON on stdout)
-- Why `PostToolUse` cannot undo a completed `Edit`/`Write`, and what
-  `{"decision": "block", ...}` actually does instead
-- Subprocess invocation pitfalls on Windows: PATH resolution ambiguity
-  for a bare interpreter name vs. `sys.executable`
-- `ruff check`'s exit code convention and how it differs from `ruff
-  format --check`
+- PostToolUse timing and feedback versus undoing edits
+- hooks.json discovery, synchronous handlers, and matcher aliases
+- JSON stdin, cwd, subprocess return codes, and interpreter selection
+- Differences between local and cloud orchestration
+
+Reference: https://learn.chatgpt.com/docs/hooks
 
 ## Off-limits
 
-`.authoring/` (at the module root) documents this module's grading
-contract across all six tasks -- spoilers, in general. Read it after
-finishing this task, if at all.
+The module's `.authoring/` directory contains grading notes and spoilers.

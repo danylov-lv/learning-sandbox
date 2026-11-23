@@ -66,11 +66,11 @@ Module **20-kubernetes** is the real k8s track — the bonus levels above stay a
 
 ## Toolkit track
 
-A separate family of small, tool-fluency modules (3–6 single-evening tasks each, no capstones) about using tools well, as opposed to the main modules' engineering topics. **Dip in anytime, no prescribed order** — with one exception: do **t1's task 01** (project memory) early, since a good `CLAUDE.md` improves every other task in the repo. These modules are non-Docker and use no host ports; each still ships its own `pyproject.toml` + `uv.lock` and objective validators.
+A separate family of small, tool-fluency modules (3–6 single-evening tasks each, no capstones) about using tools well, as opposed to the main modules' engineering topics. **Dip in anytime, no prescribed order** — with one exception: do **t1's task 01** (project memory) early, since a good `AGENTS.md` improves every other task in the repo. These modules are non-Docker and use no host ports; each still ships its own `pyproject.toml` + `uv.lock` and objective validators.
 
 | Module | One-liner | Est. evenings |
 |---|---|---|
-| t1-ai-assisted-engineering | Advanced Claude Code practice: project memory, custom subagents, hooks/guardrails, headless `claude -p` + CI, a hand-built MCP server, and reviewing plausible-but-flawed AI patches | 3–4 |
+| t1-ai-assisted-engineering | Advanced Codex practice: project memory, custom subagents, hooks/guardrails, headless `codex exec --json` + CI, a hand-built MCP server, and reviewing plausible-but-flawed AI patches | 3–4 |
 | t2-modern-python-toolchain | uv (project + tool management), ruff (lint + format), `mypy --strict`, pre-commit wiring, packaging an internal library with a src layout — every check runs the real tool | 2–3 |
 | t3-cli-data-toolkit | Explore/fix data from the terminal: jq on nested JSON, ripgrep/fd fluency, the DuckDB CLI over Parquet/CSV, honest hyperfine micro-benchmarks, GNU parallel batch processing | 2–3 |
 | t4-git-advanced | Beyond add/commit/push: interactive rebase cleanup, `git bisect` regression hunt, worktrees for parallel work, reflog rescue, and a commit-history policy writeup | 2–3 |
@@ -82,3 +82,9 @@ Not yet scheduled, one-liners only:
 - **Network layer for scraping** — TLS fingerprinting (JA3), how anti-bot systems see clients, HTTP/1.1 vs HTTP/2 semantics, connection pooling internals, DNS, traffic analysis with mitmproxy.
 - **Deep AI track** (after 14–15) — fine-tuning small models for extraction, building evals, local serving and inference optimization.
 - **IaC / Terraform** — infrastructure as code, if/when work moves cloudward.
+
+## Authoring documentation
+
+The [specification](docs/authoring/SPEC.md), [generation state](docs/authoring/GENERATION_STATE.md), and [authoring prompts](docs/authoring/prompts/) describe how to create and extend the sandbox. Learner progress is tracked in [PROGRESS.md](PROGRESS.md); authoring rules are in [CONVENTIONS.md](CONVENTIONS.md).
+
+Agent collaboration rules are in [AGENTS.md](AGENTS.md).

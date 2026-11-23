@@ -19,7 +19,7 @@ TASK_DIR = Path(__file__).resolve().parent.parent
 MODULE_ROOT = TASK_DIR.parent
 sys.path.insert(0, str(MODULE_ROOT))
 
-from harness.common import (  # noqa: E402
+from harness.common import (
     check_keywords,
     check_sections,
     guarded,
@@ -73,7 +73,7 @@ TEST_COMMAND_RE = re.compile(r"pytest\s+tests\b", re.IGNORECASE)
 
 @guarded
 def main() -> None:
-    deliverable_path = TASK_DIR / "deliverable" / "CLAUDE.md"
+    deliverable_path = TASK_DIR / "deliverable" / "AGENTS.md"
     sections = check_sections(deliverable_path, REQUIRED_SECTIONS, MIN_CHARS)
 
     full_text = read_doc(deliverable_path)
@@ -81,7 +81,7 @@ def main() -> None:
         full_text,
         GROUNDING_KEYWORDS,
         min_hits=6,
-        label="CLAUDE.md grounding vocabulary (specific to sample-project)",
+        label="AGENTS.md grounding vocabulary (specific to sample-project)",
     )
 
     if not TEST_COMMAND_RE.search(full_text):
@@ -98,7 +98,7 @@ def main() -> None:
         label="'Memory vs rot' section — reflection vocabulary",
     )
 
-    passed("CLAUDE.md structure, grounding, and test-command reference OK")
+    passed("AGENTS.md structure, grounding, and test-command reference OK")
 
 
 if __name__ == "__main__":

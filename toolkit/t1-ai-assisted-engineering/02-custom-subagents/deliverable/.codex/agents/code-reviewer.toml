@@ -1,0 +1,12 @@
+name = "TODO: code-reviewer"
+description = "TODO: explain when this agent should be used"
+developer_instructions = """
+TODO: define a review-only role and at least six concrete checklist items.
+
+- TODO: checklist item 1
+- TODO: checklist item 2
+- TODO: checklist item 3
+- TODO: checklist item 4
+- TODO: checklist item 5
+- TODO: checklist item 6
+"""

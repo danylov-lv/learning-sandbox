@@ -2,9 +2,9 @@
 
 ## Backstory
 
-You've been using Claude Code daily for a while, and you already know the
-mechanics: drop a `CLAUDE.md` at a project root and Claude Code loads it
-into every session automatically. What separates a `CLAUDE.md` that
+You've been using Codex daily for a while, and you already know the
+mechanics: drop a `AGENTS.md` at a project root and Codex loads it
+into every session automatically. What separates a `AGENTS.md` that
 actually pays for itself from one that quietly becomes noise isn't the
 mechanic -- it's editorial judgment about what belongs in memory at all.
 
@@ -26,16 +26,16 @@ bigger.
   source at `sample-project/src/priceparser/__init__.py`. Its test suite
   (`sample-project/tests/test_priceparser.py`) passes right now -- you are
   not editing any of this, only writing memory about it.
-- `deliverable/CLAUDE.md` -- an unfilled template with every required
+- `deliverable/AGENTS.md` -- an unfilled template with every required
   section already in place as a `[fill in ...]` placeholder.
 - `tests/validate.py` -- the validator; read it if you want to see
   exactly what's checked.
 - `hints/` -- three levels of hints, none containing a ready-made
-  CLAUDE.md.
+  AGENTS.md.
 
 ## What's required
 
-Fill in `deliverable/CLAUDE.md` -- all five sections:
+Fill in `deliverable/AGENTS.md` -- all five sections:
 
 1. **Commands** -- the real, verified command(s) to build/test this
    project.
@@ -78,8 +78,8 @@ Prints `PASSED` or `NOT PASSED: <reason>` and exits accordingly.
 
 ## Topics to read up on
 
-- Claude Code project memory: `CLAUDE.md` discovery and loading, and the
-  `@path` import syntax for splitting memory across files
+- Codex project memory: `AGENTS.md` discovery and loading, and the
+  directory-scoped instructions and AGENTS.override.md precedence
 - What differentiates durable project knowledge from transient/volatile
   state worth keeping out of memory
 - Editorial judgment in technical documentation: precision vs. coverage,
@@ -93,3 +93,9 @@ Prints `PASSED` or `NOT PASSED: <reason>` and exits accordingly.
 `.authoring/` (at the module root) documents this module's grading
 contract across all six tasks -- spoilers, in general. Read it after
 finishing this task, if at all.
+
+## Isolated activation
+
+`deliverable/AGENTS.md` is a graded draft, not active instructions for `sample-project/`. To try discovery in a fresh session, copy the toy project and your completed file into a temporary directory, put AGENTS.md at that project root, and launch Codex there. Do not install the exercise template at the sandbox root. The validator checks the document, not model compliance.
+
+Reference: https://learn.chatgpt.com/docs/agent-configuration/agents-md

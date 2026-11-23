@@ -9,10 +9,10 @@ plumbing) and extended with what this module's behavioral tasks need:
 
 - **Doc gate** (`read_doc`, `parse_sections`, `parse_subsections`,
   `check_sections`, `check_keywords`, `check_quantitative`, `check_answers`):
-  unchanged from module 17 — deliverable Markdown/CLAUDE.md files are
+  consistent with module 17 — deliverable Markdown/AGENTS.md files are
   graded structurally, never by content quality.
 - **Frontmatter** (`read_frontmatter`): parses a Markdown file's leading
-  `---` YAML block, used to grade subagent definition files (task 02).
+  `---` YAML block, available for Markdown authoring artifacts; task 02 uses TOML instead.
 - **Subprocess grading** (`run_pytest`, `run_hook`): spawn a fresh
   `python -m pytest` subprocess or a hook script subprocess with a JSON
   stdin payload and a timeout, used to behaviorally exercise task 03's
@@ -279,7 +279,7 @@ def check_answers(
 
 
 # --------------------------------------------------------------------------
-# Frontmatter parsing (subagent definition files)
+# Frontmatter parsing (Markdown artifacts)
 # --------------------------------------------------------------------------
 
 _FRONTMATTER_RE = re.compile(r"\A---[ \t]*\n(.*?)\n---[ \t]*\n?", re.DOTALL)
@@ -379,7 +379,7 @@ def run_hook(
     timeout: int = 30,
 ) -> HookResult:
     """Invoke a hook script as a subprocess, feeding `payload` as JSON on
-    stdin (the shape Claude Code sends a hook command), and capture its
+    stdin (the shape Codex sends a hook command), and capture its
     exit code and stdout/stderr. If stdout parses as JSON, it is also
     exposed as `.decision_json` so a caller can check for
     `{"decision": "block", ...}` without re-parsing.

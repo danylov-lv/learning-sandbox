@@ -2,20 +2,20 @@
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "^apply_patch$",
         "hooks": [
           {
             "type": "command",
-            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/run-tests.py\""
+            "command": "python .codex/hooks/run-tests.py"
           }
         ]
       },
       {
-        "matcher": "Edit|Write",
+        "matcher": "^apply_patch$",
         "hooks": [
           {
             "type": "command",
-            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/lint.py\""
+            "command": "python .codex/hooks/lint.py"
           }
         ]
       }

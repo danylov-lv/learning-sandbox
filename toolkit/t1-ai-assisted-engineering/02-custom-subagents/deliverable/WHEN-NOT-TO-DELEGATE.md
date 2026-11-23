@@ -1,13 +1,13 @@
 <!--
 Your deliverable. Delete this comment block when done. Ground every
 section in the two (or three) agents you actually wrote in
-.claude/agents/ -- not generic subagent advice.
+.codex/agents/ -- not generic subagent advice.
 -->
 
 ## When to delegate
 
 [fill in: for each agent you wrote, the concrete situation where you'd
-actually want Claude to delegate to it instead of doing the work inline]
+actually want Codex to delegate to it instead of doing the work inline]
 
 ## When NOT to delegate
 
