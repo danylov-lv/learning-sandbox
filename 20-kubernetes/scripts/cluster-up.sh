@@ -5,16 +5,27 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODULE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CLUSTER_NAME="sandbox20"
+CLUSTER_FILTER="label=io.x-k8s.kind.cluster=$CLUSTER_NAME"
 CALICO_VERSION="v3.29.1"
 CALICO_MANIFEST="https://raw.githubusercontent.com/projectcalico/calico/${CALICO_VERSION}/manifests/calico.yaml"
 CTX="kind-${CLUSTER_NAME}"
 
-if kind get clusters 2>/dev/null | grep -qx "$CLUSTER_NAME"; then
-  echo "cluster '$CLUSTER_NAME' already exists, reusing it"
-else
+node_list="$(docker ps -aq --filter "$CLUSTER_FILTER")"
+if [[ -z "$node_list" ]]; then
   echo "creating cluster '$CLUSTER_NAME'..."
-  kind create cluster --name "$CLUSTER_NAME" --config "$MODULE_ROOT/cluster/kind-config.yaml"
+  KIND_EXPERIMENTAL_PROVIDER=docker kind create cluster --name "$CLUSTER_NAME" --config "$MODULE_ROOT/cluster/kind-config.yaml"
+  node_list="$(docker ps -aq --filter "$CLUSTER_FILTER")"
+else
+  echo "cluster '$CLUSTER_NAME' already exists, reusing it"
 fi
+
+if [[ -z "$node_list" ]]; then
+  echo "No Docker containers found for cluster '$CLUSTER_NAME'." >&2
+  exit 1
+fi
+read -r -a nodes <<< "${node_list//$'\n'/ }"
+docker update --restart=no "${nodes[@]}" >/dev/null
+docker start "${nodes[@]}" >/dev/null
 
 echo "installing Calico ($CALICO_VERSION)..."
 kubectl --context "$CTX" apply -f "$CALICO_MANIFEST"

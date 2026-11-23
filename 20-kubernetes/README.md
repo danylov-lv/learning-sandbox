@@ -39,21 +39,17 @@ Optional, needed only by specific arcs: the `argocd` CLI (arc 5) and the
 
 ## Cluster lifecycle
 
-The cluster is long-lived across the whole module -- create it once, keep
-it running, tear it down only when you want to reclaim resources or start
-fresh.
+Keep the same cluster across study sessions. Its Docker containers have
+automatic restarts disabled. Run `cluster-up.sh` to start the cluster after
+a reboot and resume with its existing data and images.
 
 ```bash
 cd 20-kubernetes
-bash scripts/cluster-up.sh      # once: creates kind cluster "sandbox20" + installs Calico
+bash scripts/cluster-up.sh      # creates or starts "sandbox20" and applies Calico
 bash scripts/build-images.sh    # once: builds & loads the fixture app's 3 images
 uv sync                         # once: installs the validator/harness dependencies
 
-# work through tasks across many evenings; the cluster survives reboots
-# of individual tasks and of your machine (as long as Docker Desktop is
-# running and the kind cluster's containers weren't removed)
-
-bash scripts/cluster-down.sh    # only when you're done or want a clean slate
+bash scripts/cluster-down.sh    # deletes the cluster when you want a clean slate
 ```
 
 `cluster-up.sh` is idempotent: running it again with the cluster already up
