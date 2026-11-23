@@ -1,5 +1,0 @@
-Work in the existing learning-sandbox repository with Codex.
-
-Read README.md, CONVENTIONS.md, the global sections of docs/authoring/SPEC.md (before '# Module specs'), and the relevant entries in PROGRESS.md and docs/authoring/GENERATION_STATE.md. Use bounded reads; inspect individual modules only as needed for the current request.
-
-Summarize the learning workflow and current state briefly, then carry out the user's requested scope. The learner writes exercise solutions; help with reviews, explanations, and authoring materials without revealing reference solutions. Preserve existing work. Do not recreate the repository skeleton, generate modules, or start solving unchecked tasks merely because this is a new session.

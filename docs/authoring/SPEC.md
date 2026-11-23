@@ -1,18 +1,8 @@
 # Global spec — read this once per session
 
-## Profile & hardware (calibrate ALL difficulty to this)
+## Difficulty and environment
 
-Maintain and extend the `learning-sandbox` repository for project-based engineering skill development. Calibrate task difficulty to my profile — do NOT dumb it down:
-
-- 2 years of commercial web scraping: 1 year requests/bs4, 1 year Scrapy
-- Daily work with distributed architecture: producer/consumer spiders communicating via RabbitMQ, deployed to Kubernetes via existing Helm charts and an Argo template (I fill templates, I don't design charts — see module 20 spec)
-- Backend background: Django, FastAPI; NestJS project at work
-- Large personal project: NestJS API + workers + scheduler + Next.js web + third-party API integrations
-- Main acknowledged gap: SQL optimization. Overall goal: growth to the systems level — storage, scaling, data architecture
-
-Meaning: queues, workers, containers, k8s are my daily context. Tasks like "learn what a queue is" or "write your first spider" are useless to me. Weak areas: the data layer (SQL, storage, formats, modeling) and streaming semantics. Strong areas: delivery, process orchestration, infrastructure.
-
-Hardware: Windows machine, 32 GB RAM, RTX 3070 Ti Super 8 GB VRAM, Docker available. I work both inside Docker and natively on Windows. Postgres always in Docker.
+Calibrate module design to the learner's confirmed experience and goals for that topic. Keep local exercises runnable on Windows with Docker, 32 GB RAM, and 8 GB of GPU VRAM. Run PostgreSQL in Docker.
 
 ## Working with Codex
 
@@ -36,13 +26,13 @@ Read the root README, CONVENTIONS.md, and the relevant progress or generation-st
 ```
 learning-sandbox/
 ├── README.md               # learning map, order, how to work with the sandbox
-├── PROGRESS.md             # flat checklist of all tasks
-├── CONVENTIONS.md          # authoring rules
+├── .agents/skills/         # repository skills
 ├── docs/
+│   ├── PROGRESS.md         # flat checklist of all tasks
 │   └── authoring/
+│       ├── CONVENTIONS.md  # authoring rules
 │       ├── SPEC.md
-│       ├── GENERATION_STATE.md
-│       └── prompts/
+│       └── GENERATION_STATE.md
 ├── 01-sql-foundations/
 ├── 02-sql-optimization/    # PRIORITY #1 — my main gap
 ├── 03-data-modeling/
@@ -88,8 +78,8 @@ NN-task-name/
 
 - Generate data via scripts (faker/numpy with fixed seeds), realistic distributions; never commit gigabytes to git — generators only.
 - Every docker-compose must actually start; verify by running it and report any runtime verification that could not be completed.
-- Root README: recommended order (02 right after warm-up 01), estimated time per module, the rule "one evening per week — one or two tasks, capstones span multiple evenings".
-- PROGRESS.md — flat checklist of all tasks with day-block groupings for capstones.
+- Root README: recommend module 02 after the SQL warm-up, base module estimates on documented task effort, and state cross-module prerequisites.
+- `docs/PROGRESS.md` is the checklist of all tasks, with checkpoints for capstones.
 - Since k8s/Helm is my daily tool, add an optional `k8s-bonus/` level to modules 06, 07, and 13 (plus a spark-on-k8s taste in module 05 if trivial to include): deploy that module's project to a local cluster (kind/k3d) with your own Helm chart — HPA for consumers, PDB, resource limits based on measurements.
 - Meta-task `ci-meta/`: a GitHub Actions workflow that, on push, detects the changed module and runs its tests (service containers for Postgres/Redis/etc.). One evening; doubles as CI practice and a living progress check.
 - All generated materials in English.
@@ -104,9 +94,9 @@ List the following in the root README under "Planned modules (second wave)" as o
 
 ## Authoring process
 
-- Work on the module or maintenance scope requested by the user. `docs/authoring/GENERATION_STATE.md` records content generation; `PROGRESS.md` records learner completion. An unchecked learner task is not a request to generate or solve it.
+- Work on the module or maintenance scope requested by the user. `docs/authoring/GENERATION_STATE.md` records content generation and `docs/PROGRESS.md` records learner completion. An unchecked learner task is not a request to generate or solve it.
 - For module authoring, read only its section in this file, located via `## MODULE:` headings. Plan the work, implement or delegate as appropriate, verify the environment and validators, then update the relevant generation-state entry. Continue to another module only within the authorized scope.
-- Preserve existing exercises, learner solutions, and completion checkboxes during unrelated maintenance. New modules follow the spec-approval process in `docs/authoring/prompts/add-new-module.md`.
+- Preserve existing exercises, learner solutions, and completion checkboxes during unrelated maintenance. Use [the add-new-module skill](../../.agents/skills/add-new-module/SKILL.md) for the new-module workflow.
 - Keep context bounded. Delegated work should return a short summary, changed paths, verification results, and unresolved issues. Inspect the changes needed to assess correctness.
 - At a session boundary, record unfinished authoring work and verification limits in the generation state. A fresh session reads the global spec, the relevant state entry, and only the requested module's section.
 
@@ -132,11 +122,11 @@ List the following in the root README under "Planned modules (second wave)" as o
 
 ## MODULE: Module 05-distributed-processing-spark
 
-**Distributed processing: Spark (core data-engineering module, recommended at work).** PySpark, local mode is enough (pip pyspark or bitnami Docker image; 32 GB RAM is plenty). Skip RDDs — DataFrame API from day one. Tasks: lazy evaluation and reading query plans (`explain()` — direct parallel to EXPLAIN from module 02), partitions/shuffles/data skew and how to see them in the Spark UI, broadcast vs sort-merge joins, why Python UDFs are slow (and pandas_udf/Arrow as the fix), window functions at 50M+ rows, reading/writing partitioned Parquet to MinIO via s3a (reuses module 04 infrastructure). One mandatory calibration task: solve the same job in polars single-node vs Spark and write down where Spark is overkill — knowing when NOT to use Spark is part of the skill. Capstone: multi-evening job that takes raw "scraped" JSON dumps → cleans, dedups, joins with reference data → writes a partitioned Parquet lake, with a shuffle-tuning pass measured in the Spark UI. Verification — result correctness validators + plan-structure checks (e.g., "the join must be broadcast, not sort-merge").
+**Distributed processing: Spark (core data-engineering module, recommended at work).** PySpark, local mode is enough (pip pyspark or bitnami Docker image; 32 GB RAM is plenty). Skip RDDs — DataFrame API from day one. Tasks: lazy evaluation and reading query plans (`explain()` — direct parallel to EXPLAIN from module 02), partitions/shuffles/data skew and how to see them in the Spark UI, broadcast vs sort-merge joins, why Python UDFs are slow (and pandas_udf/Arrow as the fix), window functions at 50M+ rows, reading/writing partitioned Parquet to MinIO via s3a (applies the object-storage concepts from module 04 in a separate stack). One mandatory calibration task: solve the same job in polars single-node vs Spark and write down where Spark is overkill — knowing when NOT to use Spark is part of the skill. Capstone: multi-evening job that takes raw "scraped" JSON dumps → cleans, dedups, joins with reference data → writes a partitioned Parquet lake, with a shuffle-tuning pass measured in the Spark UI. Verification — result correctness validators + plan-structure checks (e.g., "the join must be broadcast, not sort-merge").
 
 ## MODULE: Module 06-pipelines-and-orchestration
 
-**Pipelines and orchestration.** Airflow via the official docker-compose (fits in 32 GB easily). Project: ETL from raw dumps (let them be "scraped" JSONs) to a serving mart: incremental loads, idempotency, backfill, poison-record handling, failure alerting. Plus a dbt mini-project on top of the module 02 Postgres. The pipeline should orchestrate the module 05 Spark job as one of its stages. One dedicated task: migrate one DAG to Prefect and write a comparison (Prefect was a work candidate). Include 2 data-contract tasks: pandera (or Great Expectations — pick the less heavyweight) schemas as contracts at pipeline boundaries, validation gates that route violations to quarantine, and contract evolution without breaking downstream consumers. Verification — scenarios like "the middle of the pipeline died — recover without duplicates" plus "upstream added a column / changed a type — the contract catches it." Capstone: multi-evening end-to-end pipeline.
+**Pipelines and orchestration.** Airflow via the official docker-compose (fits in 32 GB easily). Project: ETL from raw dumps (let them be "scraped" JSONs) to a serving mart: incremental loads, idempotency, backfill, poison-record handling, failure alerting. Plus a dbt mini-project on top of the module 02 Postgres. One Airflow stage applies Spark concepts from module 05 to this module's own dataset and MinIO service. One dedicated task: migrate one DAG to Prefect and write a comparison (Prefect was a work candidate). Include 2 data-contract tasks: pandera (or Great Expectations — pick the less heavyweight) schemas as contracts at pipeline boundaries, validation gates that route violations to quarantine, and contract evolution without breaking downstream consumers. Verification — scenarios like "the middle of the pipeline died — recover without duplicates" plus "upstream added a column / changed a type — the contract catches it." Capstone: multi-evening end-to-end pipeline.
 
 ## MODULE: Module 07-streaming
 
@@ -160,7 +150,7 @@ List the following in the root README under "Planned modules (second wave)" as o
 
 ## MODULE: Module 12-api-engineering
 
-**API engineering.** FastAPI on top of the module 02 DB: pagination (offset vs cursor — with a benchmark showing why offset dies at depth), Redis caching, rate limiting, background tasks, streaming responses for large exports. Plus a security block (2–3 tasks): SQL injection hands-on — break your own module 02 DB through a deliberately vulnerable endpoint, then fix it properly (parametrization, least-privilege DB roles); authn/authz done right (JWT with refresh, common pitfalls as trap tests); secrets management (no secrets in env/compose files — docker secrets or sops, plus a "find the leaked secret in this repo" exercise). Verification — pytest + a load script (locust or a simple asyncio bombardier) with relative RPS targets; security tasks verified by exploit scripts that must fail after the fix.
+**API engineering.** FastAPI with a dedicated marketplace Postgres and Redis stack: pagination (offset vs cursor — with a benchmark showing why offset dies at depth), Redis caching, rate limiting, background tasks, streaming responses for large exports. Plus a security block (2–3 tasks): SQL injection hands-on — demonstrate the flaw in the module's isolated test stack, then fix it properly (parametrization, least-privilege DB roles); authn/authz done right (JWT with refresh, common pitfalls as trap tests); secrets management (no secrets in env/compose files — docker secrets or sops, plus a "find the leaked secret in this repo" exercise). Verification — pytest + a load script (locust or a simple asyncio bombardier) with relative RPS targets; security tasks verified by exploit scripts that must fail after the fix.
 
 ## MODULE: Module 13-scraping-at-scale
 

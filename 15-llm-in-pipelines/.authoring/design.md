@@ -37,7 +37,7 @@ docker compose exec ollama ollama pull qwen2.5:7b-instruct
 docker compose exec ollama ollama pull nomic-embed-text
 ```
 
-`CONVENTIONS.md`'s ports table gained one row:
+`docs/authoring/CONVENTIONS.md`'s ports table gained one row:
 `15-llm-in-pipelines | Ollama (HTTP API) | 11439 | SANDBOX_15_OLLAMA_PORT`.
 
 This session's verification ran against an already-running out-of-band
@@ -267,9 +267,9 @@ rng draw at all (`seed` param kept only for signature symmetry with the
 other four builders). They describe THIS sandbox's own conventions (ports,
 hints, verification contract, data generation rules, Python tooling,
 capstone checkpoint structure) but are synthesized prose, not copied
-verbatim from `CONVENTIONS.md` or any other live file. This is intentional:
+verbatim from `docs/authoring/CONVENTIONS.md` or any other live file. This is intentional:
 pointing RAG at the live repo would make the QA gold answers drift every
-time `CONVENTIONS.md` changes, breaking a previously-passing task through
+time `docs/authoring/CONVENTIONS.md` changes, breaking a previously-passing task through
 no fault of the learner. The handbook is a frozen snapshot in spirit only.
 
 Docs: `doc_id ∈ {ports-policy, hint-ladder, verification-contract,

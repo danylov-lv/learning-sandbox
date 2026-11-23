@@ -62,10 +62,10 @@ subprocess wrappers passed in seconds). Only cosmetic fix: README "ten" -> "elev
 
 - Created `08-capstone/README.md` (backstory / given / CP1–CP3 / criteria /
   topics; no code, no ground-truth numbers leaked).
-- Filled PROGRESS.md `## 10-nosql-patterns` (8-task flat checklist, capstone
+- Filled docs/PROGRESS.md `## 10-nosql-patterns` (8-task flat checklist, capstone
   expanded to CP1/CP2/CP3), matching module 09's format.
 - Root README est-evenings 4 -> 5–6.
-- CONVENTIONS.md ports (SANDBOX_10_*) were already recorded in wave-1.
+- docs/authoring/CONVENTIONS.md ports (SANDBOX_10_*) were already recorded in wave-1.
 
 ## Stock state
 

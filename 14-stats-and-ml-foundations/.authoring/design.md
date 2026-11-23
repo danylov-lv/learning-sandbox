@@ -14,7 +14,7 @@ regenerate and reverify and update every consumer in the same change.
 
 Module 14 is pure Python (numpy, pandas, polars, pyarrow, scipy, scikit-learn,
 matplotlib, torch, pytest). There is no `docker-compose.yml` and no ports
-table entry in `CONVENTIONS.md`. `requires-python = ">=3.12,<3.13"` is a hard
+table entry in `docs/authoring/CONVENTIONS.md`. `requires-python = ">=3.12,<3.13"` is a hard
 pin, not a floor — verified this session that torch 2.13.0+cpu has no
 wheel for 3.14 (the ambient interpreter on this machine) but resolves,
 installs, and imports cleanly on 3.12.12 via `uv python`. Do not relax the

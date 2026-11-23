@@ -4,7 +4,7 @@
 
 PriceWatch's scrapers dump raw NDJSON to disk every night, and until now nothing turns those dumps into anything a BI person or a pricing model can query — the closest thing to a pipeline is a cron job and a prayer. You've run queues, workers, and k8s jobs for years; what's new here is doing the work inside an orchestrator that owns scheduling, retries, and historical replay for you.
 
-You are going to build the ETL properly on Airflow: raw scraped NDJSON → a `staging` layer → `core` serving tables, with a `mart` on top. The whole module is organised around the properties that separate a real pipeline from a script — idempotent loads, correct backfill and hole-repair, poison-record quarantine with alerting, and pandera data contracts that catch upstream schema drift at the boundary instead of downstream three days later. Two of the stages reach outside Airflow: one runs the module 05 Spark job as a scheduled pipeline stage that lands a partitioned silver lake, and a dbt mini-project builds marts over module 02's Postgres. The module closes by porting one DAG to Prefect 3 and writing down what actually differs once you've built both.
+Build an Airflow ETL pipeline from raw scraped NDJSON through `staging` to `core` serving tables and a `mart`. Practise idempotent loading, backfill, recovery, quarantine and alerting for bad records, and pandera contracts for detecting schema drift. An Airflow-managed Spark job writes a partitioned silver lake, and a dbt mini-project builds marts over module 02's Postgres. The module closes by porting a DAG to Prefect 3 and comparing the two implementations.
 
 ## Stack / quickstart
 
@@ -41,7 +41,7 @@ Ports are overridable via `SANDBOX_06_PORT`, `SANDBOX_06_AIRFLOW_PORT`, `SANDBOX
 | 04 | poison-records-and-alerting | Quarantine unparseable rows to a dead-letter table, alert on breakage-rate spikes, fail on missing dumps | 1 evening |
 | 05 | contract-gate-pandera | A pandera contract gate from `staging` to `core`: violations quarantined, not coerced | 1 evening |
 | 06 | contract-evolution | Survive two upstream schema changes without breaking downstream consumers | 1 evening |
-| 07 | spark-stage-silver-lake | Run the module 05 Spark job as an Airflow-owned stage → partitioned silver lake on MinIO | 1 evening |
+| 07 | spark-stage-silver-lake | Schedule a Spark job in Airflow to write a partitioned silver lake to MinIO | 1 evening |
 | 08 | dbt-marts-over-oltp | A dbt staging layer + two marts with tests, over module 02's Postgres | 1 evening |
 | 09 | prefect-migration | Port the task-02 loader to a Prefect 3 flow, run it, write the honest comparison | 1 evening |
 | 10 | capstone-end-to-end | Compose everything into one production pipeline: CP1 build + backfill, CP2 failure drills, CP3 design memo | multi-evening |
@@ -50,8 +50,8 @@ Ports are overridable via `SANDBOX_06_PORT`, `SANDBOX_06_AIRFLOW_PORT`, `SANDBOX
 
 ## Cross-module ties
 
-- **Task 07** orchestrates the **module 05** Spark job as a pipeline stage (pyspark and the s3a jars are baked into the Airflow image, so it runs local-mode inside the Airflow container).
-- **Task 08** targets **module 02's** Postgres as its dbt source — that module's stack must be up while you work task 08.
+- **Task 07** builds on Spark concepts from **module 05** and uses its own DAG scaffold and dataset. Spark runs locally inside the Airflow container and writes to this module's MinIO.
+- **Task 08** requires the running, seeded **module 02** Postgres as its dbt source.
 
 ## Topics to read up on
 

@@ -3,7 +3,7 @@
 This directory (`.authoring/`) is committed but must never be read by the
 learner before attempting a task — it documents planted mutant themes,
 which is exactly the answer key. Read it after finishing a task, if at all,
-same rule as every other module (see repo `CONVENTIONS.md`).
+same rule as every other module (see repo `docs/authoring/CONVENTIONS.md`).
 
 This file is the design contract for task-authoring agents building tasks
 01–07 of `16-testing-engineering`. It documents infrastructure that is

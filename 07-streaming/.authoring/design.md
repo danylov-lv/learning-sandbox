@@ -21,7 +21,7 @@ regenerate the corpus and update every consumer in the same change.
   `OUTSIDE://localhost:${SANDBOX_07_KAFKA_PORT}`. Admin API on `19644`
   (`SANDBOX_07_REDPANDA_ADMIN_PORT`). Redpanda Console UI on `8307`
   (`SANDBOX_07_CONSOLE_PORT`). Transactions and idempotence are on by default
-  (redpanda enables them; we do not disable). All added to root `CONVENTIONS.md`.
+  (redpanda enables them; we do not disable). All added to `docs/authoring/CONVENTIONS.md`.
 - Topic naming convention: every module topic starts with the prefix `s07.`.
   `harness/common.py:reset_topics("s07.")` deletes them all for a clean slate.
 
@@ -189,7 +189,7 @@ Field notes:
 
 ## Ports table addition
 
-Added to root `CONVENTIONS.md`:
+Added to `docs/authoring/CONVENTIONS.md`:
 
 | Module | Service | Host port | Env var |
 |---|---|---|---|

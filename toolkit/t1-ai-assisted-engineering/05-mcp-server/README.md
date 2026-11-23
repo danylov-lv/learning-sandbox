@@ -21,7 +21,7 @@ actually good for.
   and exact return-value contract; the tool function itself
   `raise NotImplementedError`.
 - `fixture/PROGRESS-fixture.md` -- a small, fixed fixture shaped like this
-  repo's real PROGRESS.md, so grading is fully deterministic and never
+  repo's `docs/PROGRESS.md`, so grading is fully deterministic and never
   depends on the repo's actual, ever-changing progress. Do not edit it.
 - `tests/validate.py` -- the validator; read it if you want to see
   exactly how it speaks MCP to your server.

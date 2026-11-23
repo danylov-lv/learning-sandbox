@@ -1,7 +1,7 @@
 # Design notes — t2-modern-python-toolchain
 
 Off-limits to the learner until after they finish a task (see module
-README and CONVENTIONS.md). This documents the grading contract and the
+README and docs/authoring/CONVENTIONS.md). This documents the grading contract and the
 planted-issue ground truth per task, for future authoring sessions to
 resume from without re-deriving everything.
 

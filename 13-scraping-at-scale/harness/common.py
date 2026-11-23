@@ -145,7 +145,7 @@ def load_target_spec():
 
 
 # --------------------------------------------------------------------------
-# Ports (env-overridable, module 13 block -- see CONVENTIONS.md)
+# Ports (env-overridable, module 13 block -- see docs/authoring/CONVENTIONS.md)
 # --------------------------------------------------------------------------
 
 def target_port():

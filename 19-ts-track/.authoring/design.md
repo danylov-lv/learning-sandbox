@@ -11,7 +11,7 @@ This is a **TypeScript module built as a pnpm workspace**: no Python, no
 workspace at `19-ts-track/` (root `package.json` + `pnpm-workspace.yaml` +
 committed `pnpm-lock.yaml`) replaces all of that, exactly the way module
 18-rust-track's Cargo workspace does. This is the module's documented
-CONVENTIONS.md exception; state it as such when writing task READMEs.
+docs/authoring/CONVENTIONS.md exception; state it as such when writing task READMEs.
 
 All dev dependencies live once in the root `package.json` and are shared
 through the workspace — task packages declare **no** dev dependencies of their

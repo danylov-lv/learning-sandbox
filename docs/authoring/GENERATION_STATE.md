@@ -1,6 +1,6 @@
 # Generation state
 
-Status tracks generated learning materials, not learner completion. Learner progress is in PROGRESS.md.
+This inventory tracks generated learning materials. See [learner progress](../PROGRESS.md) for exercise completion.
 
 ## Generated content
 
@@ -31,4 +31,4 @@ Status tracks generated learning materials, not learner completion. Learner prog
 
 ## Current authoring rules
 
-Follow CONVENTIONS.md and the relevant section of docs/authoring/SPEC.md when extending a module. Use module-local .authoring notes only for grading contracts, fixture constraints, and verification limits. Update this inventory when new content is generated. Keep authoring documentation focused on current behavior.
+Follow [the authoring conventions](CONVENTIONS.md) and the relevant section of [the specification](SPEC.md) when extending a module. Use module-local `.authoring` notes only for grading contracts, fixture constraints, and verification limits. Update this inventory when new content is generated. Keep authoring documentation focused on current behavior.

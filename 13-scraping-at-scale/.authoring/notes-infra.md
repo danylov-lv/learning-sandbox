@@ -232,7 +232,7 @@ http://localhost:3313/api/health` -> `{"database":"ok",...}`.
   the gate's scope exactly "every route except `/__debug/*`" as designed,
   rather than adding a second bypass just for convenience.
 - **Prometheus `spider` job target port (9113)** is a NEW convention this
-  session introduces (not in CONVENTIONS.md's fixed-ports table, since it's
+  session introduces (not in docs/authoring/CONVENTIONS.md's fixed-ports table, since it's
   a learner dev-server port like module 12's ephemeral API ports, not a
   docker-compose service) — documented in design.md and `prometheus.yml`'s
   own comment; task 06's author must either use exactly 9113 or update both

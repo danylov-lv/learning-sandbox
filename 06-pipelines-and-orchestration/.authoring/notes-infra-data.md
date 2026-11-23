@@ -77,7 +77,7 @@ for compatibility, re-pin explicitly and re-run `uv lock`.
   completion summary — both were re-derived from ground-truth.json rather
   than eyeballed.
 - Ad hoc checks (script written to `scratch/`, run, then deleted per
-  CONVENTIONS.md — not committed):
+  docs/authoring/CONVENTIONS.md — not committed):
   - Per-day identity `total_lines == malformed_lines + duplicate_lines +
     valid_records + invalid_records["total"]` holds for all 14 days at both
     scales.

@@ -13,7 +13,7 @@ regenerate and reverify and update every consumer in the same change.
 
 Module 11 is pure Python (`asyncio`, `aiohttp` for the mock peer and client
 requests, `psutil`/`numpy` where noted). There is no `docker-compose.yml` and
-no ports table entry in `CONVENTIONS.md` — nothing here binds a fixed host
+no ports table entry in `docs/authoring/CONVENTIONS.md` — nothing here binds a fixed host
 port. `harness/peer.py`'s mock server always binds `127.0.0.1:0` (OS-assigned
 ephemeral port), so parallel task runs never collide.
 

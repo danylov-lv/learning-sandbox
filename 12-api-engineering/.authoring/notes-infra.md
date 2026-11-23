@@ -181,7 +181,7 @@ tracked afterward.
   [sock])` (the pre-bound-socket strategy from `run_app`) started and tore
   down cleanly across every probe run, matching module 11's prior finding
   that binding your own socket avoids relying on private internals.
-- **CONVENTIONS.md ports table** updated with the two new rows
+- **docs/authoring/CONVENTIONS.md ports table** updated with the two new rows
   (`12-api-engineering | Postgres | 54312 | SANDBOX_12_PG_PORT` and
   `... | Redis | 6312 | SANDBOX_12_REDIS_PORT`) in the same session.
 - **Stock state after this session**: `docker compose up` stack LEFT

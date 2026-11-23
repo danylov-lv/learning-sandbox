@@ -8,7 +8,7 @@ stable project instructions.
 
 This module is pure Python with no services -- no `docker-compose.yml`,
 no host ports (unlike most of the other sandbox modules, see
-`CONVENTIONS.md`'s ports table).
+`docs/authoring/CONVENTIONS.md`'s ports table).
 
 ## Tasks
 

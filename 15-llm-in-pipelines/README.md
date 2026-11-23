@@ -56,14 +56,14 @@ metric failure.
 
 ## Tasks
 
-| # | Task | Status |
-|---|------|--------|
-| 01 | swappable-llm-client | pending |
-| 02 | structured-extraction | pending |
-| 03 | classification-and-enrichment | ready |
-| 04 | embedding-dedup | pending |
-| 05 | mini-rag | pending |
-| 06 | capstone (CP1/CP2/CP3) | pending |
+| # | Task |
+|---|------|
+| 01 | [swappable-llm-client](01-swappable-llm-client/) |
+| 02 | [structured-extraction](02-structured-extraction/) |
+| 03 | [classification-and-enrichment](03-classification-and-enrichment/) |
+| 04 | [embedding-dedup](04-embedding-dedup/) |
+| 05 | [mini-rag](05-mini-rag/) |
+| 06 | [capstone (CP1/CP2/CP3)](06-capstone/) |
 
 ## Verification philosophy
 

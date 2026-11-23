@@ -82,7 +82,7 @@ pruning probe, ground-truth loading, benchmark timing) and print
 uv run python NN-task-name/tests/validate.py
 ```
 
-## Planned task lineup
+## Tasks
 
 - **01** — mergetree-and-primary-index
 - **02** — materialized-views

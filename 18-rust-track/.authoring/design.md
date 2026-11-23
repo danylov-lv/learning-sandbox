@@ -127,7 +127,7 @@ Bonus. **proc-macro-bonus** (`t09-proc-macro-bonus`, optional, `proc-macro
 behavior (never on generated *source text* — that would be an
 implementation-detail check).
 
-## Grading contract (the module's documented CONVENTIONS.md exception)
+## Grading contract (the module's documented docs/authoring/CONVENTIONS.md exception)
 
 Every task is graded by GIVEN cargo integration tests under the task's own
 `tests/` directory. **`cargo test -p <package>` is the validator.** Rust

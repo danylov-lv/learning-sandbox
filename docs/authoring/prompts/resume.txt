@@ -1,3 +1,0 @@
-Resume work with Codex in the existing learning-sandbox repository.
-
-Read CONVENTIONS.md, the global sections of docs/authoring/SPEC.md (before '# Module specs'), and the progress or generation-state entries relevant to the user's current request. Continue the agreed scope using targeted reads; do not regenerate completed materials or treat unchecked learner tasks as authoring work. Preserve learner solutions and progress. Report completed work, verification results, and anything still unfinished. If no current task is specified or recoverable from the conversation, ask what to continue instead of inventing work.

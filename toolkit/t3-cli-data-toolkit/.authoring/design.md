@@ -1,7 +1,7 @@
 # Module t3 design notes — OFF-LIMITS TO THE LEARNER BEFORE FINISHING A TASK
 
 This directory (`.authoring/`) is committed but must not be read before
-you attempt a task — see `CONVENTIONS.md`. There are no reference
+you attempt a task — see `docs/authoring/CONVENTIONS.md`. There are no reference
 solutions here (there never are, anywhere in this repo): this file
 documents the grading *contract* and the exact expected answers each
 validator recomputes, not a solving command line. Read it after

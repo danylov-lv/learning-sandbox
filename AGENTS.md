@@ -6,9 +6,9 @@ This is a project-based engineering course. The learner writes exercise solution
 
 ## Read only what the task needs
 
-- Read CONVENTIONS.md before editing course materials; it defines task structure, verification rules, and track-specific exceptions.
-- When asked to resume learning, use the course order in README.md and read only the relevant section of PROGRESS.md and the candidate task's README. If an unchecked task has a learner submission, consult its documented completion criteria and verify it when the required environment is available. Report any discrepancy or verification blocker and give one concrete next step. Preserve completion checkboxes unless the user asks to update them.
-- For module authoring or expansion, read the global sections of docs/authoring/SPEC.md and only the relevant module section, located by its `## MODULE:` heading. Check docs/authoring/GENERATION_STATE.md for content-generation status. The new-module process is in docs/authoring/prompts/add-new-module.md.
+- Read `docs/authoring/CONVENTIONS.md` before editing course materials for task structure, verification rules, and track-specific exceptions.
+- When asked to resume learning, use the course order in README.md and read only the relevant section of `docs/PROGRESS.md` and the candidate task's README. If an unchecked task has a learner submission, consult its documented completion criteria and verify it when the required environment is available. Report any discrepancy or verification blocker and give one concrete next step. Preserve completion checkboxes unless the user asks to update them.
+- For a new module, use `$add-new-module` (`.agents/skills/add-new-module/SKILL.md`). For changes to an existing module, read the global sections of `docs/authoring/SPEC.md`, its relevant `## MODULE:` section, and the matching entry in `docs/authoring/GENERATION_STATE.md`.
 - For an exercise review, read its README, submitted work, and relevant tests. Treat .authoring directories as spoilers; use them only when necessary for authoring or a validator audit, and keep their ground truth out of learner feedback.
 
 Start with top-level listings and targeted searches. Avoid recursively reading the course, environments, generated data, or all of SPEC.md. Keep unrelated learner edits intact.

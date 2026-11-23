@@ -107,8 +107,8 @@ reference solutions anywhere in this module -- not in hints, not in
 
 ## Tasks
 
-22 tasks across 6 arcs (arc 6 optional). Estimated 12-15 evenings total;
-the arc capstones (07, 11, 22) each run several evenings.
+The first five arcs take an estimated 20-25 evenings, including their
+capstones. The optional sixth arc adds 5-7 evenings.
 
 | # | Task | Arc | Evenings |
 |---|---|---|:---:|

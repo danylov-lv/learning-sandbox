@@ -53,21 +53,21 @@ traceback.
 
 ## Tasks
 
-| # | Task | Status |
-|---|------|--------|
-| 01 | vectorization-and-broadcasting | pending |
-| 02 | eda-scraped-prices | pending |
-| 03 | matplotlib-fundamentals | pending |
-| 04 | price-distributions-not-normal | pending |
-| 05 | outliers-vs-parsing-errors | pending |
-| 06 | confidence-intervals | pending |
-| 07 | bootstrap | pending |
-| 08 | ab-test-scraping-strategies | pending |
-| 09 | correlation-vs-causation | pending |
-| 10 | sklearn-pipeline-leakage | pending |
-| 11 | feature-engineering | pending |
-| 12 | pytorch-tensors-autograd | pending |
-| 13 | capstone-text-classifier | pending |
+| # | Task |
+|---|------|
+| 01 | [vectorization-and-broadcasting](01-vectorization-and-broadcasting/) |
+| 02 | [eda-scraped-prices](02-eda-scraped-prices/) |
+| 03 | [matplotlib-fundamentals](03-matplotlib-fundamentals/) |
+| 04 | [price-distributions-not-normal](04-price-distributions-not-normal/) |
+| 05 | [outliers-vs-parsing-errors](05-outliers-vs-parsing-errors/) |
+| 06 | [confidence-intervals](06-confidence-intervals/) |
+| 07 | [bootstrap](07-bootstrap/) |
+| 08 | [ab-test-scraping-strategies](08-ab-test-scraping-strategies/) |
+| 09 | [correlation-vs-causation](09-correlation-vs-causation/) |
+| 10 | [sklearn-pipeline-leakage](10-sklearn-pipeline-leakage/) |
+| 11 | [feature-engineering](11-feature-engineering/) |
+| 12 | [pytorch-tensors-autograd](12-pytorch-tensors-autograd/) |
+| 13 | [capstone-text-classifier](13-capstone-text-classifier/) |
 
 ## Verification philosophy
 

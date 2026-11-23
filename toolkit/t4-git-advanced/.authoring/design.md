@@ -1,7 +1,7 @@
 # toolkit/t4-git-advanced design notes -- OFF-LIMITS TO THE LEARNER BEFORE FINISHING A TASK
 
 This directory is committed but must not be read before attempting a
-task -- see the repo's `CONVENTIONS.md`. There are no reference solutions
+task -- see the repo's `docs/authoring/CONVENTIONS.md`. There are no reference solutions
 here (there never are, anywhere in this repo): this documents the grading
 *contract* -- the intended final repo states and the independently-known
 answers the validators check against -- not a worked solution.

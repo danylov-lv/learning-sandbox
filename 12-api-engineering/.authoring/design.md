@@ -52,7 +52,7 @@ port) for both the in-process and subprocess launch strategies — there is
 no `SANDBOX_12_API_PORT` anywhere and none should ever be added; parallel
 task runs (and parallel validator runs within one task) must never
 collide on a port. Only Postgres and Redis have fixed, env-overridable
-host ports (`CONVENTIONS.md`):
+host ports (`docs/authoring/CONVENTIONS.md`):
 
 | Service  | Host port | Env var                  |
 |----------|-----------|---------------------------|

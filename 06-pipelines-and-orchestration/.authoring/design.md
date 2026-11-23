@@ -15,7 +15,7 @@ a number here, regenerate data and update every consumer in the same change.
 - Host port `54306`, env override `SANDBOX_06_PORT` (default `54306` if unset).
 - Schemas: `staging`, `core`, `mart`, `ops`. (`ops` is for run/audit metadata —
   load watermarks, DAG run logs, dead-letter tables — not business data.)
-- This entry has been added to the root `CONVENTIONS.md` ports table.
+- This entry has been added to the `docs/authoring/CONVENTIONS.md` ports table.
 
 ## Raw data layout
 
@@ -297,7 +297,7 @@ Field notes:
 
 ## Ports table addition
 
-Added to root `CONVENTIONS.md`:
+Added to `docs/authoring/CONVENTIONS.md`:
 
 | Module | Service | Host port | Env var |
 |---|---|---|---|
