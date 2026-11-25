@@ -78,9 +78,9 @@ Service classification:
 
 | Class | Meaning | Modules |
 |---|---|---|
-| `light` | Own `docker-compose.yml` with only Postgres/Redis/Mongo. CI brings it up with `--wait` to prove the containers actually boot and reach healthy. | 01, 03, 10, 12 |
-| `heavy` | Has a compose file, but it's too big or too special for a hosted GitHub runner (Spark, Airflow, ClickHouse, redpanda, Debezium, MinIO, a GPU-bound Ollama, multi-GB seeded data). CI runs only the static checks and emits an `::notice::` explaining why the live step is skipped — honestly, not silently. | 02, 04, 05, 06, 07, 08, 09, 13, 15 |
-| `none` | No compose file; static checks only. | 11, 14, 16, 17, 18, 19, 20, and all four `toolkit/` modules |
+| `light` | Own `docker-compose.yml` with only Postgres/Redis/Mongo. CI brings it up with `--wait` to prove the containers actually boot and reach healthy. | 01, 04, 11, 13 |
+| `heavy` | Has a compose file, but it's too big or too special for a hosted GitHub runner (Spark, Airflow, ClickHouse, redpanda, Debezium, MinIO, a GPU-bound Ollama, multi-GB seeded data). CI runs only the static checks and emits an `::notice::` explaining why the live step is skipped — honestly, not silently. | 02, 05, 06, 07, 08, 09, 10, 14, 16 |
+| `none` | No compose file; static checks only. | 12, 15, 17, 18, 19, 20, 21, and all four `toolkit/` modules |
 
 The honest reason `heavy` modules don't run live in CI: a hosted runner
 has 2 vCPU / 7 GB RAM and no GPU, and several of these stacks (a Spark
@@ -88,9 +88,8 @@ cluster, ClickHouse at the 50M-row scale the module actually exercises,
 Ollama on a GPU) either won't fit or would produce a boot check so
 degenerate (an empty container with none of the seeded scale that makes
 the module's tasks meaningful) that it wouldn't prove anything real. Module
-20's `kind` cluster and modules 16/18/19's ephemeral/testcontainers-managed
-services are structurally different from `docker-compose.yml` and are
-`none` for that reason, not because they're unimportant.
+21 uses a kind cluster, module 17 manages testcontainers in its test suite,
+and the Rust and TypeScript tracks require no Compose services.
 
 ## Change detection (`ci-meta/detect_changes.py`)
 

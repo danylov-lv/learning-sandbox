@@ -22,8 +22,8 @@ directly in `tests/validate.py`, captured once by literally running
 `setup.sh` during authoring and reading off `git rev-parse` / `git log`.
 This mirrors the spec language for the reflog task precisely ("setup
 records the lost SHA in .authoring... for the validator to know the
-target") and is not materially different from module 03's
-`ground_truth.json` or module 17's independent-recomputation pattern --
+target") and is not materially different from module 04's
+`ground_truth.json` or module 18's independent-recomputation pattern --
 the validator's knowledge of the *answer* is not a *solution to the
 task*: knowing that main's tip SHA is `b2d59f5...` tells a learner
 nothing about how to find and recreate a deleted branch's SHA via
@@ -200,7 +200,7 @@ state.
 
 ## Task 05 -- history-design-writeup
 
-Same two-gate doc-gate shape as module 17 (structure + hostile review),
+Same two-gate doc-gate shape as module 18 (structure + hostile review),
 minus the capacity-model gate (there's no numeric model here -- this is
 `check_sections` + `check_keywords` + `check_quantitative` +
 `check_answers` only, no `import_estimate`/`check_close`).
@@ -222,7 +222,7 @@ vague one visibly fails to.
 quantitative gate, `min_answered=6`/`min_chars=200` on `check_answers`
 with `questions_path=HOSTILE-REVIEW.md` (so verbatim-copy detection
 compares against the real question text, not a weak same-line
-heuristic -- see module 17's `.authoring/notes-live-verification.md` for
+heuristic -- see module 18's `.authoring/notes-live-verification.md` for
 why that flag matters).
 
 Verified live: the stock, unfilled `POLICY.md` fails on `check_sections`

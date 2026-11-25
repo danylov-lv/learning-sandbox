@@ -71,52 +71,52 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 |---|---|---|---|
 | 01-sql-for-analytics | Postgres | 54301 | `SANDBOX_01_PORT` |
 | 02-sql-optimization | Postgres | 54302 | `SANDBOX_02_PORT` |
-| 03-data-modeling | Postgres | 54303 | `SANDBOX_03_PORT` |
-| 04-storage-and-formats | MinIO (API / console) | 9301 / 9302 | `SANDBOX_04_MINIO_PORT` / `SANDBOX_04_MINIO_CONSOLE_PORT` |
-| 05-distributed-processing-spark | MinIO (API / console) | 9501 / 9502 | `SANDBOX_05_MINIO_PORT` / `SANDBOX_05_MINIO_CONSOLE_PORT` |
-| 05-distributed-processing-spark | Spark UI | 4040 | `SANDBOX_05_SPARK_UI_PORT` |
-| 06-pipelines-and-orchestration | Postgres | 54306 | `SANDBOX_06_PORT` |
-| 06-pipelines-and-orchestration | Airflow UI | 8306 | `SANDBOX_06_AIRFLOW_PORT` |
-| 06-pipelines-and-orchestration | MinIO (API / console) | 9601 / 9602 | `SANDBOX_06_MINIO_PORT` / `SANDBOX_06_MINIO_CONSOLE_PORT` |
-| 07-streaming | Postgres | 54307 | `SANDBOX_07_PORT` |
-| 07-streaming | Redpanda (Kafka API) | 19092 | `SANDBOX_07_KAFKA_PORT` |
-| 07-streaming | Redpanda (Admin API) | 19644 | `SANDBOX_07_REDPANDA_ADMIN_PORT` |
-| 07-streaming | Redpanda Console | 8307 | `SANDBOX_07_CONSOLE_PORT` |
-| 08-cdc-debezium | Source Postgres | 54308 | `SANDBOX_08_SOURCE_PORT` |
-| 08-cdc-debezium | Mart Postgres | 54318 | `SANDBOX_08_MART_PORT` |
-| 08-cdc-debezium | Redpanda (Kafka API) | 19093 | `SANDBOX_08_KAFKA_PORT` |
-| 08-cdc-debezium | Redpanda (Admin API) | 19645 | `SANDBOX_08_REDPANDA_ADMIN_PORT` |
-| 08-cdc-debezium | Redpanda Console | 8308 | `SANDBOX_08_CONSOLE_PORT` |
-| 08-cdc-debezium | Kafka Connect REST | 8383 | `SANDBOX_08_CONNECT_PORT` |
-| 09-olap-clickhouse-duckdb | ClickHouse (HTTP) | 8309 | `SANDBOX_09_CH_HTTP_PORT` |
-| 09-olap-clickhouse-duckdb | ClickHouse (native TCP) | 9309 | `SANDBOX_09_CH_NATIVE_PORT` |
-| 09-olap-clickhouse-duckdb | Postgres | 54309 | `SANDBOX_09_PG_PORT` |
-| 10-nosql-patterns | Redis (Redis Stack) | 6310 | `SANDBOX_10_REDIS_PORT` |
-| 10-nosql-patterns | MongoDB | 27310 | `SANDBOX_10_MONGO_PORT` |
-| 10-nosql-patterns | Postgres | 54310 | `SANDBOX_10_PG_PORT` |
-| 12-api-engineering | Postgres | 54312 | `SANDBOX_12_PG_PORT` |
-| 12-api-engineering | Redis | 6312 | `SANDBOX_12_REDIS_PORT` |
-| 13-scraping-at-scale | Target site (HTTP) | 8313 | `SANDBOX_13_TARGET_PORT` |
-| 13-scraping-at-scale | Prometheus | 9313 | `SANDBOX_13_PROM_PORT` |
-| 13-scraping-at-scale | Grafana | 3313 | `SANDBOX_13_GRAFANA_PORT` |
-| 15-llm-in-pipelines | Ollama (HTTP API) | 11439 | `SANDBOX_15_OLLAMA_PORT` |
-| 20-kubernetes | kind apiserver | 6320 | `SANDBOX_20_APISERVER_PORT` |
-| 20-kubernetes | ingress HTTP | 8320 | `SANDBOX_20_INGRESS_HTTP_PORT` |
-| 20-kubernetes | ingress HTTPS | 9320 | `SANDBOX_20_INGRESS_HTTPS_PORT` |
+| 04-data-modeling | Postgres | 54303 | `SANDBOX_03_PORT` |
+| 05-storage-and-formats | MinIO (API / console) | 9301 / 9302 | `SANDBOX_04_MINIO_PORT` / `SANDBOX_04_MINIO_CONSOLE_PORT` |
+| 06-distributed-processing-spark | MinIO (API / console) | 9501 / 9502 | `SANDBOX_05_MINIO_PORT` / `SANDBOX_05_MINIO_CONSOLE_PORT` |
+| 06-distributed-processing-spark | Spark UI | 4040 | `SANDBOX_05_SPARK_UI_PORT` |
+| 07-pipelines-and-orchestration | Postgres | 54306 | `SANDBOX_06_PORT` |
+| 07-pipelines-and-orchestration | Airflow UI | 8306 | `SANDBOX_06_AIRFLOW_PORT` |
+| 07-pipelines-and-orchestration | MinIO (API / console) | 9601 / 9602 | `SANDBOX_06_MINIO_PORT` / `SANDBOX_06_MINIO_CONSOLE_PORT` |
+| 08-streaming | Postgres | 54307 | `SANDBOX_07_PORT` |
+| 08-streaming | Redpanda (Kafka API) | 19092 | `SANDBOX_07_KAFKA_PORT` |
+| 08-streaming | Redpanda (Admin API) | 19644 | `SANDBOX_07_REDPANDA_ADMIN_PORT` |
+| 08-streaming | Redpanda Console | 8307 | `SANDBOX_07_CONSOLE_PORT` |
+| 09-cdc-debezium | Source Postgres | 54308 | `SANDBOX_08_SOURCE_PORT` |
+| 09-cdc-debezium | Mart Postgres | 54318 | `SANDBOX_08_MART_PORT` |
+| 09-cdc-debezium | Redpanda (Kafka API) | 19093 | `SANDBOX_08_KAFKA_PORT` |
+| 09-cdc-debezium | Redpanda (Admin API) | 19645 | `SANDBOX_08_REDPANDA_ADMIN_PORT` |
+| 09-cdc-debezium | Redpanda Console | 8308 | `SANDBOX_08_CONSOLE_PORT` |
+| 09-cdc-debezium | Kafka Connect REST | 8383 | `SANDBOX_08_CONNECT_PORT` |
+| 10-olap-clickhouse-duckdb | ClickHouse (HTTP) | 8309 | `SANDBOX_09_CH_HTTP_PORT` |
+| 10-olap-clickhouse-duckdb | ClickHouse (native TCP) | 9309 | `SANDBOX_09_CH_NATIVE_PORT` |
+| 10-olap-clickhouse-duckdb | Postgres | 54309 | `SANDBOX_09_PG_PORT` |
+| 11-nosql-patterns | Redis (Redis Stack) | 6310 | `SANDBOX_10_REDIS_PORT` |
+| 11-nosql-patterns | MongoDB | 27310 | `SANDBOX_10_MONGO_PORT` |
+| 11-nosql-patterns | Postgres | 54310 | `SANDBOX_10_PG_PORT` |
+| 13-api-engineering | Postgres | 54312 | `SANDBOX_12_PG_PORT` |
+| 13-api-engineering | Redis | 6312 | `SANDBOX_12_REDIS_PORT` |
+| 14-scraping-at-scale | Target site (HTTP) | 8313 | `SANDBOX_13_TARGET_PORT` |
+| 14-scraping-at-scale | Prometheus | 9313 | `SANDBOX_13_PROM_PORT` |
+| 14-scraping-at-scale | Grafana | 3313 | `SANDBOX_13_GRAFANA_PORT` |
+| 16-llm-in-pipelines | Ollama (HTTP API) | 11439 | `SANDBOX_15_OLLAMA_PORT` |
+| 21-kubernetes | kind apiserver | 6320 | `SANDBOX_20_APISERVER_PORT` |
+| 21-kubernetes | ingress HTTP | 8320 | `SANDBOX_20_INGRESS_HTTP_PORT` |
+| 21-kubernetes | ingress HTTPS | 9320 | `SANDBOX_20_INGRESS_HTTPS_PORT` |
 
 Future modules extend this table when generated — pick the next free block (e.g. `543NN` for Postgres-based modules, module-specific ranges for others) and record it here immediately.
 
-Exception: module 20-kubernetes runs a kind cluster named `sandbox20` instead of `docker-compose`, so its ports above are fixed in `cluster/kind-config.yaml` (not env-overridable via a `docker-compose.yml`) and it has no `docker-compose.yml`.
+Exception: module 21-kubernetes runs a kind cluster named `sandbox20` instead of `docker-compose`, so its ports above are fixed in `cluster/kind-config.yaml` (not env-overridable via a `docker-compose.yml`) and it has no `docker-compose.yml`.
 
-Exception: module 17-system-design is a writing module — its validators are pure-Python document and capacity-model checks with no services at all, so it has no host-port row and no `docker-compose.yml`.
+Exception: module 18-system-design is a writing module — its validators are pure-Python document and capacity-model checks with no services at all, so it has no host-port row and no `docker-compose.yml`.
 
-Exception: module 16-testing-engineering uses `testcontainers`, which starts ephemeral Postgres/Redis containers on random host ports managed per test run, so it has no fixed-port row and no `docker-compose.yml`.
+Exception: module 17-testing-engineering uses `testcontainers`, which starts ephemeral Postgres/Redis containers on random host ports managed per test run, so it has no fixed-port row and no `docker-compose.yml`.
 
-Exception: module 18-rust-track is a Cargo workspace, not a Python/Docker module — it has no `docker-compose.yml`, no `pyproject.toml`, and no host-port row. Its tests' fixture HTTP servers (`sandbox18-harness`) bind `127.0.0.1:0` (ephemeral) per test. The validator is `cargo test -p <package>`: a failing/panicking test exits non-zero and prints its assertion's explanatory message, which is this module's documented stand-in for the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule.
+Exception: module 19-rust-track is a Cargo workspace, not a Python/Docker module — it has no `docker-compose.yml`, no `pyproject.toml`, and no host-port row. Its tests' fixture HTTP servers (`sandbox18-harness`) bind `127.0.0.1:0` (ephemeral) per test. The validator is `cargo test -p <package>`: a failing/panicking test exits non-zero and prints its assertion's explanatory message, which is this module's documented stand-in for the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule.
 
-Exception: module 19-ts-track is a pnpm workspace, not a Python/Docker module — it has no `docker-compose.yml`, no `pyproject.toml`, and no host-port row. Its fixture HTTP mock server (`@sandbox19/harness`) binds `127.0.0.1:0` (ephemeral) per test. The validators are `pnpm --filter <pkg> run typecheck` (`tsc --noEmit`, strict) and `pnpm --filter <pkg> run test` (`vitest run`): a type error or failing assertion exits non-zero with a clean human-readable message, which is this module's documented stand-in for the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule.
+Exception: module 20-ts-track is a pnpm workspace, not a Python/Docker module — it has no `docker-compose.yml`, no `pyproject.toml`, and no host-port row. Its fixture HTTP mock server (`@sandbox19/harness`) binds `127.0.0.1:0` (ephemeral) per test. The validators are `pnpm --filter <pkg> run typecheck` (`tsc --noEmit`, strict) and `pnpm --filter <pkg> run test` (`vitest run`): a type error or failing assertion exits non-zero with a clean human-readable message, which is this module's documented stand-in for the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule.
 
-Exception: the **toolkit track** (`toolkit/t1-ai-assisted-engineering`, `t2-modern-python-toolchain`, `t3-cli-data-toolkit`, `t4-git-advanced`) are tool-fluency modules — none has a `docker-compose.yml` or a host-port row. Each still ships its own `pyproject.toml` + committed `uv.lock`, `harness/common.py` (the module-17 pass/fail + doc-gate plumbing), and validators following the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule. Their validators run the real local tools rather than a service: t1 exercises Codex mechanisms (`AGENTS.md`, `.codex/agents`, hooks, `codex exec --json`, a stdio MCP server) plus a patch-review inversion; t2 shells out to `uv`/`ruff`/`mypy`/`pre-commit`; t3 to `jq`/`rg`/`fd`/`duckdb`/`hyperfine`/`parallel` and diffs stdout against an independently computed answer; t4 builds a throwaway scratch git repo per task under a gitignored `work/` dir and asserts the resulting repo state. A task that is *about* a `.codex/` config or a `AGENTS.md` ships that config as a learner deliverable inside the task directory — it never touches the sandbox repo's own `.codex/` or root `AGENTS.md`.
+Exception: the **toolkit track** (`toolkit/t1-ai-assisted-engineering`, `t2-modern-python-toolchain`, `t3-cli-data-toolkit`, `t4-git-advanced`) are tool-fluency modules — none has a `docker-compose.yml` or a host-port row. Each still ships its own `pyproject.toml` + committed `uv.lock`, `harness/common.py` (the module-18 pass/fail + doc-gate plumbing), and validators following the repo-wide "print `NOT PASSED: <reason>` and exit 1" rule. Their validators run the real local tools rather than a service: t1 exercises Codex mechanisms (`AGENTS.md`, `.codex/agents`, hooks, `codex exec --json`, a stdio MCP server) plus a patch-review inversion; t2 shells out to `uv`/`ruff`/`mypy`/`pre-commit`; t3 to `jq`/`rg`/`fd`/`duckdb`/`hyperfine`/`parallel` and diffs stdout against an independently computed answer; t4 builds a throwaway scratch git repo per task under a gitignored `work/` dir and asserts the resulting repo state. A task that is *about* a `.codex/` config or a `AGENTS.md` ships that config as a learner deliverable inside the task directory — it never touches the sandbox repo's own `.codex/` or root `AGENTS.md`.
 
 Exception: **`ci-meta`** is committed CI infrastructure for the repository itself, not a learner task — it has no unsolved stub, so unlike every other module its validator (`ci-meta/tests/validate.py`) PASSES on stock; that is expected, not a bug. Its scripts (`registry.py`, `detect_changes.py`, `checks.py`, `repo_guards.py`, `tests/validate.py`) are stdlib-only by design, since they run inside GitHub's `detect`/`guards` jobs against a bare runner python with no `uv sync` step (`run_module_ci.py` is the one exception, since it shells out to `uv`/`docker`). It has no `docker-compose.yml` and no host-port row — it doesn't run a service itself, it boots other modules' service containers on their behalf. See `ci-meta/README.md` for the full design and `ci-meta/.authoring/notes-live-verification.md` for what was verified locally.
 

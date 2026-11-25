@@ -1,5 +1,5 @@
 """Shared pass/fail plumbing and doc/estimate checks for toolkit/t4-git-advanced
-validators. Copied verbatim from `17-system-design/harness/common.py` — see
+validators. Copied verbatim from `18-system-design/harness/common.py` — see
 that module if this file drifts and needs reconciling.
 
 Convention (matches the rest of the repo): a validator prints exactly one

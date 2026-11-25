@@ -71,10 +71,10 @@ def check_detect_changes_mapping() -> None:
         "02-sql-optimization/foo.sql": ["02-sql-optimization"],
         "toolkit/t3-cli-data-toolkit/x": ["toolkit/t3-cli-data-toolkit"],
         "README.md": [],
-        "18-rust-track/01-log-parser-aggregations/src/lib.rs": ["18-rust-track"],
+        "19-rust-track/01-log-parser-aggregations/src/lib.rs": ["19-rust-track"],
         "ci-meta/registry.py": [],
         ".github/workflows/ci.yml": [],
-        "20-kubernetes/cluster/kind-config.yaml": ["20-kubernetes"],
+        "21-kubernetes/cluster/kind-config.yaml": ["21-kubernetes"],
     }
     for path, expected in cases.items():
         got = detect_changes.map_files_to_modules([path])

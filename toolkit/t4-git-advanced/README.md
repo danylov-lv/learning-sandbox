@@ -50,7 +50,7 @@ over; it always rebuilds `work/` from scratch, deterministically (fixed
 author/committer dates and content, so the same commit SHAs come out on
 every machine and every run).
 
-Task 05 is a **written task**, same shape as module 17's design
+Task 05 is a **written task**, same shape as module 18's design
 exercises: fill in `POLICY.md` against a doc-gate validator (required
 sections, grounding vocabulary, quantitative-or-concrete claims, and a
 hostile-review gauntlet of `### Qn` questions from `HOSTILE-REVIEW.md`).
@@ -75,7 +75,7 @@ uv run python tests/validate.py
 `uv run` resolves against this module's `pyproject.toml` /
 `uv.lock` regardless of which task directory you're standing in (uv
 walks up to find them). No docker-compose, no services, no fixed ports
--- this module has neither, same as module 17.
+-- this module has neither, same as module 18.
 
 ## Off-limits
 

@@ -66,7 +66,7 @@ real container boot, not just a code-reading exercise:
   "toolkit/t2-modern-python-toolchain", "toolkit/t3-cli-data-toolkit",
   "toolkit/t4-git-advanced"]`, matching the previous commit
   (`feat: add toolkit track (t1-t4)`) exactly.
-- **`python ci-meta/run_module_ci.py 17-system-design`** (a `none`-services
+- **`python ci-meta/run_module_ci.py 18-system-design`** (a `none`-services
   module) -- `PASSED`, static checks only, no docker involved.
 - **`python ci-meta/run_module_ci.py 01-sql-foundations`** (a `light`
   module, docker actually available) -- `PASSED`. `docker compose -f
@@ -148,7 +148,7 @@ above.
    gracefully if a module legitimately has no such tree" instruction.
 
 Also found and excluded one legitimate `target/` collision in
-`repo_guards.check_no_tracked_junk`: `13-scraping-at-scale/docker/target/`
+`repo_guards.check_no_tracked_junk`: `14-scraping-at-scale/docker/target/`
 is the mock target site's Docker build context (a directory legitimately
 named `target`), not a Rust build-artifact directory. Excluded by exact
 path prefix with a code comment explaining why, rather than weakening the

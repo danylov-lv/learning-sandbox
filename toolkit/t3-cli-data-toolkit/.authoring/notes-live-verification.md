@@ -99,7 +99,7 @@ few MB" budget.
   rounding/precision rules exactly (unrounded floats + `rel_tol`
   comparison throughout, rather than asking the learner to round and
   guessing at their rounding mode) — this avoids the class of
-  false-negative validator bugs that cost time in module 17's
+  false-negative validator bugs that cost time in module 18's
   `check_answers` (see that module's own live-verification notes).
 - Task 03's Q3 tie-break rule (earliest `ts` wins) exists specifically
   because the generated data has a real tie at the shipped `SCALE=1.0` —

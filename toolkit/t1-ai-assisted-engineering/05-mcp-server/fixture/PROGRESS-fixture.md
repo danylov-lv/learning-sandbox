@@ -16,9 +16,9 @@ it as given.
 - [ ] 02-index-design -- choosing and validating indexes
 - [ ] 03-query-rewriting -- rewriting slow queries
 
-## 03-data-modeling
+## 04-data-modeling
 - [ ] 01-relational-core -- normalized schema design
 - [ ] 02-scd2-history -- slowly changing dimensions
 
-## 04-storage-and-formats
+## 05-storage-and-formats
 - [ ] 01-parquet-vs-csv -- columnar vs row storage tradeoffs

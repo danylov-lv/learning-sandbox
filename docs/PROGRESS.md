@@ -39,7 +39,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: fix the hot paths
   - [ ] CP3: hygiene and report
 
-## 03-data-modeling
+## 04-data-modeling
 
 - [ ] 01-relational-core — normalized OLTP schema for shops/products/listings/observations + loader
 - [ ] 02-scd2-history — SCD2 history for shop name/tier and product brand/category
@@ -49,7 +49,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: lifecycle + client questions, full 16-question battery green
   - [ ] CP3: design writeup
 
-## 04-storage-and-formats
+## 05-storage-and-formats
 
 - [ ] 01-format-shootout — JSONL vs CSV vs Parquet size and scan-time shootout
 - [ ] 02-compression-codecs — snappy/gzip/zstd hot-tier and archive-tier codec choice
@@ -63,7 +63,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: quality gates — codec, file count/size, row-group pruning, smoke query
   - [ ] CP3: design memo — layout defended with measurements from tasks 01-07
 
-## 05-distributed-processing-spark
+## 06-distributed-processing-spark
 
 - [ ] 01-lazy-plans-and-explain — lazy evaluation, actions vs transformations, reading `explain()`
 - [ ] 02-partitions-and-shuffles — `repartition` vs `coalesce`, `spark.sql.shuffle.partitions`, skew + salting
@@ -77,7 +77,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: shuffle tuning — naive vs tuned job, measured in the Spark UI
   - [ ] CP3: design memo — DESIGN.md defended with measurements, incl. the polars verdict
 
-## 06-pipelines-and-orchestration
+## 07-pipelines-and-orchestration
 
 - [ ] 01-first-dag-raw-to-staging — first Airflow DAG: raw NDJSON to `staging`, skipping malformed lines
 - [ ] 02-incremental-idempotent-loads — `@daily` schedule, idempotent partition loads, one audit row per run
@@ -85,7 +85,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 - [ ] 04-poison-records-and-alerting — classify and quarantine malformed/invalid records, alert on degradation
 - [ ] 05-contract-gate-pandera — pandera schema as a boundary contract, route violations to quarantine
 - [ ] 06-contract-evolution — catch additive + type-change drift, evolve the schema without breaking downstream
-- [ ] 07-spark-stage-silver-lake — orchestrate the module 05 Spark job as a stage, write a partitioned silver lake to MinIO
+- [ ] 07-spark-stage-silver-lake — orchestrate the module 06 Spark job as a stage, write a partitioned silver lake to MinIO
 - [ ] 08-dbt-marts-over-oltp — dbt staging views + daily-GMV marts over module 02's OLTP Postgres, tests and incremental stability
 - [ ] 09-prefect-migration — port the incremental load to Prefect + written Airflow-vs-Prefect comparison
 - [ ] 10-capstone-end-to-end (capstone)
@@ -94,7 +94,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP3: design memo — DESIGN.md defended end-to-end, CP1+CP2 still green
 - [ ] k8s-bonus (optional) — package the loader as a hand-written Helm chart (CronJob, Deployment, PDB) on kind/k3d
 
-## 07-streaming
+## 08-streaming
 
 - [ ] 01-log-vs-queue-and-offsets — publish the price stream; two consumer groups each read the full log independently; history re-read from offset 0
 - [ ] 02-delivery-semantics — manual offset commits: at-most-once vs at-least-once; survive an injected mid-stream crash with zero loss
@@ -111,21 +111,21 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP3: design memo — DESIGN.md defended, CP1+CP2 still green
 - [ ] k8s-bonus (optional) — deploy the consumer as a Deployment with HPA + PDB on kind/minikube; scale replicas and watch the group rebalance
 
-## 08-cdc-debezium
+## 09-cdc-debezium
 
 - [ ] 01-connector-setup-snapshot-vs-streaming — register a Debezium Postgres connector; prove the snapshot phase (op=r per existing row) hands off to streaming (op=c/u/d) from the event stream alone
 - [ ] 02-change-event-anatomy — decode the full envelope: schema vs payload, the source block, and the base64 Kafka Connect Decimal encoding of NUMERIC prices under decimal.handling.mode=precise
 - [ ] 03-updates-and-deletes-downstream — apply before/after diffs and delete tombstones to a downstream replica table so it mirrors the source after an update/delete burst
 - [ ] 04-schema-evolution — add a column on the source without breaking a running connector or consumer; the replica keeps converging across the schema change
 - [ ] 05-replica-lag-and-alerting — measure replication-slot lag (bytes and time) and alert past a threshold under a change burst; understand the orphaned-slot WAL-pinning hazard
-- [ ] 06-exactly-once-materialization — LSN/offset-ordered idempotent upsert into the mart so redelivery/restart can't corrupt state (continuation of module 07 task 04)
+- [ ] 06-exactly-once-materialization — LSN/offset-ordered idempotent upsert into the mart so redelivery/restart can't corrupt state (continuation of module 08 task 04)
 - [ ] 07-cdc-vs-rescraping-writeup — written: where CDC beats periodic re-scraping/re-querying and where it's overkill
 - [ ] 08-capstone-converge (capstone)
   - [ ] CP1: steady replica — full source→Debezium→mart pipeline converges (mart == source) after a scripted insert/update/delete burst on a clean run
   - [ ] CP2: chaos convergence — mart still converges to source after an injected mid-run crash and connector restart (redelivery survived)
   - [ ] CP3: design memo — DESIGN.md defended, CP1+CP2 still green
 
-## 09-olap-clickhouse-duckdb
+## 10-olap-clickhouse-duckdb
 
 - [ ] 01-mergetree-and-primary-index — ORDER BY as a sparse primary index; prove part/granule pruning via `system.query_log` read_rows (pruned scan << full scan)
 - [ ] 02-materialized-views — incremental MV rollup (SummingMergeTree) maintaining daily-per-category count+price_sum as rows stream into a landing table
@@ -140,7 +140,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: DuckDB cross-check — the same business questions answered over the Parquet lake reproduce ground truth (and thus agree with CP1), partition pruning proven
   - [ ] CP3: design memo — DESIGN.md defended (ORDER BY, MV vs on-demand, lifecycle, server-vs-embedded), CP1+CP2 still green
 
-## 10-nosql-patterns
+## 11-nosql-patterns
 
 - [ ] 01-rate-limiter — per-domain requests/window cap via a single atomic Redis check-and-record, closing the check-then-act race that lets a burst of workers blow past the limit
 - [ ] 02-distributed-lock — fleet-wide single-owner lock: token-checked safe release plus a fencing token so a worker stalled past its TTL can't corrupt state after another worker takes over
@@ -154,7 +154,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: chaos convergence — at-least-once + watermarked idempotent materialize survives a mid-batch crash (entries stuck in the PEL): XAUTOCLAIM reclaim + forward drain still hit ground truth exactly with XPENDING 0
   - [ ] CP3: design memo — DESIGN.md defended (control-plane, watermark idempotency, crash recovery, rate shaping, failure modes), CP1+CP2 still green
 
-## 11-python-concurrency
+## 12-python-concurrency
 
 - [ ] 01-event-loop-and-blocking — rescue a fetcher that looks async but is serial and runs a blocking call inline on the loop: fetch every path concurrently AND offload the blocking (GIL-releasing) parse off the event-loop thread so a heartbeat coroutine keeps ticking
 - [ ] 02-taskgroup-structured-concurrency — replace `create_task` + `gather` (leaks siblings on first failure, silently swallows a second one) with `asyncio.TaskGroup`: first failure cancels every sibling, results come back in input order, nothing left alive
@@ -169,7 +169,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: chaos — with injected 500s and latency jitter, retry + per-request timeout without leaking tasks or connections and still converge to the identical ground-truth aggregate
   - [ ] CP3: design memo — DESIGN.md defended (bounded concurrency, backpressure, cancellation/timeouts, retry, failure modes), CP1+CP2 still green
 
-## 12-api-engineering
+## 13-api-engineering
 
 - [ ] 01-pagination-offset-vs-cursor — build `LIMIT/OFFSET` and keyset cursor pagination over 200k `shop.products`, then benchmark on your own machine: deep-offset latency degrades materially with depth while cursor latency stays flat, and a full cursor sweep returns every product exactly once (count + id checksum both match)
 - [ ] 02-response-caching-redis — cache-aside a category summary aggregation in Redis (TTL + explicit invalidation route), with `X-Cache: HIT/MISS` and a byte-for-byte identical cached body, proven both correct against an independent Postgres oracle and materially faster on a relative baseline
@@ -185,7 +185,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: chaos/hardening — the same service survives a SQLi battery against `/catalog/search` (never leaks `shop.users`, never 500s), forged/expired/rotated-and-replayed tokens all rejected, the rate limiter holds under a heavier multi-key concurrent burst, concurrent readers never see a torn cache value, and a Redis-down instance still answers the summary endpoint with `X-Cache: BYPASS` instead of 500 — while CP1's exact ground-truth sweep still passes
   - [ ] CP3: design memo — `DESIGN.md`'s six sections (pagination at scale, cache correctness, rate-limit atomicity, JWT rotation, SQLi defense, Redis as optional dependency) filled in with real content, then CP1 and CP2 re-run as subprocesses and both still green
 
-## 13-scraping-at-scale
+## 14-scraping-at-scale
 
 - [ ] 01-hostile-target-recon — probe the target from the outside (no peeking at `target-spec.json`) to discover the header gate, the token-bucket rate limit's rough shape, and where honeypot traps hide in listing HTML, then write a client that crawls the full real-product catalog with zero bans and zero honeypot hits (validator checks the discovered id set is exactly the real product ids, `banned=False`, `honeypot_hits=0`, and a record sample matches the catalog oracle including the JS-only `rating`/`shipping_info`)
 - [ ] 02-data-quality-contracts — a pandera schema over scraped product records that catches every planted defect (missing/`N/A`/negative price, empty title, bad currency, truncated description) and routes clean vs. quarantined records to separate file sinks, where the quarantine sink is EXACTLY ground truth's bad-record id union across all 6 defect types and the clean sink is exactly its complement — no defect silently passes through as "clean"
@@ -199,7 +199,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP3: design memo — `DESIGN.md`'s seven sections (architecture/data flow, defense handling, data-quality contract, change-detection design, cost/budget tradeoffs, observability, scaling to 10x) filled with grounded content, then CP1 and CP2 re-run as subprocesses and both still green
 - [ ] k8s-bonus (optional) — grow the scraping infrastructure into a from-scratch `spider-platform` Helm chart (provided filled `values.yaml`; you write the templates): a resource-bounded spider Deployment with liveness+readiness probes, a matching HPA, and a PDB; validator runs `helm lint` + `helm template` and asserts the rendered manifests (a live kind/k3d deploy is the optional stretch)
 
-## 14-stats-and-ml-foundations
+## 15-stats-and-ml-foundations
 
 - [ ] 01-vectorization-and-broadcasting — rewrite a colleague's row-by-row Python loops (per-category z-score, rolling mean, per-group min-max) as vectorized numpy/broadcasting; validator checks correctness against the provided naive baseline and asserts a machine-relative per-function speedup (`baseline.py` writes a gitignored `baseline-local.json`)
 - [ ] 02-eda-scraped-prices — first-pass EDA of the scraped dataset computed BOTH in pandas and polars and proven to agree (the polars-vs-pandas taste) plus an EDA figure; validator grades facts (counts, missingness, valid-price median/mean, busiest day) against ground truth / an independent recompute
@@ -218,7 +218,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: PyTorch classifier — an embedding / bag-of-words torch model on the same split reaching a higher macro-F1 threshold on held-out
   - [ ] CP3: design memo — `DESIGN.md` (data/labels, text representation, architecture, training/eval, per-class error analysis, scaling) filled, then CP1 and CP2 re-run as subprocesses and both still green
 
-## 15-llm-in-pipelines
+## 16-llm-in-pipelines
 
 - [ ] 01-swappable-llm-client — a pipeline-grade resilience wrapper over `harness.llm`: enforced structured/JSON output with schema validation + bounded reask on invalid output, timeout + bounded retry-with-backoff on transient errors, primary→fallback provider swap on repeated failure, and token/latency accounting; tested with injected fake providers (flaky/returns-junk-then-valid) for the deterministic retry/reask/fallback paths plus one live smoke call against real Ollama
 - [ ] 02-structured-extraction — extract `{name, brand, price, currency, in_stock}` from selector-hostile HTML snippets (prose pricing, attribute-only fields, entity/whitespace noise, malformed tags, cents-only pricing); graded field-level precision/recall/exact-match vs. gold with 7B-realistic thresholds
@@ -230,7 +230,7 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: chaos — messier inputs, injected malformed model outputs, forced provider fallback; must degrade gracefully, quarantine correctly, and still converge
   - [ ] CP3: design memo — `DESIGN.md` filled, then CP1 and CP2 re-run as subprocesses and both still green
 
-## 16-testing-engineering
+## 17-testing-engineering
 
 The inversion: the sandbox ships a GIVEN correct `src/impl.py`; you write the TEST SUITE. Grading is mutant-killing — your suite must pass against the correct impl AND fail against every seeded mutant (a hidden bank under `.authoring/mutants/`). `.authoring/` is off-limits until you finish. Tasks 03/04/07 need Docker (testcontainers).
 
@@ -238,14 +238,14 @@ The inversion: the sandbox ships a GIVEN correct `src/impl.py`; you write the TE
 - [ ] 02-stateful-and-metamorphic — a `RuleBasedStateMachine` + metamorphic relations against a given LRU-cache-with-TTL (injected deterministic clock, no sleeps); must kill 6 mutants (FIFO-not-LRU, TTL off-by-one, capacity off-by-one, get/re-put recency bugs, expired-counted-in-len)
 - [ ] 03-integration-postgres-testcontainers — integration tests against a real ephemeral `postgres:16` for a given `PriceRepo` (idempotent upsert, watermark incremental load, keyset pagination); must kill 7 mutants (wrong ON CONFLICT, DO NOTHING, missing commit, cursor off-by-one, watermark >/>=, dropped id tiebreak, limit off-by-one)
 - [ ] 04-integration-redis-testcontainers — integration tests against a real ephemeral `redis:7` for a given atomic `RateLimiter` + `DedupFilter`; must kill 7 mutants (TTL never set, non-atomic check-then-set, dropped namespace, boundary off-by-one, EXPIRE-every-call, dedup missing NX, dedup missing EX)
-- [ ] 05-contract-tests-api — consumer contract tests (httpx + jsonschema) against a given module-12-style FastAPI catalog; must kill 8 mutants (field rename, wrong error status, next_cursor edge polarity, id/price type drift, error-envelope shape, dropped cache header)
+- [ ] 05-contract-tests-api — consumer contract tests (httpx + jsonschema) against a given module-13-style FastAPI catalog; must kill 8 mutants (field rename, wrong error status, next_cursor edge polarity, id/price type drift, error-envelope shape, dropped cache header)
 - [ ] 06-mutation-testing-taste — the reflexive one: run a real mutation tool (cosmic-ray) on a given module + a given weak-but-green suite, read the survivors, and strengthen the tests until the survivor count reaches zero (graded by the tool, not the custom harness)
 - [ ] 07-capstone-scrape-to-serve-test-suite (capstone) — a layered suite for a given one-file scrape->serve stack (parser + Postgres repo + Redis cache + FastAPI)
   - [ ] CP1: unit + property layer — kills the pure-parser mutant subset, no containers
   - [ ] CP2: integration + contract layer — testcontainers Postgres+Redis + ASGI/jsonschema; kills the stateful DB/cache/API mutant subset
   - [ ] CP3: test-strategy memo — `DESIGN.md` (testing pyramid, what each layer catches, where mutation testing found gaps, extending to CI) filled, then CP1 and CP2 re-run as subprocesses and both still green
 
-## 17-system-design
+## 18-system-design
 
 The writing module, and it runs ongoing alongside the others. Each task is graded on two gates: a `DESIGN.md` checked structurally (required sections, no leftover placeholders, grounding vocabulary, quantitative claims, hostile-review questions actually answered) and a back-of-the-envelope capacity model in `src/estimate.py` checked numerically against the validator's own independent recomputation across several perturbed workloads — so hardcoded constants fail. No Docker, no ports.
 
@@ -259,7 +259,7 @@ The writing module, and it runs ongoing alongside the others. Each task is grade
   - [ ] CP2: architecture, data flow and failure — components, contracts, storage/serving layout, multi-tenancy, failure modes, degradation ladder, 10x, plus three ADRs with rejected alternatives argued
   - [ ] CP3: defence — twelve hostile-review questions answered, a risk register, a `REVIEW.md` self-critique, then CP1 and CP2 re-run as subprocesses and both still green
 
-## 18-rust-track
+## 19-rust-track
 
 Rust projects, independent pace, no chapter binding. A Cargo workspace (edition 2024, `rust-version 1.95`) replaces Docker/ports/pyproject — no services here. The module's one CONVENTIONS exception: each task is graded by the GIVEN cargo integration tests under its own `tests/` directory, so **`cargo test -p <package>` is the validator** (a failing assertion exits non-zero and prints its explanatory message, which satisfies the repo's clean-fail rule). Every task README lists the idioms it must cement (ownership, `Result`/`?`, iterators, traits, threads). No async until tasks 07–08. Data (`data/access.log`, `data/products.csv`) is generated deterministically by `sandbox18-datagen`; only `data/ground-truth.json` is committed.
 
@@ -276,7 +276,7 @@ Rust projects, independent pace, no chapter binding. A Cargo workspace (edition 
   - [ ] CP3: adds concurrency-cap + crash-recovery checks and a `DESIGN.md` memo, re-running CP1/CP2 (`--test cp3`)
 - [ ] proc-macro-bonus (optional) — a `#[derive(Builder)]` macro via syn/quote/proc-macro2; graded by integration tests that apply the derive and assert on generated behavior, not on generated source text
 
-## 19-ts-track
+## 20-ts-track
 
 - [ ] 01-type-challenges — a 12-challenge type-level progression (MyPick, DeepReadonly, TupleToUnion, First/Last, EventByTag + assertNever, Getters, PartialBy, ReplaceReturnType, MyAwaited, ExtractParams, Flatten, Brand); graded by `pnpm --filter @sandbox19/t01 run typecheck` + `run test`
 - [ ] 02-type-safe-sdk-client — zod schemas with `z.infer`-derived types, a validated `request` core, cursor pagination with an async iterator, auth with rotating refresh, malformed routes must throw; graded by `pnpm --filter @sandbox19/t02 run test` (+ `run typecheck`)
@@ -285,7 +285,7 @@ Rust projects, independent pace, no chapter binding. A Cargo workspace (edition 
   - [ ] CP2: worker round-trips a contract-typed job, exhaustive over job kinds (`... run test cp2`)
   - [ ] CP3: web client end-to-end with anti-cast validation + filled `DESIGN.md` (`... run test cp3`)
 
-## 20-kubernetes
+## 21-kubernetes
 
 Local `kind` cluster `sandbox20` (3 nodes + Calico for real NetworkPolicy). Create it once: `bash scripts/cluster-up.sh` then `bash scripts/build-images.sh`. Each task validator runs from its own dir via `uv run python tests/validate.py` and uses its own namespace `tNN`.
 

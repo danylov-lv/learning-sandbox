@@ -49,7 +49,7 @@ detection, grounding keywords, quantitative-claim checks, hostile-
 answer-quality checks) used by tasks 01, 02, and 06, and subprocess
 grading helpers (`run_pytest`,
 `run_hook`) used by tasks 03 and 06. Task 02 parses TOML directly. Copied from and consistent with
-`17-system-design/harness/common.py`'s conventions, extended for this
+`18-system-design/harness/common.py`'s conventions, extended for this
 module's behavioral (subprocess-driven) tasks.
 
 ## Off-limits

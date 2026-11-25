@@ -2,7 +2,7 @@
 (CLI data toolkit) validators.
 
 Convention (matches the rest of the repo, copied from
-17-system-design/harness/common.py): a validator prints exactly one line
+18-system-design/harness/common.py): a validator prints exactly one line
 and exits. On success: `PASSED` (optionally with a trailing detail line).
 On failure: `NOT PASSED: <reason>` and exit 1. No raw tracebacks.
 
@@ -33,7 +33,7 @@ DATA_DIR = MODULE_ROOT / "data"
 
 
 # --------------------------------------------------------------------------
-# Pass / fail plumbing (identical semantics to 17-system-design)
+# Pass / fail plumbing (identical semantics to 18-system-design)
 # --------------------------------------------------------------------------
 
 def not_passed(reason: str) -> NoReturn:

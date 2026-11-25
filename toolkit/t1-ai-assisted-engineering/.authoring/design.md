@@ -56,7 +56,7 @@ this file is the human-readable spoiler copy of the same facts).
 own fresh `pytest` subprocess (`harness.common.run_pytest`) with
 `cwd=TASK_DIR`, against the code exactly as shipped -- there is
 deliberately no hidden "fixed" variant anywhere for the validator to
-swap in and compare against (unlike module 16's mutant-bank pattern).
+swap in and compare against (unlike module 17's mutant-bank pattern).
 This is intentional and matches the actual instruction given for this
 task: the validator only needs to prove the learner's test "genuinely
 catches the planted bug" by failing against the shipped buggy code (and

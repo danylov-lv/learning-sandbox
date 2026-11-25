@@ -4,12 +4,12 @@ Convention (matches the rest of the repo): a validator prints exactly one
 line and exits. On success: `PASSED` (optionally with a trailing detail
 line). On failure: `NOT PASSED: <reason>` and exit 1. No raw tracebacks.
 
-Copied from `17-system-design/harness/common.py` (the pass/fail + doc-gate
+Copied from `18-system-design/harness/common.py` (the pass/fail + doc-gate
 plumbing) and extended with what this module's behavioral tasks need:
 
 - **Doc gate** (`read_doc`, `parse_sections`, `parse_subsections`,
   `check_sections`, `check_keywords`, `check_quantitative`, `check_answers`):
-  consistent with module 17 — deliverable Markdown/AGENTS.md files are
+  consistent with module 18 — deliverable Markdown/AGENTS.md files are
   graded structurally, never by content quality.
 - **Frontmatter** (`read_frontmatter`): parses a Markdown file's leading
   `---` YAML block, available for Markdown authoring artifacts; task 02 uses TOML instead.
@@ -335,7 +335,7 @@ class PytestResult:
 def run_pytest(test_paths: list, cwd, timeout: int = 60, extra_args: list | None = None) -> PytestResult:
     """Run `python -m pytest <test_paths>` in a fresh subprocess, using
     `sys.executable` (never a bare `python` on PATH — see the Windows
-    gotcha documented in module 16: a bare `python` inside a subprocess
+    gotcha documented in module 17: a bare `python` inside a subprocess
     can resolve to a different interpreter than this project's venv)."""
     cmd = [sys.executable, "-m", "pytest", *test_paths, "-q"]
     if extra_args:

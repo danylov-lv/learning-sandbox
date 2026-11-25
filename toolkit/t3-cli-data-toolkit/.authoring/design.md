@@ -16,7 +16,7 @@ finishing a task, if at all.
   trees (`sha256sum` over every file's hash, sorted by path, then
   hashed again — see `notes-live-verification.md` for the recorded
   digest).
-- `harness/common.py` was copied from `17-system-design/harness/common.py`
+- `harness/common.py` was copied from `18-system-design/harness/common.py`
   (same `guarded`/`passed`/`not_passed` semantics) and then extended with
   process/data helpers this module actually needs: `run_script` (invokes
   `bash <script>`, resolving the `bash` executable via `shutil.which`

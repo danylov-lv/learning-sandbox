@@ -26,30 +26,30 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 |---|---|---|---|
 | 1 | 01-sql-for-analytics | SQL for Analytics: joins, window functions, CTEs, and time-bucketed reports on 3–5M rows | 12–16 |
 | 2 | 02-sql-optimization | **PRIORITY**: inherited wrecked marketplace DB — EXPLAIN, indexing, partitioning, bloat, locking, N+1; capstone audit | 15–21 |
-| 3 | 03-data-modeling | Design a price-tracking platform schema: normalization, SCD2, temporal history, star schema | 6–9 |
-| 4 | 04-storage-and-formats | Parquet vs CSV/JSON, pyarrow, predicate pushdown, partitioned datasets, Delta Lake, MinIO | 10–15 |
-| 5 | 05-distributed-processing-spark | PySpark DataFrame API, shuffles/skew, broadcast joins, Spark UI, polars calibration task | 9–13 |
-| 6 | 06-pipelines-and-orchestration | Airflow ETL with idempotency/backfill, dbt, Prefect comparison, pandera data contracts | 9 + capstone |
-| 7 | 07-streaming | Kafka (redpanda) for an RMQ practitioner: log vs queue, offsets, exactly-once, compacted topics | 9–11 + capstone |
-| 8 | 08-cdc-debezium | Postgres → Debezium → Kafka → downstream mart; schema evolution, convergence validation | 7–9 + capstone |
-| 9 | 09-olap-clickhouse-duckdb | MergeTree, materialized views, Postgres-vs-ClickHouse at 50M rows, DuckDB on Parquet | 4–5 |
-| 10 | 10-nosql-patterns | Redis beyond cache (rate limiter, locks, dedup, streams), MongoDB vs Postgres JSONB | 5–6 |
-| 11 | 11-python-concurrency | Event-loop internals, broken-code rescues, cancellation, backpressure, GIL benchmarks, py-spy | 5–6 |
-| 12 | 12-api-engineering | Own FastAPI stack: cursor pagination, Redis caching, rate limiting, background jobs, streaming exports, plus a security block (SQLi, JWT auth, secrets) and a load-test bottleneck hunt | 6–7 |
-| 13 | 13-scraping-at-scale | Hostile local target site; data-quality platform, change detection, selector resilience, cost model, Prometheus/Grafana | 7–8 |
-| 14 | 14-stats-and-ml-foundations | numpy/pandas/viz, applied stats on scraped prices, sklearn + PyTorch taste | 6–7 |
-| 15 | 15-llm-in-pipelines | Local Ollama 7B: structured extraction, enrichment, embedding dedup, mini-RAG | 4–5 |
-| 16 | 16-testing-engineering | Inverted: you write the tests against a given impl, graded by mutant-killing — Hypothesis property/stateful tests, testcontainers (Postgres/Redis), contract tests, cosmic-ray mutation testing | 5–6 |
-| 17 | 17-system-design | Six written design exercises (crawl capacity, price-history storage, SLA delivery, multi-tenancy, an outage postmortem, capstone design review) graded on two gates: a structurally checked design doc plus a numerically checked capacity model; hostile-interviewer questions to defend against (ongoing, alongside other modules) | 6–7 |
-| any | 18-rust-track | 7–8 projects: CSV→Parquet converter, URL health checker, TUI dashboard, bitcask KV store, toy interpreter | independent pace |
-| any | 19-ts-track | Advanced type system: type-challenges progression, zod-validated SDK for a module-12-shaped API, contract-first monorepo capstone | 6–9 |
-| any | 20-kubernetes | Manifests from zero → own Helm charts → ops/debugging → networking/state → Argo CD internals → optional operator on kopf; kind cluster | 20–25 + 5–7 optional |
+| 4 | 04-data-modeling | Design a price-tracking platform schema: normalization, SCD2, temporal history, star schema | 6–9 |
+| 5 | 05-storage-and-formats | Parquet vs CSV/JSON, pyarrow, predicate pushdown, partitioned datasets, Delta Lake, MinIO | 10–15 |
+| 6 | 06-distributed-processing-spark | PySpark DataFrame API, shuffles/skew, broadcast joins, Spark UI, polars calibration task | 9–13 |
+| 7 | 07-pipelines-and-orchestration | Airflow ETL with idempotency/backfill, dbt, Prefect comparison, pandera data contracts | 9 + capstone |
+| 8 | 08-streaming | Kafka (redpanda) for an RMQ practitioner: log vs queue, offsets, exactly-once, compacted topics | 9–11 + capstone |
+| 9 | 09-cdc-debezium | Postgres → Debezium → Kafka → downstream mart; schema evolution, convergence validation | 7–9 + capstone |
+| 10 | 10-olap-clickhouse-duckdb | MergeTree, materialized views, Postgres-vs-ClickHouse at 50M rows, DuckDB on Parquet | 4–5 |
+| 11 | 11-nosql-patterns | Redis beyond cache (rate limiter, locks, dedup, streams), MongoDB vs Postgres JSONB | 5–6 |
+| 12 | 12-python-concurrency | Event-loop internals, broken-code rescues, cancellation, backpressure, GIL benchmarks, py-spy | 5–6 |
+| 13 | 13-api-engineering | Own FastAPI stack: cursor pagination, Redis caching, rate limiting, background jobs, streaming exports, plus a security block (SQLi, JWT auth, secrets) and a load-test bottleneck hunt | 6–7 |
+| 14 | 14-scraping-at-scale | Hostile local target site; data-quality platform, change detection, selector resilience, cost model, Prometheus/Grafana | 7–8 |
+| 15 | 15-stats-and-ml-foundations | numpy/pandas/viz, applied stats on scraped prices, sklearn + PyTorch taste | 6–7 |
+| 16 | 16-llm-in-pipelines | Local Ollama 7B: structured extraction, enrichment, embedding dedup, mini-RAG | 4–5 |
+| 17 | 17-testing-engineering | Inverted: you write the tests against a given impl, graded by mutant-killing — Hypothesis property/stateful tests, testcontainers (Postgres/Redis), contract tests, cosmic-ray mutation testing | 5–6 |
+| 18 | 18-system-design | Six written design exercises (crawl capacity, price-history storage, SLA delivery, multi-tenancy, an outage postmortem, capstone design review) graded on two gates: a structurally checked design doc plus a numerically checked capacity model; hostile-interviewer questions to defend against (ongoing, alongside other modules) | 6–7 |
+| any | 19-rust-track | 7–8 projects: CSV→Parquet converter, URL health checker, TUI dashboard, bitcask KV store, toy interpreter | independent pace |
+| any | 20-ts-track | Advanced type system: type-challenges progression, zod-validated SDK for a module-13-shaped API, contract-first monorepo capstone | 6–9 |
+| any | 21-kubernetes | Manifests from zero → own Helm charts → ops/debugging → networking/state → Argo CD internals → optional operator on kopf; kind cluster | 20–25 + 5–7 optional |
 | — | ci-meta | GitHub Actions CI for the sandbox itself: changed-module detection + service containers | 1 |
 
-Start with SQL for Analytics (01), then prioritize SQL Optimization (02). Continue with 03–06 for modeling, storage, and batch pipelines, then 07–10 for streaming and serving. Modules 11–16 can follow in order. Work through system design (17) alongside other modules. Rust (18), TypeScript (19), and Kubernetes (20) are independent tracks.
+Start with SQL for Analytics (01), then prioritize SQL Optimization (02). Continue with 04–07 for modeling, storage, and batch pipelines, then 08–11 for streaming and serving. Later modules cover application engineering, applied ML, and testing (12–17). Work through system design (18) alongside other modules. Rust (19), TypeScript (20), and Kubernetes (21) are independent tracks.
 
-- Module 06's Spark task builds on concepts from 05 and runs Spark inside its own Airflow container. Its dbt task requires a running, seeded Postgres from module 02. [Module 06 prerequisites](06-pipelines-and-orchestration/README.md#cross-module-ties)
-- Module 08 builds on module 07's streaming patterns. Each ships its own stack, with its own broker. [Module 08 prerequisites](08-cdc-debezium/README.md#cross-module-ties)
+- Module 07's Spark task builds on concepts from 06 and runs Spark inside its own Airflow container. Its dbt task requires a running, seeded Postgres from module 02. [Module 07 prerequisites](07-pipelines-and-orchestration/README.md#cross-module-ties)
+- Module 09 builds on module 08's streaming patterns. Each ships its own stack, with its own broker. [Module 09 prerequisites](09-cdc-debezium/README.md#cross-module-ties)
 
 ## Verification philosophy
 
@@ -63,9 +63,9 @@ Every module ships an unsolved stub with no reference solution, so a task valida
 
 ## k8s bonus levels
 
-Modules **06**, **07**, and **13** (and optionally **05**) include an optional `k8s-bonus/` level: deploy that module's project to a local `kind`/`k3d` cluster using your own Helm chart, with HPA, PodDisruptionBudgets, and resource limits derived from what you actually measured earlier in the module.
+Modules **07**, **08**, and **14** (and optionally **06**) include an optional `k8s-bonus/` level: deploy that module's project to a local `kind`/`k3d` cluster using your own Helm chart, with HPA, PodDisruptionBudgets, and resource limits derived from what you actually measured earlier in the module.
 
-Module **20-kubernetes** is the real k8s track — the bonus levels above stay as light exercises. Recommendation: complete module 20's Arc 1–2 (raw manifests, your own Helm chart) before attempting the k8s-bonus levels of 06/07/13.
+Module **21-kubernetes** is the real k8s track — the bonus levels above stay as light exercises. Recommendation: complete module 21's Arc 1–2 (raw manifests, your own Helm chart) before attempting the k8s-bonus levels of 07/08/14.
 
 ## Toolkit track
 

@@ -150,7 +150,7 @@ def check_no_solution(module_id: str) -> tuple[bool, str]:
     # module root's harness/seed/validate.py -- those are infra scripts that
     # legitimately never need to contain a stub marker. Some modules ship
     # raw .sql/.sh task deliverables with no .py/.rs/.ts files under any task
-    # dir at all, or (16-testing-engineering, the toolkit modules) use a
+    # dir at all, or (17-testing-engineering, the toolkit modules) use a
     # per-task placeholder convention other than the kind's generic marker
     # (a "given, not edited" real config to fix, an instructional comment
     # block, a real git repo state) -- these are "legitimately has no such

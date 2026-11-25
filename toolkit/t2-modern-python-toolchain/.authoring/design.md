@@ -8,7 +8,7 @@ resume from without re-deriving everything.
 ## Shared harness (`harness/common.py`)
 
 - `guarded`/`passed`/`not_passed` — copied verbatim in spirit from
-  `17-system-design/harness/common.py` (same one-line PASSED/NOT PASSED
+  `18-system-design/harness/common.py` (same one-line PASSED/NOT PASSED
   contract), but this module's tasks are behavioral/subprocess-driven
   rather than doc-graded, so the doc-section-parsing half of that file
   was dropped and replaced with:

@@ -12,7 +12,7 @@ gives no answer when two reasonable engineers disagree about whether a
 40-file hotfix should be one commit or five. A real policy has to survive
 being read by someone looking for an excuse to ignore it.
 
-This is a **written task**, like module 17's design exercises: no
+This is a **written task**, like module 18's design exercises: no
 scratch git repo, no service, no docker. The deliverable is a policy
 document, graded structurally (required sections, grounding vocabulary,
 concrete claims) plus a hostile-review gauntlet that checks whether your

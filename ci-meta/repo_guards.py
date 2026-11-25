@@ -41,10 +41,10 @@ _JUNK_PATTERNS: list[tuple[re.Pattern, str]] = [
 _DATA_DIR_RE = re.compile(r"(^|/)data/")
 _ALLOWED_DATA_FILE = "data/ground-truth.json"
 
-# 13-scraping-at-scale/docker/target/ is the mock target site's Docker
+# 14-scraping-at-scale/docker/target/ is the mock target site's Docker
 # build context (a directory legitimately named "target"), not a Rust
 # build-artifact directory -- excluded from the target/ junk pattern.
-_ALLOWED_TARGET_PREFIX = "13-scraping-at-scale/docker/target/"
+_ALLOWED_TARGET_PREFIX = "14-scraping-at-scale/docker/target/"
 
 _TASK_DIR_RE = re.compile(r"^\d{2}-")
 _TOOLKIT_DIR_RE = re.compile(r"^t\d+-")
