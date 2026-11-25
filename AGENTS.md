@@ -10,7 +10,8 @@ Give exercise hints only when the learner explicitly asks for them.
 
 - Read `docs/authoring/CONVENTIONS.md` before editing course materials for task structure, verification rules, and track-specific exceptions.
 - When asked to resume learning, use the course order in README.md and read only the relevant section of `docs/PROGRESS.md` and the candidate task's README. If an unchecked task has a learner submission, consult its documented completion criteria and verify it when the required environment is available. Identify the next exercise and report any discrepancy or verification blocker. Preserve completion checkboxes unless the user asks to update them.
-- For a new module, use `$add-new-module` (`.agents/skills/add-new-module/SKILL.md`). For changes to an existing module, read the global sections of `docs/authoring/SPEC.md`, its relevant `## MODULE:` section, and the matching entry in `docs/authoring/GENERATION_STATE.md`.
+- For a new module, use `$add-new-module` (`.agents/skills/add-new-module/SKILL.md`).
+- For changes to an existing module, read the global sections of `docs/authoring/SPEC.md`, its relevant `## MODULE:` section, and the matching entry in `docs/authoring/GENERATION_STATE.md`. Use `$modify-existing-module` (`.agents/skills/modify-existing-module/SKILL.md`) when changing the module's learning outcomes, prerequisites, scope, or exercise sequence.
 - For an exercise review, read its README, submitted work, and relevant tests. Treat .authoring directories as spoilers; use them only when necessary for authoring or a validator audit, and keep their ground truth out of learner feedback.
 
 Start with top-level listings and targeted searches. Avoid recursively reading the course, environments, generated data, or all of SPEC.md. Keep unrelated learner edits intact.
