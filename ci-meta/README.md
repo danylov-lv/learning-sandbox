@@ -116,7 +116,7 @@ returned in registry order.
 
 ```bash
 python ci-meta/detect_changes.py
-python ci-meta/run_module_ci.py 01-sql-foundations
+python ci-meta/run_module_ci.py 01-sql-for-analytics
 python ci-meta/repo_guards.py
 python ci-meta/tests/validate.py
 ```

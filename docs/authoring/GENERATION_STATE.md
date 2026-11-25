@@ -4,7 +4,7 @@ This inventory tracks generated learning materials. See [learner progress](../PR
 
 ## Generated content
 
-- [x] 01-sql-foundations
+- [x] 01-sql-for-analytics — 11 generated tasks. See the [lecture index](../../01-sql-for-analytics/Lectures.md) for chapter publication and verification.
 - [x] 02-sql-optimization
 - [x] 03-data-modeling
 - [x] 04-storage-and-formats

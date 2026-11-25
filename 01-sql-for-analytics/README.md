@@ -1,4 +1,4 @@
-# Module 01 — SQL Foundations
+# Module 01 — SQL for Analytics
 
 ## Backstory
 
@@ -11,16 +11,17 @@ scraper glitches, ops wants to know which (product, source) pairs go dark the lo
 All of it is answerable from five tables in Postgres, if you actually know SQL beyond
 `SELECT * WHERE`.
 
-This module is a warm-up: ten tasks that build from a single `GROUP BY` up to a
-capstone report that joins the category tree, does an as-of currency conversion, and
-compares medians month over month in one query.
+This module develops analytical querying skills on an existing PostgreSQL schema.
+Ten tasks build from a single `GROUP BY` to a capstone report that joins the
+category tree, converts currencies as of the observation date, and compares
+monthly medians.
 
 ## Setup
 
 Prerequisites: Docker with compose v2, uv.
 
 ```bash
-cd 01-sql-foundations
+cd 01-sql-for-analytics
 docker compose up -d --wait     # Postgres 16 on port 54301
 uv sync
 uv run python seed/generate.py
@@ -49,7 +50,7 @@ scale produces different data and every validator will fail.
 
 ## How to work
 
-- Run all commands from this module directory (`01-sql-foundations/`), e.g.
+- Run all commands from this module directory (`01-sql-for-analytics/`), e.g.
   `uv run python validate.py 01`.
 - Work the tasks in order — later tasks (especially the capstone) assume techniques
   introduced earlier.

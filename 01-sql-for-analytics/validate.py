@@ -1,4 +1,4 @@
-"""Validation harness for module 01-sql-foundations.
+"""Validation harness for module 01-sql-for-analytics.
 
 Usage:
     uv run python validate.py 04     # validate task 04

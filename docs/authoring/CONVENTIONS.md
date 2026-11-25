@@ -69,7 +69,7 @@ Every module gets unique, env-overridable host ports so multiple modules' `docke
 
 | Module | Service | Host port | Env var |
 |---|---|---|---|
-| 01-sql-foundations | Postgres | 54301 | `SANDBOX_01_PORT` |
+| 01-sql-for-analytics | Postgres | 54301 | `SANDBOX_01_PORT` |
 | 02-sql-optimization | Postgres | 54302 | `SANDBOX_02_PORT` |
 | 03-data-modeling | Postgres | 54303 | `SANDBOX_03_PORT` |
 | 04-storage-and-formats | MinIO (API / console) | 9301 / 9302 | `SANDBOX_04_MINIO_PORT` / `SANDBOX_04_MINIO_CONSOLE_PORT` |

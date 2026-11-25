@@ -86,11 +86,11 @@ def check_detect_changes_mapping() -> None:
     # registry order regardless of input order.
     mixed = [
         "toolkit/t4-git-advanced/01-interactive-rebase-cleanup/README.md",
-        "01-sql-foundations/README.md",
+        "01-sql-for-analytics/README.md",
         "toolkit/t4-git-advanced/02-bisect-find-regression/README.md",
     ]
     got = detect_changes.map_files_to_modules(mixed)
-    expected = ["01-sql-foundations", "toolkit/t4-git-advanced"]
+    expected = ["01-sql-for-analytics", "toolkit/t4-git-advanced"]
     if got != expected:
         raise AssertionError(f"map_files_to_modules(mixed) = {got}, expected {expected}")
 

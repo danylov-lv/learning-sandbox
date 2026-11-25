@@ -2,7 +2,7 @@
 
 Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks are completed by the learner. Task lists are populated when each module is generated; until then, a placeholder line stands in.
 
-## 01-sql-foundations
+## 01-sql-for-analytics
 
 - [x] 01-cross-source-price-spread — price spread by root category and source tier
 - [x] 02-category-tree-rollup — recursive category-tree rollup

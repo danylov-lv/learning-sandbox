@@ -1,4 +1,4 @@
--- Schema for module 01-sql-foundations: price-intelligence scraping warehouse.
+-- Schema for module 01-sql-for-analytics: price-intelligence scraping warehouse.
 -- Tables only; FKs and secondary indexes are added after COPY (see post_load.sql).
 
 DROP TABLE IF EXISTS price_snapshots CASCADE;

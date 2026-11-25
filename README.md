@@ -24,7 +24,7 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 
 | Order | Module | One-liner | Est. evenings |
 |---|---|---|---|
-| 1 | 01-sql-foundations | Warm-up: joins, window functions, CTEs, time-bucketed aggregations on 3–5M rows | 11–15 |
+| 1 | 01-sql-for-analytics | SQL for Analytics: joins, window functions, CTEs, and time-bucketed reports on 3–5M rows | 11–15 |
 | 2 | 02-sql-optimization | **PRIORITY**: inherited wrecked marketplace DB — EXPLAIN, indexing, partitioning, bloat, locking, N+1; capstone audit | 15–21 |
 | 3 | 03-data-modeling | Design a price-tracking platform schema: normalization, SCD2, temporal history, star schema | 6–9 |
 | 4 | 04-storage-and-formats | Parquet vs CSV/JSON, pyarrow, predicate pushdown, partitioned datasets, Delta Lake, MinIO | 10–15 |
@@ -46,7 +46,7 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 | any | 20-kubernetes | Manifests from zero → own Helm charts → ops/debugging → networking/state → Argo CD internals → optional operator on kopf; kind cluster | 20–25 + 5–7 optional |
 | — | ci-meta | GitHub Actions CI for the sandbox itself: changed-module detection + service containers | 1 |
 
-Start with the SQL warm-up in module 01, then prioritize module 02. Continue with 03–06 for modeling, storage, and batch pipelines, then 07–10 for streaming and serving. Modules 11–16 can follow in order. Work through system design (17) alongside other modules. Rust (18), TypeScript (19), and Kubernetes (20) are independent tracks.
+Start with SQL for Analytics (01), then prioritize SQL Optimization (02). Continue with 03–06 for modeling, storage, and batch pipelines, then 07–10 for streaming and serving. Modules 11–16 can follow in order. Work through system design (17) alongside other modules. Rust (18), TypeScript (19), and Kubernetes (20) are independent tracks.
 
 - Module 06's Spark task builds on concepts from 05 and runs Spark inside its own Airflow container. Its dbt task requires a running, seeded Postgres from module 02. [Module 06 prerequisites](06-pipelines-and-orchestration/README.md#cross-module-ties)
 - Module 08 builds on module 07's streaming patterns. Each ships its own stack, with its own broker. [Module 08 prerequisites](08-cdc-debezium/README.md#cross-module-ties)

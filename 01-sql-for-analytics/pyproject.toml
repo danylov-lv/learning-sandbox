@@ -1,5 +1,5 @@
 [project]
-name = "sql-foundations"
+name = "sql-for-analytics"
 version = "0.1.0"
 description = "Module 01: SQL foundations warm-up (price-intelligence scraping warehouse)"
 requires-python = ">=3.12"

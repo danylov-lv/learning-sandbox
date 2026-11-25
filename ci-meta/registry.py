@@ -23,8 +23,8 @@ class Module(NamedTuple):
 # Order matters only for readability and for deterministic matrix ordering
 # in detect_changes.py output -- it mirrors the repo's own module numbering.
 MODULES: dict[str, Module] = {
-    "01-sql-foundations": Module(
-        "01-sql-foundations", "python", "light",
+    "01-sql-for-analytics": Module(
+        "01-sql-for-analytics", "python", "light",
         "Postgres only; boots and reaches healthy on a hosted runner",
     ),
     "02-sql-optimization": Module(
