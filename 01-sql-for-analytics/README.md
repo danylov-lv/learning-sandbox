@@ -16,6 +16,9 @@ Eleven tasks build from a single `GROUP BY` to a capstone report that joins the
 category tree, converts currencies as of the observation date, and compares
 monthly medians.
 
+Use the [lecture index](Lectures.md) for the chapter plan and the reading map
+for each exercise.
+
 ## Setup
 
 Prerequisites: Docker with compose v2, uv.
