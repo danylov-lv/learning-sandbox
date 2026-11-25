@@ -11,9 +11,10 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
 - [x] 05-rolling-price-volatility — 30-day RANGE-framed rolling volatility
 - [x] 06-top-n-per-group — top-3 products per level-2 category
 - [ ] 07-time-bucketed-trends — weekly trend bucketing with distinct counts
-- [ ] 08-gaps-and-islands — longest out-of-stock streaks
-- [ ] 09-dedup-latest-snapshot — dedup to latest snapshot per pair
-- [ ] 10-capstone-pricing-report (capstone)
+- [ ] 08-scrape-coverage — hourly source coverage and missing observations
+- [ ] 09-gaps-and-islands — longest out-of-stock streaks
+- [ ] 10-dedup-latest-snapshot — dedup to latest snapshot per pair
+- [ ] 11-capstone-pricing-report (capstone)
   - [ ] CP1: as-of converted monthly base
   - [ ] CP2: rollup to root category + median
   - [ ] CP3: month-over-month window + final shape

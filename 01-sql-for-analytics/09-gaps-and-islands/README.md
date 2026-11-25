@@ -1,4 +1,4 @@
-# 08 — Gaps and Islands
+# 09 — Gaps and Islands
 
 ## Backstory
 
@@ -48,7 +48,7 @@ chain right before you limit.)
 Write your query into `src/query.sql`. From the module root:
 
 ```
-uv run python validate.py 08
+uv run python validate.py 09
 ```
 
 Must print `PASSED`.

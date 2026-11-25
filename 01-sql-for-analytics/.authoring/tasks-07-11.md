@@ -13,7 +13,15 @@ Grouping key is `date_trunc('week', captured_at)` cast to date, joined to `sourc
 for `tier`. Result shape: 237 rows (79 ISO week buckets x 3 tiers) — verified via
 `SELECT COUNT(DISTINCT date_trunc('week', captured_at)) FROM price_snapshots` = 79.
 
-## 08 — gaps-and-islands
+## 08 — scrape-coverage
+
+The expected report was computed independently from the default seed's
+`price_snapshots.csv` by counting observations and in-stock observations per
+source and hour. Keep the interval and source IDs aligned with the task brief.
+The 192 keys include 96 empty hours, 2 observed hours with zero in-stock share,
+and 3 hours with a share strictly between 0 and 1.
+
+## 09 — gaps-and-islands
 
 Design intent: canonical gaps-and-islands via the row-number-difference technique.
 Trap: naive `LAG()`-based flagging identifies run *boundaries* but not run
@@ -28,7 +36,7 @@ asc`) makes the top-25 cut deterministic; verified rows 25/26 at the cutoff
 (`streak_snapshots = 10`) differ by `product_id` (89618 vs 140857), so the cut is
 unambiguous. Result shape: exactly 25 rows (`LIMIT 25`).
 
-## 09 — dedup-latest-snapshot
+## 10 — dedup-latest-snapshot
 
 Design intent: `DISTINCT ON` / `ROW_NUMBER()` dedup with an explicit tie-breaker
 (`captured_at DESC, id DESC`). Checked the actual data: there are zero
@@ -41,7 +49,7 @@ data. If a future reseed introduces same-timestamp duplicates (e.g. by lowering
 scrape interval variance), this task would then also demonstrate the bug live.
 Result shape: 12 rows (3 tiers x 4 currencies, full cross product observed).
 
-## 10 — capstone-pricing-report
+## 11 — capstone-pricing-report
 
 Design intent: multi-CTE capstone combining a recursive tree rollup, an as-of
 currency join, `percentile_cont` for a real median, and a `LAG()`-based MoM window,

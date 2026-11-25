@@ -1,4 +1,4 @@
-# 10 — Capstone: Quarterly Pricing Report
+# 11 — Capstone: Quarterly Pricing Report
 
 ## Backstory
 
@@ -102,7 +102,7 @@ have `mom_median_change_pct IS NULL`, and every other row for that root must hav
 Write your final query into `src/query.sql`. From the module root:
 
 ```
-uv run python validate.py 10
+uv run python validate.py 11
 ```
 
 Must print `PASSED`.

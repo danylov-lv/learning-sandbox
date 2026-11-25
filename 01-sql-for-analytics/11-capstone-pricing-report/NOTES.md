@@ -1,4 +1,4 @@
-# Notes — 09 Dedup Latest Snapshot
+# Notes — 11 Capstone Pricing Report
 
 ## What I learned
 

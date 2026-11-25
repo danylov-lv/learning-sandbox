@@ -1,4 +1,4 @@
-# Notes — 10 Capstone Pricing Report
+# Notes — 09 Gaps and Islands
 
 ## What I learned
 

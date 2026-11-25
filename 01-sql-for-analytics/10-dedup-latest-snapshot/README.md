@@ -1,4 +1,4 @@
-# 09 — Dedup: Latest Snapshot
+# 10 — Dedup: Latest Snapshot
 
 ## Backstory
 
@@ -53,7 +53,7 @@ source — with columns in this exact order:
 Write your query into `src/query.sql`. From the module root:
 
 ```
-uv run python validate.py 09
+uv run python validate.py 10
 ```
 
 Must print `PASSED`.

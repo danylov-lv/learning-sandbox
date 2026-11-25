@@ -12,7 +12,7 @@ All of it is answerable from five tables in Postgres, if you actually know SQL b
 `SELECT * WHERE`.
 
 This module develops analytical querying skills on an existing PostgreSQL schema.
-Ten tasks build from a single `GROUP BY` to a capstone report that joins the
+Eleven tasks build from a single `GROUP BY` to a capstone report that joins the
 category tree, converts currencies as of the observation date, and compares
 monthly medians.
 
@@ -52,8 +52,7 @@ scale produces different data and every validator will fail.
 
 - Run all commands from this module directory (`01-sql-for-analytics/`), e.g.
   `uv run python validate.py 01`.
-- Work the tasks in order — later tasks (especially the capstone) assume techniques
-  introduced earlier.
+- Work through the tasks in table order. Later tasks build on earlier techniques.
 - There are no reference solutions in this repo. Each task directory has `README.md`
   (the assignment), `src/query.sql` (write your answer here), `tests/expected.json`
   (what the validator compares against), `hints/hint-1.md` through `hint-3.md`
@@ -85,11 +84,12 @@ strings), and diffs it against `tests/expected.json`. Prints `PASSED` or
 | 05 | [rolling-price-volatility](05-rolling-price-volatility/) | `RANGE`-framed window functions for calendar-based rolling stats | 1-2 |
 | 06 | [top-n-per-group](06-top-n-per-group/) | `RANK()`/`ROW_NUMBER()` top-3-per-category with deterministic tiebreaks | 1 |
 | 07 | [time-bucketed-trends](07-time-bucketed-trends/) | `date_trunc` bucketing with correct distinct counts across grains | 1 |
-| 08 | [gaps-and-islands](08-gaps-and-islands/) | gaps-and-islands run detection over out-of-stock streaks | 1-2 |
-| 09 | [dedup-latest-snapshot](09-dedup-latest-snapshot/) | `DISTINCT ON` / windowed dedup to the latest row per key | 1 |
-| 10 | [capstone-pricing-report](10-capstone-pricing-report/) | **capstone** — as-of currency join, category rollup, median, MoM window, all in one query | 2-3 |
+| 08 | [scrape-coverage](08-scrape-coverage/) | hourly source coverage, including hours with zero observations | 1 |
+| 09 | [gaps-and-islands](09-gaps-and-islands/) | gaps-and-islands run detection over out-of-stock streaks | 1-2 |
+| 10 | [dedup-latest-snapshot](10-dedup-latest-snapshot/) | `DISTINCT ON` / windowed dedup to the latest row per key | 1 |
+| 11 | [capstone-pricing-report](11-capstone-pricing-report/) | **capstone** — as-of currency join, category rollup, median, MoM window, all in one query | 2-3 |
 
-The capstone (10) is deliberately multi-evening: work it through its three
+The capstone (11) is deliberately multi-evening: work it through its three
 checkpoints (CP1 as-of converted base, CP2 category rollup + median, CP3 MoM window +
 final shape), each with a self-check you run in `psql` before moving on. Only the
 final `src/query.sql` is graded.

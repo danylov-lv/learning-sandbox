@@ -24,7 +24,7 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 
 | Order | Module | One-liner | Est. evenings |
 |---|---|---|---|
-| 1 | 01-sql-for-analytics | SQL for Analytics: joins, window functions, CTEs, and time-bucketed reports on 3–5M rows | 11–15 |
+| 1 | 01-sql-for-analytics | SQL for Analytics: joins, window functions, CTEs, and time-bucketed reports on 3–5M rows | 12–16 |
 | 2 | 02-sql-optimization | **PRIORITY**: inherited wrecked marketplace DB — EXPLAIN, indexing, partitioning, bloat, locking, N+1; capstone audit | 15–21 |
 | 3 | 03-data-modeling | Design a price-tracking platform schema: normalization, SCD2, temporal history, star schema | 6–9 |
 | 4 | 04-storage-and-formats | Parquet vs CSV/JSON, pyarrow, predicate pushdown, partitioned datasets, Delta Lake, MinIO | 10–15 |

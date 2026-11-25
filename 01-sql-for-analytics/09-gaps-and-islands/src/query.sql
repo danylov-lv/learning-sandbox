@@ -1,3 +1,3 @@
--- Task 08: gaps-and-islands
+-- Task 09: gaps-and-islands
 -- Expected output columns (in order): product_id, source_id, streak_snapshots, streak_start, streak_end
 -- Write your query below.

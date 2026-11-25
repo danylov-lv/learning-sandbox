@@ -106,7 +106,7 @@ List the following in the root README under "Planned modules (second wave)" as o
 
 ## MODULE: Module 01-sql-for-analytics
 
-**SQL for Analytics.** Build and verify multi-stage analytical queries against an existing PostgreSQL schema. The Docker environment seeds five related tables, including roughly four million price observations with realistic distributions. Ten tasks cover joins, CTEs, window functions, and time-bucketed aggregations. A validator compares query results with expected outputs.
+**SQL for Analytics.** Build and verify multi-stage analytical queries against an existing PostgreSQL schema. The Docker environment seeds five related tables, including roughly four million price observations with realistic distributions. Eleven tasks cover joins, CTEs, window functions, time-bucketed aggregations, and reporting hours with no observations. A validator compares query results with expected outputs.
 
 ## MODULE: Module 02-sql-optimization
 

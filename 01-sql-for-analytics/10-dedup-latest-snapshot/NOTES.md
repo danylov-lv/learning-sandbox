@@ -1,4 +1,4 @@
-# Notes — 08 Gaps and Islands
+# Notes — 10 Dedup Latest Snapshot
 
 ## What I learned
 
