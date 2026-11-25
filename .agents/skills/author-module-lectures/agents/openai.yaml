@@ -1,0 +1,4 @@
+interface:
+  display_name: "Author Module Lectures"
+  short_description: "Plan module courses and write connected lectures"
+  default_prompt: "Use $author-module-lectures to plan the lecture course for the selected module."
