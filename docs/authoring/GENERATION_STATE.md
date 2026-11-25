@@ -6,6 +6,7 @@ This inventory tracks generated learning materials. See [learner progress](../PR
 
 - [x] 01-sql-for-analytics — 11 generated tasks. See the [lecture index](../../01-sql-for-analytics/Lectures.md) for chapter publication and verification.
 - [x] 02-sql-optimization
+- [x] 03-postgresql-writes-and-transactions - 9 generated tasks. See the [learning-path and verification record](../../03-postgresql-writes-and-transactions/.authoring/verification.md).
 - [x] 04-data-modeling
 - [x] 05-storage-and-formats
 - [x] 06-distributed-processing-spark

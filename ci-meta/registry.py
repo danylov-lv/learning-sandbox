@@ -33,6 +33,10 @@ MODULES: dict[str, Module] = {
         "booting the empty container proves nothing about the seeded "
         "workload, so it is not run live on a hosted runner",
     ),
+    "03-postgresql-writes-and-transactions": Module(
+        "03-postgresql-writes-and-transactions", "python", "light",
+        "Postgres only; boots and reaches healthy on a hosted runner",
+    ),
     "04-data-modeling": Module(
         "04-data-modeling", "python", "light",
         "Postgres only; boots and reaches healthy on a hosted runner",

@@ -35,6 +35,7 @@ learning-sandbox/
 │       └── GENERATION_STATE.md
 ├── 01-sql-for-analytics/
 ├── 02-sql-optimization/    # PRIORITY #1 — my main gap
+├── 03-postgresql-writes-and-transactions/
 ├── 04-data-modeling/
 ├── 05-storage-and-formats/
 ├── 06-distributed-processing-spark/
@@ -111,6 +112,10 @@ List the following in the root README under "Planned modules (second wave)" as o
 ## MODULE: Module 02-sql-optimization
 
 **SQL optimization (the largest module, go deep).** Backstory: you inherit a "wrecked" marketplace DB — 10M+ rows, wrong indexes, bloated tables, slow "production" queries. 12–15 tasks progressing through: reading EXPLAIN ANALYZE, diagnosing Seq Scan / Nested Loop issues, index selection (btree, partial, covering, GIN), query rewriting, time-based partitioning, VACUUM/bloat, locking, N+1 from the application side. Each task = "here's the query, here's its current plan, here's the SLA — meet it." Verification — plan-structure checks + relative timing vs baseline. Capstone: a multi-evening "full audit" of the DB with a written optimization report template.
+
+## MODULE: Module 03-postgresql-writes-and-transactions
+
+**PostgreSQL writes and transactions.** Build a PriceWatch loader on a provided schema and a standalone PostgreSQL 16 instance. Practice scoped DML and returned rows, atomic writes, savepoints, idempotent upserts, COPY into staging, snapshot visibility, row locking and deadlocks, and whole-transaction retries. Requires basic SQL joins, CTEs, and keys. The capstone applies CSV batches atomically with a processing ledger and verifies replay, a pre-commit failure, and overlapping workers. Validators drive independent sessions under controlled interleavings and compare committed state with expected results computed from inputs.
 
 ## MODULE: Module 04-data-modeling
 

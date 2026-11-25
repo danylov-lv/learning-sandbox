@@ -78,7 +78,7 @@ Service classification:
 
 | Class | Meaning | Modules |
 |---|---|---|
-| `light` | Own `docker-compose.yml` with only Postgres/Redis/Mongo. CI brings it up with `--wait` to prove the containers actually boot and reach healthy. | 01, 04, 11, 13 |
+| `light` | Own `docker-compose.yml` with only Postgres/Redis/Mongo. CI brings it up with `--wait` to prove the containers actually boot and reach healthy. | 01, 03, 04, 11, 13 |
 | `heavy` | Has a compose file, but it's too big or too special for a hosted GitHub runner (Spark, Airflow, ClickHouse, redpanda, Debezium, MinIO, a GPU-bound Ollama, multi-GB seeded data). CI runs only the static checks and emits an `::notice::` explaining why the live step is skipped — honestly, not silently. | 02, 05, 06, 07, 08, 09, 10, 14, 16 |
 | `none` | No compose file; static checks only. | 12, 15, 17, 18, 19, 20, 21, and all four `toolkit/` modules |
 

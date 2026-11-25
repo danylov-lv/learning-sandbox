@@ -69,6 +69,7 @@ def check_detect_changes_mapping() -> None:
 
     cases = {
         "02-sql-optimization/foo.sql": ["02-sql-optimization"],
+        "03-postgresql-writes-and-transactions/seed/schema.sql": ["03-postgresql-writes-and-transactions"],
         "toolkit/t3-cli-data-toolkit/x": ["toolkit/t3-cli-data-toolkit"],
         "README.md": [],
         "19-rust-track/01-log-parser-aggregations/src/lib.rs": ["19-rust-track"],

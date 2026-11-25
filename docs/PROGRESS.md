@@ -39,6 +39,20 @@ Flat checklist of all tasks across all modules. Checkboxes are ticked as tasks a
   - [ ] CP2: fix the hot paths
   - [ ] CP3: hygiene and report
 
+## 03-postgresql-writes-and-transactions
+
+- [ ] 01-scoped-dml — Write scoped INSERT, UPDATE and DELETE with RETURNING
+- [ ] 02-atomic-price-write — Commit history and the current price together
+- [ ] 03-savepoints — Recover from rejected optional metadata inside a transaction
+- [ ] 04-idempotent-upsert — Handle repeated and out-of-order observations
+- [ ] 05-copy-staging — Load a CSV and merge it as a set
+- [ ] 06-isolation-snapshots — Compare what two sessions see across a commit
+- [ ] 07-row-locks-and-deadlocks — Reproduce a deadlock, then fix lock ordering
+- [ ] 08-serializable-retries — Protect a cross-row limit and retry a full transaction
+- [ ] 09-capstone-batch-loader — Ship a replayable loader for overlapping batches
+  - [ ] CP1 — atomic load, rollback, and replay
+  - [ ] CP2 — overlapping batches and simultaneous replay
+
 ## 04-data-modeling
 
 - [ ] 01-relational-core — normalized OLTP schema for shops/products/listings/observations + loader

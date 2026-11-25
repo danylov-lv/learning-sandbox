@@ -26,6 +26,7 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 |---|---|---|---|
 | 1 | 01-sql-for-analytics | SQL for Analytics: joins, window functions, CTEs, and time-bucketed reports on 3–5M rows | 12–16 |
 | 2 | 02-sql-optimization | **PRIORITY**: inherited wrecked marketplace DB — EXPLAIN, indexing, partitioning, bloat, locking, N+1; capstone audit | 15–21 |
+| 3 | 03-postgresql-writes-and-transactions | PostgreSQL writes, atomic batches, upserts, isolation, locks, and retries | 10–13 |
 | 4 | 04-data-modeling | Design a price-tracking platform schema: normalization, SCD2, temporal history, star schema | 6–9 |
 | 5 | 05-storage-and-formats | Parquet vs CSV/JSON, pyarrow, predicate pushdown, partitioned datasets, Delta Lake, MinIO | 10–15 |
 | 6 | 06-distributed-processing-spark | PySpark DataFrame API, shuffles/skew, broadcast joins, Spark UI, polars calibration task | 9–13 |
@@ -46,7 +47,7 @@ There are **no reference solutions anywhere in this repository**. Only hints and
 | any | 21-kubernetes | Manifests from zero → own Helm charts → ops/debugging → networking/state → Argo CD internals → optional operator on kopf; kind cluster | 20–25 + 5–7 optional |
 | — | ci-meta | GitHub Actions CI for the sandbox itself: changed-module detection + service containers | 1 |
 
-Start with SQL for Analytics (01), then prioritize SQL Optimization (02). Continue with 04–07 for modeling, storage, and batch pipelines, then 08–11 for streaming and serving. Later modules cover application engineering, applied ML, and testing (12–17). Work through system design (18) alongside other modules. Rust (19), TypeScript (20), and Kubernetes (21) are independent tracks.
+Start with SQL for Analytics (01), then prioritize SQL Optimization (02). Practice PostgreSQL Writes and Transactions (03) before Data Modeling. Continue with 04–07 for modeling, storage, and batch pipelines, then 08–11 for streaming and serving. Later modules cover application engineering, applied ML, and testing (12–17). Work through system design (18) alongside other modules. Rust (19), TypeScript (20), and Kubernetes (21) are independent tracks.
 
 - Module 07's Spark task builds on concepts from 06 and runs Spark inside its own Airflow container. Its dbt task requires a running, seeded Postgres from module 02. [Module 07 prerequisites](07-pipelines-and-orchestration/README.md#cross-module-ties)
 - Module 09 builds on module 08's streaming patterns. Each ships its own stack, with its own broker. [Module 09 prerequisites](09-cdc-debezium/README.md#cross-module-ties)
