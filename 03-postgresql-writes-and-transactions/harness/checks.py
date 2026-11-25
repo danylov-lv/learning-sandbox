@@ -1,6 +1,8 @@
 import csv
 from collections.abc import Iterable
+from contextlib import contextmanager
 from pathlib import Path
+from secrets import randbits
 from threading import Event as Signal
 from time import monotonic
 
@@ -34,6 +36,16 @@ def await_block(observer: Connection, blocked: Connection, blocker: Connection) 
             return
         delay.wait(0.025)
     raise AssertionError("expected PostgreSQL to report one worker blocked by the other")
+
+
+@contextmanager
+def advisory_gate(observer: Connection):
+    key = randbits(63)
+    observer.execute("SELECT pg_advisory_lock(%s)", (key,))
+    try:
+        yield key
+    finally:
+        observer.execute("SELECT pg_advisory_unlock(%s)", (key,))
 
 
 def write_csv(path: Path, rows: Iterable[tuple]) -> Path:

@@ -14,7 +14,20 @@ Implement `load_batch(conn, batch_id, path, before_commit)` in `src/answer.py`. 
 
 ## Completion criteria
 
-Checkpoint 1 covers rollback, retry, replay, and malformed input. Checkpoint 2 also runs overlapping writers and simultaneous replay. The validator compares the whole ledger and both price tables with committed CSV inputs.
+Checkpoint 1 covers rollback, retry, replay, and malformed input.
+
+Checkpoint 2 covers two kinds of contention.
+
+- Different batch IDs can share observation keys or update the same offers.
+  Both batches must commit when a second worker starts during either merge.
+  Recall how [task 07](../07-row-locks-and-deadlocks/README.md) changed the
+  outcome by changing the order in which workers acquired locks.
+- Two workers can receive the same batch ID. If the first commits, the waiting
+  worker reports a replay. If the first rolls back, the waiting worker applies
+  the batch. The ledger follows the same commit boundary as the price writes
+  from [task 02](../02-atomic-price-write/README.md).
+
+The validator compares the whole ledger and both price tables with committed CSV inputs.
 
 Run from the [module root](../README.md).
 
@@ -29,4 +42,4 @@ uv run python 09-capstone-batch-loader/tests/validate.py --checkpoint 2
 
 ## Topics to read up on
 
-atomic ingestion, idempotency keys, temporary staging, concurrent uniqueness conflicts.
+atomic ingestion, idempotency keys, temporary staging, concurrent uniqueness conflicts, lock ordering.

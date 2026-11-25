@@ -7,11 +7,12 @@ from concurrent.futures import ThreadPoolExecutor
 from tempfile import TemporaryDirectory
 from threading import Event
 
-from psycopg import errors
+from psycopg import errors, sql
 from psycopg.pq import TransactionStatus
 
 from harness.checks import (
     InjectedFailure,
+    advisory_gate,
     await_block,
     await_signal,
     read_csv,
@@ -77,7 +78,7 @@ def sequential(load_batch, good, bad):
         verify(reader, {"friday": good})
 
 
-def concurrent(load_batch, paths, same_batch):
+def concurrent(load_batch, paths, same_batch, *, roll_back_first=False):
     left_path, right_path = paths
     right_id = "left" if same_batch else "right"
     with (
@@ -96,6 +97,8 @@ def concurrent(load_batch, paths, same_batch):
             verify(observer, {})
             first_ready.set()
             await_signal(release, "the validator did not release the first worker")
+            if roll_back_first:
+                raise InjectedFailure("roll back while the other worker waits")
 
         first = pool.submit(load_batch, left, "left", left_path, pause_first)
         try:
@@ -104,13 +107,68 @@ def concurrent(load_batch, paths, same_batch):
             await_block(observer, right, left)
         finally:
             release.set()
-        require(first.result() is True, "first worker must commit a new batch")
-        require(second.result() is (not same_batch), "second worker must apply only a new batch")
-        require(calls == ([] if same_batch else [True]), "invoke the hook only after applying a new batch")
-        expected = {"left": left_path}
-        if not same_batch:
-            expected["right"] = right_path
+        try:
+            first_applied = first.result()
+        except InjectedFailure:
+            require(roll_back_first, "unexpected pre-commit failure")
+            expected = {}
+        else:
+            require(not roll_back_first and first_applied is True, "finish the first worker as requested")
+            expected = {"left": left_path}
+
+        second_applies = roll_back_first or not same_batch
+        require(second.result() is second_applies, "apply the waiting batch only if its ID has not committed")
+        require(calls == ([True] if second_applies else []), "invoke the hook only after applying a new batch")
+        if second_applies:
+            expected[right_id] = right_path
         verify(observer, expected)
+
+
+def overlapping_merges(load_batch, left_path, right_path, *, target):
+    with (
+        arena() as database,
+        database.connect() as observer,
+        database.connect() as left,
+        database.connect() as right,
+        ThreadPoolExecutor(max_workers=2) as pool,
+    ):
+        observer.execute("""
+            CREATE FUNCTION pause_second_merge_key() RETURNS trigger LANGUAGE plpgsql AS $$
+            DECLARE
+                gate text := current_setting('writes.merge_gate', true);
+                first_key text := nullif(current_setting('writes.first_merge_key', true), '');
+                merge_key text := json_build_array(
+                    NEW.source, NEW.sku, CASE WHEN TG_TABLE_NAME = 'observations' THEN NEW.version END
+                )::text;
+            BEGIN
+                IF gate IS NULL THEN
+                    RETURN NEW;
+                END IF;
+                IF first_key IS NULL THEN
+                    PERFORM set_config('writes.first_merge_key', merge_key, true);
+                ELSIF merge_key <> first_key THEN
+                    PERFORM pg_advisory_xact_lock(gate::bigint);
+                END IF;
+                RETURN NEW;
+            END;
+            $$;
+        """)
+        observer.execute(sql.SQL("""
+            CREATE TRIGGER pause_merge BEFORE INSERT ON {}
+            FOR EACH ROW EXECUTE FUNCTION pause_second_merge_key()
+        """).format(sql.Identifier(target)))
+        with advisory_gate(observer) as gate:
+            left.execute("SELECT set_config('writes.merge_gate', %s, false)", (str(gate),))
+            first = pool.submit(load_batch, left, "left", left_path, lambda: None)
+            await_block(observer, left, observer)
+            second = pool.submit(load_batch, right, "right", right_path, lambda: None)
+            await_block(observer, right, left)
+        try:
+            require(first.result() is True, "commit the first overlapping batch")
+            require(second.result() is True, "commit the second overlapping batch")
+        except errors.DeadlockDetected as error:
+            raise AssertionError(f"overlapping writes to {target} deadlocked (SQLSTATE {error.sqlstate})") from error
+        verify(observer, {"left": left_path, "right": right_path})
 
 
 def check(source: Path, checkpoint: int = 2) -> None:
@@ -124,6 +182,15 @@ def check(source: Path, checkpoint: int = 2) -> None:
         if checkpoint == 2:
             concurrent(load_batch, (left, right), same_batch=False)
             concurrent(load_batch, (left, left), same_batch=True)
+            concurrent(load_batch, (left, left), same_batch=True, roll_back_first=True)
+            merge_left = write_csv(directory / "merge-left.csv", [("market", "a", 1, 100), ("market", "b", 1, 200)])
+            merge_right = write_csv(directory / "merge-right.csv", [("market", "b", 2, 240), ("market", "a", 2, 160)])
+            overlapping_merges(load_batch, merge_left, merge_right, target="current_prices")
+
+            shared = [("market", "a", 1, 100), ("market", "a", 2, 200)]
+            history_left = write_csv(directory / "history-left.csv", shared)
+            history_right = write_csv(directory / "history-right.csv", reversed(shared))
+            overlapping_merges(load_batch, history_left, history_right, target="observations")
 
 
 if __name__ == "__main__":

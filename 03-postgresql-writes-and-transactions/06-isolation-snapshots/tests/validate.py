@@ -17,13 +17,22 @@ def check(source: Path) -> None:
         with arena() as database, database.connect() as reader, database.connect() as writer:
             writer.execute("INSERT INTO stock VALUES (%s, %s), ('c', 390)", (sku, start))
             steps = []
+            previous_scans = 0
 
             def after_read(step):
+                nonlocal previous_scans
                 steps.append(step)
                 require(step == len(steps), "signal each of the three reads in order")
                 require(reader.info.transaction_status == TransactionStatus.INTRANS, "keep one reader transaction open")
                 actual = reader.execute("SHOW transaction_isolation").fetchone()[0]
                 require(actual == isolation, f"expected reader isolation {isolation}, got {actual}")
+                scans = reader.execute("""
+                    SELECT seq_scan + idx_scan
+                    FROM pg_stat_xact_user_tables
+                    WHERE relid = 'stock'::regclass
+                """).fetchone()[0]
+                require(scans > previous_scans, f"read stock from PostgreSQL before signaling step {step}")
+                previous_scans = scans
                 if step == 1:
                     writer.execute("BEGIN")
                     writer.execute("UPDATE stock SET quantity = %s WHERE sku = %s", (changed, sku))

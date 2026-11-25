@@ -9,13 +9,71 @@ from threading import Barrier, Event
 from psycopg import errors
 from psycopg.pq import TransactionStatus
 
-from harness.checks import WAIT_SECONDS, await_block, await_signal, require
+from harness.checks import WAIT_SECONDS, advisory_gate, await_block, await_signal, require
 from harness.db import arena
 from harness.runner import run, submission
 
 
 def quantities(conn):
     return conn.execute("SELECT quantity FROM stock ORDER BY sku").fetchall()
+
+
+def stock_is_locked(observer, sku):
+    try:
+        observer.execute("SELECT sku FROM stock WHERE sku = %s FOR NO KEY UPDATE NOWAIT", (sku,))
+    except errors.LockNotAvailable:
+        return True
+    return False
+
+
+def check_lock_sequence(adjust_stock, keys, ordered):
+    first, second = sorted(keys) if ordered else keys
+    reached_hook = Event()
+    resume = Event()
+    reported = []
+
+    def after_first(sku):
+        reported.append(sku)
+        reached_hook.set()
+        await_signal(resume, "the validator did not release the first lock hook")
+    with (
+        arena() as database,
+        database.connect() as observer,
+        database.connect() as worker,
+        ThreadPoolExecutor(max_workers=1) as pool,
+    ):
+        observer.execute("INSERT INTO stock VALUES ('a', 100), ('b', 150)")
+        observer.execute("""
+            CREATE FUNCTION pause_stock_update() RETURNS trigger LANGUAGE plpgsql AS $$
+            BEGIN
+                PERFORM pg_advisory_xact_lock(TG_ARGV[0]::bigint);
+                RETURN NULL;
+            END;
+            $$;
+        """)
+        with advisory_gate(observer) as gate:
+            observer.execute(f"""
+                CREATE TRIGGER pause_stock_update BEFORE UPDATE ON stock
+                FOR EACH STATEMENT EXECUTE FUNCTION pause_stock_update('{gate}')
+            """)
+            job = pool.submit(adjust_stock, worker, keys, 7, ordered, after_first)
+            job.add_done_callback(lambda _: reached_hook.set())
+            try:
+                await_signal(reached_hook, "call the hook after acquiring the first stock lock")
+                if not reported:
+                    job.result()
+                    raise AssertionError("call the hook after acquiring the first stock lock")
+                require(reported == [first], f"report SKU {first} as the first lock")
+                require(stock_is_locked(observer, first), f"lock SKU {first} before calling the hook")
+                require(not stock_is_locked(observer, second), f"leave SKU {second} unlocked at the first lock hook")
+            finally:
+                resume.set()
+
+            await_block(observer, worker, observer)
+            for sku in keys:
+                require(stock_is_locked(observer, sku), f"explicitly lock SKU {sku} before the first stock UPDATE")
+        job.result()
+        require(reported == [first], "call the first lock hook exactly once")
 
 
 def check(source: Path) -> None:
@@ -25,7 +83,7 @@ def check(source: Path) -> None:
         def after_first(key):
             require(conn.info.transaction_status == TransactionStatus.INTRANS, "hold the first lock in a transaction")
             require(any(
-                "for update" in " ".join(statement.lower().split())
+                any(mode in " ".join(statement.lower().split()) for mode in ("for update", "for no key update"))
                 for operation, statement in conn.activity
                 if operation == "execute"
             ), "acquire the row lock explicitly before invoking the hook")
@@ -34,6 +92,8 @@ def check(source: Path) -> None:
         adjust_stock(conn, keys, 7, ordered, after_first)
 
     for ordered in (False, True):
+        for keys in (("a", "b"), ("b", "a")):
+            check_lock_sequence(adjust_stock, keys, ordered)
         with (
             arena() as database,
             database.connect() as reader,
