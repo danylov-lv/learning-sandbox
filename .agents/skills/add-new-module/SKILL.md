@@ -13,7 +13,7 @@ Read the global sections of `docs/authoring/SPEC.md` and the relevant rules in `
 
 Draft the spec around the intended learning outcomes. Use representative engineering problems or focused exercises that make a concept concrete. State what prior skills, earlier work, and services the module requires. Reuse suitable datasets, design for the documented local environment, and explain the limits of any local approximation. Check version-sensitive requirements against official documentation.
 
-For each exercise, state its learning outcome, what the learner will submit, the observable behavior that earns a pass, and a plausible mistake the check will catch. When the method itself is a learning outcome, identify evidence that demonstrates its use. Specify independent expected results or observations and explain how checks involving failures, concurrency, or performance will be reproduced.
+For each exercise, state its learning outcome and what the learner will submit. Map every explicit requirement to an observable acceptance check and a plausible violation it should detect. One scenario can cover several requirements when its observations demonstrate each one. When the exercise requires a technique, identify evidence that demonstrates its actual use. Specify independent expected results or observations. For failures, concurrency, or performance, explain how the harness will establish and observe the conditions the check depends on.
 
 ## Validate the learning path
 
@@ -33,4 +33,4 @@ Register the new module in `README.md`, `docs/authoring/SPEC.md`, `docs/authorin
 
 Repeat the learning-path review against the actual briefs, scaffolds, fixtures, and validator contracts. Fix mismatches between what the module is meant to teach and what the exercises require or reward.
 
-Verify the documented environment. Exercise each new validator on the intended pass and a representative failure with disposable inputs or implementations. Keep temporary solutions outside the repository. Run `python ci-meta/run_module_ci.py <module-id>`, `python ci-meta/repo_guards.py`, and `python ci-meta/tests/validate.py`. Record the results of the learning-path review, technical checks, and any limits before marking the module generated.
+Verify the documented environment. Use disposable inputs or implementations to confirm that each validator accepts correct behavior and rejects the planned violations for the intended reasons. For checks that rely on a failure or concurrent interleaving, verify that the scenario actually occurred. Keep temporary solutions outside the repository. Run `python ci-meta/run_module_ci.py <module-id>`, `python ci-meta/repo_guards.py`, and `python ci-meta/tests/validate.py`. Record the results of the learning-path review, technical checks, and any limits before marking the module generated.
