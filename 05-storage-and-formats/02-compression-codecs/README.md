@@ -7,7 +7,7 @@ Finance is asking why the Parquet lake still costs real money every month, and t
 ## What's given
 
 - `data/raw/part-*.jsonl` and `data/ground-truth.json` from the module generator.
-- `tests/bench.py` — writes all five variants via your code, times the write, then measures each variant's file size and full-scan read time. Produces `results-local.json`.
+- `tests/bench.py` — times your pipeline writing all five variants, then measures each file's size and full-scan read time. It also encodes the same sample of up to 100,000 rows with each codec, using a sink that discards the output so the encoding comparison excludes disk I/O. Produces `results-local.json`.
 - `tests/validate.py` — the validator.
 
 ## What's required
@@ -33,7 +33,7 @@ uv run python 02-compression-codecs/tests/bench.py
 uv run python 02-compression-codecs/tests/validate.py
 ```
 
-Fill in `NOTES.md`: which variant would you actually put in the hot tier, which in the archive tier, and why — cite your own size and read-time numbers. Also note what a single-pass-fan-out design costs you in peak memory versus a five-pass design, if you tried both, or reason about it if you only built one.
+Fill in `NOTES.md`: which variant would you actually put in the hot tier, which in the archive tier, and why — cite your own size and timing measurements and say which timing came from the controlled encoding sample. Also note what a single-pass-fan-out design costs you in peak memory versus a five-pass design, if you tried both, or reason about it if you only built one.
 
 ## Completion criteria
 
@@ -42,7 +42,7 @@ Fill in `NOTES.md`: which variant would you actually put in the hot tier, which 
 - all five files exist, and each has `num_rows` equal to `ground-truth.json`'s `total_rows` (checked from Parquet footer metadata only — no full read);
 - the `price` column's row-group-0 compression codec actually matches the variant (`none` → `UNCOMPRESSED`, `snappy` → `SNAPPY`, `gzip` → `GZIP`, `zstd3`/`zstd19` → `ZSTD`) — passing the wrong kwarg silently no-ops in some pyarrow versions, this check catches that;
 - file size ordering: `none` is meaningfully bigger than `snappy`, `snappy` is meaningfully bigger than `zstd3`, `gzip` is meaningfully bigger than `zstd19` ("meaningfully" = more than a 2% difference, to avoid flip-flopping on near-ties);
-- `results-local.json` has write and read timings for every variant;
+- `results-local.json` has the total pipeline write time, the shared encoding sample size, and separate encoding and full-scan read timings for every variant;
 - `NOTES.md` has real measurements and conclusions, not just the template.
 
 ## Estimated evenings

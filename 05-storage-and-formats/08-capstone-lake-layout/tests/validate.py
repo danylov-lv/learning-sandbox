@@ -11,7 +11,8 @@ Three checkpoints (see README.md):
 --cp2   structural gates on the already-built silver zone: every file
         zstd-compressed; <= 8 files per partition; no file smaller than
         min(8 MB, partition_bytes / 2) except the last file of a
-        partition; <= 15% of silver row groups overlap the filter_probe;
+        partition; rows are sorted within each partition; <= 15% of silver
+        row groups overlap the filter_probe;
         a DuckDB smoke query reproduces latest_price_probe.
 
 --cp3   DESIGN.md is filled in with real content (length check on
@@ -86,6 +87,7 @@ def run_cp1():
     import duckdb
 
     con = duckdb.connect()
+    con.execute("SET TimeZone='UTC'")
 
     # --- bronze round-trip: all rows preserved -------------------------------
     if not BRONZE_DIR.exists():
@@ -119,28 +121,49 @@ def run_cp1():
         )
 
     silver_glob = str(SILVER_DIR / "**" / "*.parquet")
-    silver_rows = con.execute(
-        "SELECT count(*) FROM read_parquet(?, hive_partitioning=true)", [silver_glob]
-    ).fetchone()[0]
-    if silver_rows != gt["total_rows"]:
-        _fail_cp("cp1", f"silver row count: expected {gt['total_rows']}, got {silver_rows}")
-
     month_rows = con.execute(
         """
-        SELECT strftime(captured_at, '%Y-%m') AS ym, sum(price)
+        SELECT month, count(*), coalesce(sum(price), 0.0),
+               count(*) FILTER (WHERE strftime(captured_at, '%Y-%m') IS DISTINCT FROM month)
         FROM read_parquet(?, hive_partitioning=true)
-        WHERE price IS NOT NULL
-        GROUP BY ym
+        GROUP BY month
         """,
         [silver_glob],
     ).fetchall()
-    month_sums = {ym: s for ym, s in month_rows}
-    for month, expected in gt["price_sum_by_month"].items():
-        actual = month_sums.get(month, 0.0)
-        common.approx(actual, expected, rel_tol=1e-6, what=f"silver price_sum_by_month[{month}]")
+    silver_rows = 0
+    for month, rows, price_sum, misplaced_rows in month_rows:
+        if misplaced_rows:
+            _fail_cp("cp1", f"month={month} has {misplaced_rows} rows outside its UTC month")
+        expected_rows = gt["rows_by_month"].get(month)
+        if rows != expected_rows:
+            _fail_cp("cp1", f"month={month}: expected {expected_rows} rows, got {rows}")
+        silver_rows += rows
+        expected = gt["price_sum_by_month"].get(month, 0.0)
+        common.approx(price_sum, expected, rel_tol=1e-6, what=f"silver price_sum_by_month[{month}]")
+    if silver_rows != gt["total_rows"]:
+        _fail_cp("cp1", f"silver row count: expected {gt['total_rows']}, got {silver_rows}")
 
     print(f"PASSED [cp1]: bronze {bronze_rows} rows, silver {silver_rows} rows across {len(partitions)} partitions")
     return True
+
+
+def file_sort_bounds(parquet_file, path):
+    from pyarrow import timestamp
+
+    expected_timestamp = timestamp("us", tz="UTC")
+    first_key = last_key = None
+    for batch in parquet_file.iter_batches(columns=["source_id", "captured_at"]):
+        source_ids = batch.column("source_id").to_pylist()
+        captured_at = batch.column("captured_at").cast(expected_timestamp).cast("int64").to_pylist()
+        for key in zip(source_ids, captured_at):
+            if None in key:
+                _fail_cp("cp2", f"{path}: null value in (source_id, captured_at) sort key")
+            if last_key is not None and key < last_key:
+                _fail_cp("cp2", f"{path}: rows are out of order by (source_id, captured_at)")
+            if first_key is None:
+                first_key = key
+            last_key = key
+    return first_key, last_key
 
 
 def run_cp2():
@@ -185,8 +208,12 @@ def run_cp2():
                     f"min(8MB, partition_bytes/2) = {min_size_required:.0f} bytes",
                 )
 
+        file_ranges = []
         for f, _ in sizes:
             pf = pq.ParquetFile(f)
+            first_key, last_key = file_sort_bounds(pf, f)
+            if first_key is not None:
+                file_ranges.append((first_key, last_key, f))
             meta = pf.metadata
             for rgi in range(meta.num_row_groups):
                 rg = meta.row_group(rgi)
@@ -219,6 +246,15 @@ def run_cp2():
                 if overlap:
                     overlapping_row_groups += 1
 
+        file_ranges.sort()
+        for (_, previous_last, previous_file), (first, _, file) in zip(file_ranges, file_ranges[1:]):
+            if previous_last > first:
+                _fail_cp(
+                    "cp2",
+                    f"{part_dir.name}: (source_id, captured_at) ranges overlap between "
+                    f"{previous_file.name} and {file.name}",
+                )
+
     if total_row_groups == 0:
         _fail_cp("cp2", "no row groups found in silver zone")
 
@@ -227,8 +263,7 @@ def run_cp2():
         _fail_cp(
             "cp2",
             f"{overlapping_row_groups}/{total_row_groups} = {frac:.3f} of row groups "
-            f"overlap the filter_probe range (max {MAX_PRUNING_OVERLAP_FRACTION}) -- "
-            f"check the (source_id, captured_at) sort within partitions",
+            f"overlap the filter_probe range (max {MAX_PRUNING_OVERLAP_FRACTION})",
         )
 
     import duckdb
@@ -240,7 +275,7 @@ def run_cp2():
         pid = int(pid_str)
         row = con.execute(
             """
-            SELECT captured_at, price
+            SELECT epoch_us(captured_at) // 1000000, price
             FROM read_parquet(?, hive_partitioning=true)
             WHERE product_id = ? AND price IS NOT NULL
             ORDER BY captured_at DESC
@@ -250,8 +285,7 @@ def run_cp2():
         ).fetchone()
         if row is None:
             _fail_cp("cp2", f"latest_price_probe: no rows found for product_id {pid}")
-        captured_at, price = row
-        actual_epoch = int(captured_at.timestamp())
+        actual_epoch, price = row
         if actual_epoch != expected["captured_at_epoch"]:
             _fail_cp(
                 "cp2",
@@ -264,7 +298,7 @@ def run_cp2():
 
     print(
         f"PASSED [cp2]: {overlapping_row_groups}/{total_row_groups} row groups overlap "
-        f"filter_probe ({frac:.3f}), all files zstd, file-count/size gates clear"
+        f"filter_probe ({frac:.3f}), silver is sorted and all files meet codec, count and size gates"
     )
     return True
 

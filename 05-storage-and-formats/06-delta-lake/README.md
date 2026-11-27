@@ -42,9 +42,7 @@ that predates that column.
 
 - `data/raw/part-*.jsonl` and `data/ground-truth.json` from the module
   generator (see the module README to (re)generate).
-- MinIO running (`docker compose up -d --wait` from the module root),
-  bucket `price-lake` already created, credentials in
-  `harness/common.py`.
+- MinIO running and the `price-lake` bucket initialized using the [module setup](../README.md#start-minio-for-tasks-05-and-06). Credentials are in `harness/common.py`.
 - `src/delta_pipeline.py` — a scaffold with the full contract for each
   function in its docstring. You implement all of it.
 - `tests/validate.py` — the validator.
@@ -121,14 +119,13 @@ Fill in `NOTES.md`: how many versions did the finished table have, and
 what operation was each one? How many files existed in the last month's
 partition right before compaction, and right after? What broke (if
 anything) the first time you tried the vacuum call, and why does the
-default retention window exist? If you attempted the MinIO stretch, what
+default retention window exist? For the MinIO run, what
 `storage_options` did you end up needing, and what error told you which
 one was missing?
 
 ## Completion criteria
 
-`tests/validate.py` prints `PASSED`. It checks, all against the local
-table at `data/delta/snapshots`:
+`tests/validate.py` prints `PASSED`. It checks the local table at `data/delta/snapshots` and the MinIO table:
 
 - the latest version's row count equals `ground-truth.json`'s
   `total_rows`, and per-month price sums match `price_sum_by_month`

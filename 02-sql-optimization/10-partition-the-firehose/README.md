@@ -4,7 +4,7 @@
 
 `inventory_events` is an append-heavy time series: every stock movement in
 the warehouse writes a row here, and it has grown to 9.0M rows spanning
-January 2025 through today. Every ops query filters a recent window
+roughly 18 months ending at the seed date. Every ops query filters a recent window
 ("what happened in the last two weeks"), but the table itself doesn't know
 that — it's one flat heap with two single-column indexes. Monthly
 retention jobs `DELETE` old rows to keep the table from growing forever,
@@ -21,8 +21,8 @@ rows in the process.
   defect (c) is this task's subject.
 - A live Postgres 16 instance at `localhost:54302` (db/user/pass:
   `sandbox`), container `02-sql-optimization-postgres-1`. `inventory_events`
-  has 9.0M rows; `min(occurred_at)` is 2025-01-10, `max(occurred_at)` is
-  today.
+  has 9.0M rows. The earliest and latest timestamps depend on when you
+  seeded the database.
 - `src/recent_window_query.sql` — the query used for the pruning and
   (informational) timing checks. Reference only, not yours to write.
 - `tools/plan_check.py` and `tools/baseline.py` — the plan-assertion and
@@ -35,7 +35,19 @@ rows in the process.
    `SELECT min(occurred_at), max(occurred_at), count(*) FROM
    inventory_events;` and a per-month breakdown
    (`date_trunc('month', occurred_at)`), so you know exactly what span your
-   partitions need to cover.
+   partitions need to cover. Then record the original table from the
+   module root before running the migration:
+
+   ```
+   uv run python 10-partition-the-firehose/tests/check.py --record-stock
+   ```
+
+   This saves the row count, date range, and a fingerprint of every event
+   in the gitignored `inventory-events-stock-local.json` beside this README.
+   Stop writes to `inventory_events` from recording through verification.
+   Keep the snapshot for reruns and retain the original table under its
+   new name or keep a backup until verification succeeds.
+
 2. Write `src/migrate.sql` as a single transactional script
    (`BEGIN; ... COMMIT;`, runnable with `psql ... -f src/migrate.sql` or any
    client that executes the whole file as one script) that:
@@ -54,8 +66,11 @@ rows in the process.
    in any way.
 4. This is a heavy, minutes-long operation on 9M rows — run it once,
    deliberately, against the live DB. `tests/check.py` inspects whatever
-   state you leave the table in; it does not run your migration for you and
-   does not undo it.
+   state you leave the table in. If you already migrated before recording a
+   snapshot, restore the saved original as `inventory_events` in a separate
+   database and run `--record-stock` against that copy. Then switch back to
+   the migrated database to check it. Recording rejects a partitioned
+   source.
 
 ## Completion criteria
 
@@ -67,24 +82,20 @@ uv run python 10-partition-the-firehose/tests/check.py
 
 The checker verifies:
 
-1. `inventory_events` is a partitioned table using the RANGE strategy.
-2. There are enough partitions to plausibly cover the real span (at least
-   20 — about 19 months of real data plus a future one), and at least one
-   partition's lower bound is strictly after the stock table's
-   `max(occurred_at)` — proof you actually planned ahead, not just for
-   what exists today.
-3. Data parity: `count(*)`, `sum(qty_delta)`, `min(occurred_at)`, and
-   `max(occurred_at)` on the migrated table match the stock values exactly.
-   No rows lost, duplicated, or corrupted in the move.
+1. `inventory_events` is partitioned by `RANGE (occurred_at)`.
+2. Calendar-month partitions cover every month in the saved source range
+   and the first month after it.
+3. The migrated table matches the saved row count, date range, and
+   fingerprint, which checks that every event was preserved.
 4. A last-14-days query (`src/recent_window_query.sql`) touches at most 2
    partitions — proof the planner is pruning, not scanning every month.
 
-A timing comparison against a stock baseline is also printed, but as
-`info` only, not a pass/fail gate — see "Topics to read up on" for why a
-single small recent-window query isn't necessarily dramatically faster
-just from partitioning alone, when the unpartitioned table already had an
-index on `occurred_at`. The pruning and structural checks are the real
-signal for this task.
+For optional timing context, use `tools/baseline.py record` with
+`10-partition-the-firehose/src/recent_window_query.sql` and the baseline ID
+`recent_window_stock` before migrating. The validator reports the timing
+comparison as information. The original `occurred_at` index already helps
+this small recent-window query, so partitioning may improve retention and
+pruning without a large speedup.
 
 All checks except the timing line must print `PASS`, and the final line
 must read `PASSED`.

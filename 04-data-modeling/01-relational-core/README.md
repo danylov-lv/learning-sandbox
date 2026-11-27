@@ -20,7 +20,7 @@ into it correctly.
 
 - A running Postgres 16 at `localhost:${SANDBOX_03_PORT:-54303}` (db/user/pass
   `sandbox`), started with `docker compose up -d` from the module root.
-- `data/events.jsonl` — 2,336,793 event lines, ordered by `ingested_at`
+- `data/events.jsonl` — about 2.3 million event lines, ordered by `ingested_at`
   (arrival order, not business time). Regenerate with
   `uv run python harness/events.py` (seed 42, ~2 minutes) if the file is
   missing; it's gitignored.
@@ -82,9 +82,8 @@ into it correctly.
      price_usd)`.
    - **q03** — deduplicated observation counts by currency, plus one `ALL`
      row with the grand total. Columns: `(currency, observation_count)`.
-     This is the check that your loader actually deduplicated
-     (shop_code, product_code, event_time) correctly, keeping the
-     first-arriving copy.
+     This checks the deduplicated totals. The capstone's ingest cutoff in
+     q13b also checks the effect of keeping the first-arriving copy.
    - **q04** — daily min/max/avg USD price for product `P00001` over the
      60 days starting `2025-01-01`. Columns: `(day, min_price_usd,
      max_price_usd, avg_price_usd)`.

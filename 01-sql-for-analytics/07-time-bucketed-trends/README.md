@@ -21,7 +21,7 @@ scraping doesn't get mistaken for a market-wide price move.
 - `price_snapshots(id, product_id, source_id, captured_at, price, currency, in_stock)`
 - `sources(id, name, country, tier, currency)` — `tier` is smallint (1 = major
   marketplace, 2 = mid, 3 = long tail).
-- Full data range: 2025-01-01 through 2026-06-30 (78 full ISO weeks plus a partial
+- Full data range: 2025-01-01 through 2026-06-30 (77 full ISO weeks plus a partial
   week at each end — 79 distinct week buckets total).
 
 ## What's required

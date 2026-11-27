@@ -62,7 +62,7 @@ exact contract before writing anything.
    = 3`, `captured_at` covering 2025-09-01 through 2025-10-31 inclusive.
    Returns one row: `row_count`, `price_sum`. This range covers exactly two
    partitions (`month=2025-09`, `month=2025-10`) — write the `WHERE` clause
-   so DuckDB prunes to those two files before opening anything else.
+   so DuckDB prunes to the files in those two partitions.
    Filtering on `captured_at` alone is not enough for pruning to happen:
    `captured_at` lives inside the Parquet files, the `month` value lives in
    the directory name, and only a filter that DuckDB can evaluate from the
@@ -97,15 +97,13 @@ actually kick in, if your first attempt didn't?
   `price_sum_by_month` exactly (relative tolerance `1e-6` on sums) for all
   18 months, in month-ascending order;
 - `probe.sql`'s result matches `filter_probe`'s `rows` and `price_sum`;
-- `latest_prices.sql`'s result matches `latest_price_probe` for all 10
+- `latest_prices.sql` returns one row per product with a non-null price in the lake, and its values match `latest_price_probe` for all 10
   listed `product_id`s (`captured_at_epoch` exact, `price` relative
   tolerance `1e-6`);
-- a structural pruning check via `pruning_proof.sql`: the number of files
-  DuckDB's `EXPLAIN ANALYZE` reports as actually read is no more than the
-  number of `.parquet` files that physically exist on disk inside the two
-  partition directories the probe covers, and strictly less than the
-  lake's total file count — i.e. pruning demonstrably happened, not just a
-  full scan that happened to return the right numbers;
+- `pruning_proof.sql` wraps the same query as `probe.sql`. The optimized
+  plan applies a partition filter and selects exactly the files in the two
+  probe months. Profiling confirms that DuckDB reads only as many files
+  as those partitions contain;
 - `results-local.json` exists (`tests/bench.py` was run);
 - `NOTES.md` filled in beyond the template.
 

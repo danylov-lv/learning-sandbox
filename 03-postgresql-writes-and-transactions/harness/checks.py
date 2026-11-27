@@ -75,10 +75,10 @@ def require_prices(conn: Connection, events: Iterable[Event]) -> None:
     require(sorted(actual_current) == sorted(latest.values()), "current prices differ from the latest events")
 
 
-def uses_copy(conn: Connection) -> bool:
+def uses_copy(conn: Connection, *, since: int = 0) -> bool:
     return any(
         operation == "copy"
         and "price_stage" in statement.lower()
         and "from stdin" in " ".join(statement.lower().split())
-        for operation, statement in conn.activity
+        for operation, statement in conn.activity[since:]
     )

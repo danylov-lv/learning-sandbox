@@ -1,0 +1,20 @@
+{
+  "columns": [
+    "root_category",
+    "subtree_category_count",
+    "leaf_count",
+    "max_depth",
+    "product_count",
+    "product_share_pct"
+  ],
+  "rows": [
+    ["Alpha", 6, 2, 4, 4, 66.67],
+    ["Beta", 3, 1, 2, 2, 33.33],
+    ["Delta", 1, 1, 0, 0, 0.00],
+    ["Epsilon", 1, 1, 0, 0, 0.00],
+    ["Eta", 1, 1, 0, 0, 0.00],
+    ["Gamma", 1, 1, 0, 0, 0.00],
+    ["Theta", 1, 1, 0, 0, 0.00],
+    ["Zeta", 1, 1, 0, 0, 0.00]
+  ]
+}

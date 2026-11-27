@@ -77,10 +77,8 @@ buffer count.
 
 ## What's required
 
-1. Record the baseline for `q01` once, from the module root:
-   ```
-   uv run python tools/baseline.py record queries/q01.sql
-   ```
+1. Record the [stock baselines for tasks 01, 02, and 04](../README.md#baselines-for-tasks-01-02-and-04)
+   before changing `orders`.
 2. Diagnose the plan using the method above.
 3. Write the DDL that fixes it into `01-read-the-plan/src/fix.sql`.
 4. Apply your fix against the live database (e.g. `psql` or a short

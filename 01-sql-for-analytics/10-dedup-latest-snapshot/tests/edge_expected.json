@@ -1,0 +1,7 @@
+{
+  "columns": ["tier", "currency", "pair_count", "avg_latest_price", "in_stock_share"],
+  "rows": [
+    [1, "USD", 2, 30.00, 0.5000],
+    [2, "EUR", 1, 60.00, 0.0000]
+  ]
+}

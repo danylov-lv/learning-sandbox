@@ -60,7 +60,7 @@ uv run python 08-capstone-lake-layout/tests/validate.py --cp1
 ```
 
 This checks: bronze row count equals `ground-truth.json`'s `total_rows`;
-silver row count equals `total_rows`; per-month price sums in silver match
+silver row count equals `total_rows`; rows are in the partition for their UTC month; per-month row counts and price sums in silver match
 `price_sum_by_month` (relative tolerance `1e-6`); and the set of
 `month=YYYY-MM` partitions in silver exactly matches the keys of
 `rows_by_month` — no missing months, no extra ones, no off-by-one month
@@ -81,13 +81,14 @@ uv run python 08-capstone-lake-layout/tests/validate.py --cp2
 - **File size**: no silver file is smaller than `min(8 MB, partition_bytes
   / 2)`, except the last file in a partition (a partial final file is
   expected and fine — that's how a target-size rolling writer ends).
+- **Sort order**: rows in a silver partition are ordered by `(source_id, captured_at)` within each file. When a partition has multiple files, their key ranges must not interleave. File names may be in any order.
 - **Row-group pruning**: build the row-group statistics so that a filter
   on `source_id` and `captured_at` (using the module's `filter_probe`)
   only forces DuckDB to open row groups that could actually contain a
   match. The gate: at most 15% of all silver row groups overlap the
-  probe's range. This is a direct test of whether your sort key is doing
-  its job — an unsorted silver zone will not clear this bar once row
-  groups get small enough to matter.
+  probe's range across the entire silver zone. This measures the combined
+  effect of month partitioning and row-group statistics. The sort-order
+  check independently verifies ordering inside each partition.
 - **Smoke query**: a DuckDB query over silver reproduces
   `latest_price_probe` (the latest-price-per-product check from the
   ground truth) for all 10 probe product IDs.
@@ -101,7 +102,7 @@ so they mean the same thing at the 400k-row test dataset and at a 5 GB or
 
 Fill in `DESIGN.md`. Every claim needs a number behind it — "zstd is a
 good default" is not a design decision, "zstd at level 3 cost us 4% size
-over level 19 but wrote 6x faster in task 02" is. Sections:
+over level 19 but encoded the shared sample 6x faster in task 02" is. Sections:
 
 - **Layout and why** — zones, partition key, sort key, codec, each tied to
   a measurement from tasks 01-07.

@@ -26,6 +26,7 @@ from datetime import timedelta
 import numpy as np
 
 from common import (
+    DATASET_VERSION,
     BRANDS,
     CATEGORIES,
     COUNTRIES,
@@ -250,6 +251,15 @@ def build_admin_events(rng, shops, products, listings):
             continue
         new_name = shop["name"] + " " + ["Group", "Online", "Direct", "Plus"][i % 4]
         emit(t, "shop_renamed", {"shop_code": shop["code"], "new_name": new_name})
+
+    renames = [event for event in events if event[2] == "shop_renamed"]
+    if renames:
+        ing, t, event_type, payload = min(renames, key=lambda event: event[1])
+        if t + 365 * DAY < T1:
+            events.append((ing + 365 * DAY, t + 365 * DAY, event_type, {
+                "shop_code": payload["shop_code"],
+                "new_name": payload["new_name"] + " Marketplace",
+            }))
 
     tiered = [s for s in shops if rng.random() < 0.5]
     for i, shop in enumerate(tiered):
@@ -505,6 +515,7 @@ def main():
     n_clients, clients_sha = write_clients(clients_path, rng, products, scale)
 
     meta = {
+        "dataset_version": DATASET_VERSION,
         "scale": scale,
         "seed": args.seed,
         "events": count,

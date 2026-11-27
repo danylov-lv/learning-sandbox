@@ -12,8 +12,8 @@ You already have two shapes of the same dataset from task 04: `data/lake/` (18 m
 
 - `data/lake/` and `data/lake-trap/` from task 04, read-only.
 - `data/ground-truth.json` from the module generator.
-- MinIO already running: S3 API at `http://localhost:9301`, console at `http://localhost:9302` (`sandbox` / `sandbox123`), bucket `price-lake` already created. Endpoint and credentials are also available via `harness.common` (`minio_endpoint()`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET`).
-- `tests/bench.py` — uploads both dataset trees via your code, then measures LIST enumeration cost and query wall time against the bucket, local disk, and the small-files trap. Writes `05-minio-object-store/results-local.json`.
+- MinIO running with the `price-lake` bucket from the [module setup](../README.md#start-minio-for-tasks-05-and-06). The default S3 API is `http://localhost:9301` and the console is `http://localhost:9302` (`sandbox` / `sandbox123`). Endpoint and credentials are also available via `harness.common` (`minio_endpoint()`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET`).
+- `tests/bench.py` — uploads both dataset trees via your code, then measures LIST enumeration cost with at most 100 keys per page, and query wall time against the bucket, local disk, and the small-files trap. The fixed page size lets you observe multiple pages even on the smaller dataset. Writes `05-minio-object-store/results-local.json`.
 - `tests/validate.py` — the validator.
 
 ## What's required
@@ -41,7 +41,7 @@ Fill in `NOTES.md`: how many LIST pages did each prefix take to enumerate, and w
 - the object count under `lake/` equals the number of Parquet files in local `data/lake`;
 - the total row count of the S3 `lake/` dataset equals `total_rows`, and a probe query (source + date-range filter from `filter_probe`, month-partition-pruned) against the S3 `lake/` dataset matches `filter_probe`'s row count and price sum (relative tolerance 1e-6);
 - the object count under `lake-trap/` is at least 20x the object count under `lake/` — the same structural small-files signal task 04 used, now visible as object count instead of local file count;
-- `results-local.json` exists and shows more LIST pages were needed to enumerate `lake-trap/` than `lake/`;
+- `results-local.json` exists and shows at the benchmark's 100-key page limit, more LIST pages were needed to enumerate `lake-trap/` than `lake/`;
 - `NOTES.md` filled in beyond the template.
 
 ## Estimated evenings

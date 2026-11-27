@@ -35,10 +35,8 @@ expect on this particular table.
 
 ## What's required
 
-1. Record the baseline for `q04` once, from the module root:
-   ```
-   uv run python tools/baseline.py record queries/q04.sql
-   ```
+1. Use the [stock baseline for `q04`](../README.md#baselines-for-tasks-01-02-and-04)
+   recorded before you indexed `orders`.
 2. Run `EXPLAIN (ANALYZE, BUFFERS)` on `q04.sql`. Note the node type
    touching `orders` — is it `Index Scan` or `Index Only Scan`? These are
    not the same node, and the difference is exactly what this task is

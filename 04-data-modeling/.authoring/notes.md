@@ -106,39 +106,33 @@ review:
   tier").
 - q06: at least one of the three fixed products must show a brand change
   between d1 and d2.
-- q07/q08/q12: result sets must be non-empty.
+- q07: at least one selected shop must have different names at cutoff and
+  at the end of the stream. q08 and q12 must be non-empty.
 - q13b: at least one category's cutoff-restricted average must differ from
   its full-data average (late arrivals actually change March's reported
   numbers under a cutoff).
 
 ## Star-schema validator contract (harness/validate.py)
 
-- Schema must be named `mart`; required tables `dim_shop`, `dim_product`,
-  `dim_date`, `fact_price_observation`, all non-empty.
-- `dim_shop` and `dim_product` must each have `valid_from` and `valid_to`
-  columns.
-- For q09/q10/q11 the validator runs `SET search_path = mart` before
-  executing the learner's SQL and rejects any query text matching
-  `\bpublic\s*\.` — the star-schema questions must be answerable from
-  `mart` alone, no reaching back into the OLTP/history schema.
-- `star_schema_precheck` runs once per invocation whenever any of q09/q10/
-  q11 are requested; failure short-circuits those three with a single
-  `NOT PASSED` reason rather than three separate connection attempts.
+- `harness/star_schema.py` checks the physical tables, validity intervals,
+  calendar row count, and fact grain once per run. Report validation follows
+  PostgreSQL relation dependencies through views, checks predicate plans
+  for temporal resolution, and compares the resulting business aggregates.
+  The exercise leaves the source-row identifier and timestamp columns
+  optional, so the validator cannot compare every fact to its source event.
 
-## Verification status (as of this authoring pass)
+## Verification
 
-- `data/` already generated at scale 1.0, seed 42: 2,336,793 events, 50
-  shops, 2400 products, 10613 listings, 18 clients. `events.meta.json` sha
-  `bdaede4...` (events), clients sha `eef334d...`.
+- Dataset version 2 at scale 1.0 and seed 42 has 2,336,794 events and
+  18 clients. SHA-256 of `events.jsonl` is
+  `0ace06ef173f7795d21f16d2f22eae1c607cfad23b76565b74fa5668022bf26d`.
+  SHA-256 of `clients.jsonl` is
+  `eef334dcdc2ad19e37a9df83d53afb2464a78e635a123b61ae310c69f10f3aca`.
 - `ground_truth.json` cache is keyed by those shas (via `events.meta.json`)
   — regenerating the stream with the same seed/scale reuses the cache;
   any drift in generator logic invalidates it automatically.
-- `validate.py`'s comparison machinery (column-name/order check, row
-  multiset match with float tolerance 1e-3, timestamp/date/decimal
-  normalization, star-schema precheck, fail-path messaging) has been
-  exercised against a live Postgres instance for both the pass path and
-  deliberate fail paths (missing file, stub file, wrong columns, public.
-  schema reference on star questions). No task SQL files or reference
-  answers are committed anywhere in the repo by design — the full
-  `--all` battery cannot go green without the learner actually solving
-  every task; that's the intended state at hand-off, not a gap to fix.
+- The validator compares decimal results at four places. With this precision,
+  q13b distinguishes retaining the latest-arriving duplicate from retaining
+  the first. The fixture also distinguishes the correct q07 history and
+  q13a precision. PostgreSQL probes cover physical relation checks, direct
+  and indirect report dependencies, and load-time version selection.

@@ -105,7 +105,7 @@ counts broken down by currency, plus a grand total row.
 ### q04 -- daily price band for one product over a fixed window
 
 Fixed parameters: product `P00001`, window starts `2025-01-01T00:00:00Z`,
-spans `60` days (i.e. `2025-01-01` through `2025-03-01`, exclusive end).
+spans `60` days (i.e. `2025-01-01` through `2025-03-01`, inclusive).
 
 - Columns: `day`, `min_price_usd`, `max_price_usd`, `avg_price_usd`
 - Exactly one row per day of the 60-day window, in USD, computed from

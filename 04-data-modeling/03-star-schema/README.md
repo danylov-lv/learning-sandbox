@@ -63,13 +63,16 @@ Then answer q09–q11 (see `harness/questions.md` for the exact contract):
 
 Fixed contract enforced by the validator:
 
-- All four tables live in schema `mart`, have rows > 0, and `dim_shop` /
-  `dim_product` both have `valid_from` / `valid_to` columns.
-- q09–q11 run with `search_path` locked to `mart` — your queries must be
-  answerable from the star schema alone.
-- Any query text containing `public.` is rejected. If you find yourself
-  reaching back into your OLTP schema from a star-schema query, that is a
-  sign the mart is missing something it should already carry.
+- The four named relations are physical tables. The validator checks the
+  fact row count against the deduplicated stream and checks that the calendar
+  is large enough to cover the business period. Both history dimensions
+  must be populated and have valid intervals.
+- q09–q11 start with `search_path = mart`. Their relation dependencies must
+  stay in `mart`, including dependencies reached through views. Each query
+  must read the fact and the dimensions needed for its report.
+- Reports use the versions selected when loading the fact. The validator
+  checks for validity predicates in the report plan and compares the
+  aggregates against independently computed as-of results.
 
 ## Completion criteria
 

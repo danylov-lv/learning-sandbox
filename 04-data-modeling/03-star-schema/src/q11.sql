@@ -1,4 +1,4 @@
 -- q11: top-5 brands by observation count per quarter of 2025, ranked 1..5, ties broken by brand ascending.
 -- Columns: quarter, rank, brand, observation_count
--- Query mart only (search_path is locked to `mart`; no `public.` references allowed).
+-- Read the fact and the reporting dimensions from mart.
 -- TODO: write your query. Check: uv run python harness/validate.py --q q11

@@ -1,0 +1,17 @@
+{
+  "columns": [
+    "month",
+    "root_name",
+    "distinct_products",
+    "snapshot_count",
+    "median_price_usd",
+    "mom_median_change_pct",
+    "in_stock_share"
+  ],
+  "rows": [
+    ["2025-01-01", "Books", 1, 1, 0.00, null, 0.0000],
+    ["2025-01-01", "Electronics", 3, 4, 22.00, null, 0.7500],
+    ["2025-02-01", "Books", 1, 1, 10.00, null, 1.0000],
+    ["2025-02-01", "Electronics", 2, 2, 60.00, 172.73, 0.5000]
+  ]
+}

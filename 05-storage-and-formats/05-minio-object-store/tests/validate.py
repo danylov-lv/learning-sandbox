@@ -20,6 +20,7 @@ from harness.common import (  # noqa: E402
     DATA_DIR,
     S3_ACCESS_KEY,
     S3_BUCKET,
+    S3_LIST_PAGE_SIZE,
     S3_SECRET_KEY,
     approx,
     check_notes_filled,
@@ -145,12 +146,16 @@ def main():
 
     # --- results-local.json from bench.py ---
     results = load_results(RESULTS_PATH, what="results-local.json")
-    for name in ("lake", "lake-trap"):
+    if results.get("list_page_size") != S3_LIST_PAGE_SIZE:
+        fail(f"results-local.json must use {S3_LIST_PAGE_SIZE} keys per LIST page — rerun tests/bench.py")
+    for name, expected_count in (("lake", lake_object_count), ("lake-trap", trap_object_count)):
         if name not in results.get("prefixes", {}):
             fail(f"results-local.json missing prefixes['{name}'] — rerun tests/bench.py")
         for key in ("object_count", "list_pages", "list_wall_s"):
             if key not in results["prefixes"][name]:
                 fail(f"results-local.json prefixes['{name}'] missing '{key}' — rerun tests/bench.py")
+        if results["prefixes"][name]["object_count"] != expected_count:
+            fail(f"results-local.json object count for {name}/ differs from MinIO — rerun tests/bench.py")
 
     lake_pages = results["prefixes"]["lake"]["list_pages"]
     trap_pages = results["prefixes"]["lake-trap"]["list_pages"]

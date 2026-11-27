@@ -41,8 +41,8 @@ scoring so the "recent" window means a fixed *calendar* span, not a fixed
 Restrict to the 10 pairs above. For every snapshot of each pair, compute a
 rolling average and rolling sample standard deviation of `price` using a
 **30-day RANGE frame**: all snapshots of that same pair with `captured_at` in
-`(current_row.captured_at - 30 days, current_row.captured_at]`, ordered by
-`captured_at`.
+`[current_row.captured_at - 30 days, current_row.captured_at]`, ordered by
+`captured_at`. A snapshot exactly 30 days earlier is included.
 
 This must use a `RANGE` frame (calendar-based), not a `ROWS` frame
 (count-based) — on this data's irregular cadence they produce materially

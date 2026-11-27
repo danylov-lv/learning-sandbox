@@ -10,7 +10,10 @@
 --     hints/hint-3.md).
 --
 -- How to apply it (from the module root, with `docker compose up -d` running):
---   docker compose exec -T postgres psql -U sandbox -d sandbox < 01-relational-core/src/schema.sql
+-- PowerShell:
+--   Get-Content -Raw -Encoding UTF8 01-relational-core/src/schema.sql | docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U sandbox -d sandbox
+-- POSIX shell:
+--   docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U sandbox -d sandbox < 01-relational-core/src/schema.sql
 --
 -- Re-running this file should either be safe (CREATE TABLE IF NOT EXISTS /
 -- DROP TABLE IF EXISTS ... CASCADE first) or you should document that it is

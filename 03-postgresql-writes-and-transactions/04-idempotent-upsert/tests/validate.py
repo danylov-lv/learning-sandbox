@@ -10,6 +10,9 @@ from harness.db import Event, arena
 from harness.runner import run, submission
 
 
+IDENTIFIER = r'(?:"(?:[^"]|"")*"|[\w$]+)'
+
+
 def check(source: Path) -> None:
     apply_events = submission(source).apply_events
     new = Event("market", "a", 15, 1500)
@@ -27,7 +30,8 @@ def check(source: Path) -> None:
                 require_prices(reader, expected)
             statements = [statement for action, statement in conn.activity if action == "execute"]
             for name in ("observations", "current_prices"):
-                matching = rf'\binsert\s+into\s+"?{name}"?\b[\s\S]*\bon\s+conflict\b'
+                target = rf'(?:{IDENTIFIER}\s*\.\s*)?(?:"{name}"|{name}\b)'
+                matching = rf'\binsert\s+into\s+{target}[\s\S]*\bon\s+conflict\b'
                 require(
                     any(re.search(matching, statement, flags=re.I) for statement in statements),
                     f"exercise ON CONFLICT when inserting into {name}",

@@ -1,0 +1,21 @@
+{
+  "columns": [
+    "product_id",
+    "source_id",
+    "snapshot_count",
+    "avg_rolling_stddev",
+    "max_rolling_stddev"
+  ],
+  "rows": [
+    [17943, 91, 1, null, null],
+    [17943, 113, 1, null, null],
+    [22654, 186, 1, null, null],
+    [72050, 113, 1, null, null],
+    [140857, 91, 1, null, null],
+    [140857, 113, 1, null, null],
+    [140857, 186, 3, 14.1421, 28.2843],
+    [157376, 91, 1, null, null],
+    [157376, 113, 1, null, null],
+    [157376, 186, 1, null, null]
+  ]
+}

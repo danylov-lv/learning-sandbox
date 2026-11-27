@@ -40,10 +40,8 @@ index already serves this predicate before deciding you need a new one.
 
 ## What's required
 
-1. Record the baseline for `q02` once, from the module root:
-   ```
-   uv run python tools/baseline.py record queries/q02.sql
-   ```
+1. Use the [stock baseline for `q02`](../README.md#baselines-for-tasks-01-02-and-04)
+   recorded before you indexed `orders`.
 2. Run `EXPLAIN (ANALYZE, BUFFERS)` on `q02.sql` and diagnose it the same
    way you did in task 01.
 3. Decide: does an index you already have cover this query's access

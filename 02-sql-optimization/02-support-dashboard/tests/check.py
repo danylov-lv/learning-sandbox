@@ -18,6 +18,7 @@ import baseline  # noqa: E402
 MODULE_ROOT = Path(__file__).resolve().parents[2]
 QUERY_FILE = MODULE_ROOT / "queries" / "q02.sql"
 BASELINE_FILE = MODULE_ROOT / "baseline-local.json"
+STOCK_BASELINE_GUIDE = "see 'Baselines for tasks 01, 02, and 04' in the module README"
 QUERY_ID = "q02"
 MIN_SPEEDUP = 30.0
 
@@ -54,7 +55,7 @@ def main():
         sys.exit(1)
 
     if not BASELINE_FILE.exists() or QUERY_ID not in baseline.load_baseline(BASELINE_FILE):
-        reason = f"record the baseline first: uv run python tools/baseline.py record queries/{QUERY_ID}.sql"
+        reason = f"record the {QUERY_ID} baseline on the stock database first; {STOCK_BASELINE_GUIDE}"
         print(f"NOT PASSED: {reason}")
         sys.exit(1)
 
@@ -73,7 +74,8 @@ def main():
     else:
         reason = (
             f"{median:.2f} ms vs baseline {base_ms:.2f} ms -> only {speedup:.1f}x speedup "
-            f"(required >= {MIN_SPEEDUP}x)"
+            f"(required >= {MIN_SPEEDUP}x). If the baseline was recorded after indexing orders, "
+            f"{STOCK_BASELINE_GUIDE} to re-record it safely."
         )
         print(f"FAIL  {reason}")
         print(f"NOT PASSED: {reason}")

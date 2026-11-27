@@ -159,7 +159,7 @@ def main():
     except Exception as e:
         fail(
             f"could not load Delta table at {S3_TABLE_URI}: {type(e).__name__}: {e} — "
-            "run src/delta_pipeline.py's MinIO leg with MinIO up (`docker compose up -d --wait`)"
+            "run src/delta_pipeline.py's MinIO leg after starting MinIO and initializing the bucket (see the module README)"
         )
     if dt_s3.version() < 1:
         fail(f"{S3_TABLE_URI} has version {dt_s3.version()} — expected at least one commit past the initial write")

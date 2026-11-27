@@ -42,7 +42,9 @@ and make sure this can't quietly happen again.
 
 1. Quantify the damage before touching anything:
    - `pg_stat_user_tables` for `n_live_tup`, `n_dead_tup`, `last_vacuum`,
-     `last_autovacuum` on the three tables.
+     `last_autovacuum` on the three tables. After task 10, inspect the
+     leaf partitions of `inventory_events` and note which debt the
+     migration already removed.
    - `pg_class.reloptions` to confirm the disabled-autovacuum storage
      parameters.
    - Relation sizes (`pg_relation_size`, `pg_total_relation_size`) —
@@ -88,15 +90,18 @@ Run, from the module root:
 uv run python 11-vacuum-debt/tests/check.py
 ```
 
-The checker verifies, for each of `orders`, `payments`, `inventory_events`:
+The checker verifies every heap table and, for partitioned
+`inventory_events`, each leaf partition:
 
-1. `pg_class.reloptions` no longer contains `autovacuum_enabled=off`.
-2. `pg_stat_user_tables.last_vacuum` or `last_autovacuum` is not NULL —
-   something has actually vacuumed the table.
-3. The dead-tuple ratio (`n_dead_tup / n_live_tup`) is below a small
-   threshold — this is a ratio, not a row-count check, so it holds
-   regardless of how much the table has grown since these numbers were
-   measured.
+1. Autovacuum is enabled at the table level and the vacuum/analyze scale
+   factors are at the database defaults or lower.
+2. The ratio of dead to live tuples is below 2%. If the catalog estimate
+   exceeds the threshold, the checker measures the heap directly with
+   `pgstattuple`. Any extension installation for that measurement is
+   rolled back.
+
+Vacuum timestamps are informational. A `VACUUM FULL` can clear dead tuples
+without updating those timestamps or the catalog estimate.
 
 It also prints, purely as information (not pass/fail): relation sizes for
 all three tables, and — only if a covering index from task 04 already

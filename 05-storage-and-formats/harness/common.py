@@ -134,3 +134,4 @@ def minio_endpoint():
 S3_ACCESS_KEY = "sandbox"
 S3_SECRET_KEY = "sandbox123"
 S3_BUCKET = "price-lake"
+S3_LIST_PAGE_SIZE = 100

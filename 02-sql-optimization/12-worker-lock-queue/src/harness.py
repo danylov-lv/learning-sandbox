@@ -26,6 +26,7 @@ import argparse
 import os
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import psycopg
@@ -115,35 +116,37 @@ def _monitor_lock_waiters(stop_event, max_holder, poll_s=0.05):
         stop_event.wait(poll_s)
 
 
-def _worker(worker_id, claim_sql, batch_size, sleep_s, results, results_lock):
-    conn = psycopg.connect(conninfo())
+class ClaimContractError(ValueError):
+    pass
+
+
+def _worker(worker_id, claim_sql, batch_size, sleep_s):
     claimed_ids = []
-    try:
+    with psycopg.connect(conninfo()) as conn, conn.cursor() as cur:
         while True:
-            with conn.cursor() as cur:
-                cur.execute(claim_sql, {"worker_id": str(worker_id), "batch_size": batch_size})
-                ids = [r[0] for r in cur.fetchall()]
+            cur.execute(claim_sql, {"worker_id": str(worker_id), "batch_size": batch_size})
+            if cur.description is None or len(cur.description) != 1:
+                raise ClaimContractError(f"worker {worker_id} must return one ID column per claim")
+            ids = [row[0] for row in cur.fetchall()]
+            if any(type(claimed_id) is not int for claimed_id in ids):
+                raise ClaimContractError(f"worker {worker_id} returned a value that is not an integer ID")
+            if len(ids) > batch_size:
+                raise ClaimContractError(
+                    f"worker {worker_id} returned {len(ids)} IDs in a batch of at most {batch_size}"
+                )
             if not ids:
-                conn.commit()
                 break
-            # Simulated provider API call. Held INSIDE the claim transaction
-            # on purpose -- see README/NOTES for why this is the shape that
-            # exposes the pathology instead of hiding it.
+            # Hold the row locks during the simulated provider call.
             time.sleep(sleep_s)
             conn.commit()
             claimed_ids.extend(ids)
-    finally:
-        conn.close()
-    with results_lock:
-        results[worker_id] = claimed_ids
+    return claimed_ids
 
 
 def drain(claim_sql, n_workers, batch_size=DEFAULT_BATCH_SIZE, sleep_s=DEFAULT_SLEEP_MS / 1000, monitor=True):
     """Runs n_workers concurrent workers against the current arena until it
     is drained. Returns a stats dict. Does not set up or tear down the
     arena -- caller does that."""
-    results = {}
-    results_lock = threading.Lock()
     stop_event = threading.Event()
     max_holder = {"value": 0, "lock": threading.Lock()}
 
@@ -152,20 +155,19 @@ def drain(claim_sql, n_workers, batch_size=DEFAULT_BATCH_SIZE, sleep_s=DEFAULT_S
         mon_thread = threading.Thread(target=_monitor_lock_waiters, args=(stop_event, max_holder), daemon=True)
         mon_thread.start()
 
-    threads = [
-        threading.Thread(target=_worker, args=(i, claim_sql, batch_size, sleep_s, results, results_lock))
-        for i in range(n_workers)
-    ]
     t0 = time.perf_counter()
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
-    wall_s = time.perf_counter() - t0
-
-    stop_event.set()
-    if mon_thread is not None:
-        mon_thread.join(timeout=2)
+    try:
+        with ThreadPoolExecutor(max_workers=n_workers) as executor:
+            futures = [
+                executor.submit(_worker, i, claim_sql, batch_size, sleep_s)
+                for i in range(n_workers)
+            ]
+            results = {worker: future.result() for worker, future in enumerate(futures)}
+        wall_s = time.perf_counter() - t0
+    finally:
+        stop_event.set()
+        if mon_thread is not None:
+            mon_thread.join(timeout=2)
 
     seen = {}
     for ids in results.values():
@@ -177,9 +179,15 @@ def drain(claim_sql, n_workers, batch_size=DEFAULT_BATCH_SIZE, sleep_s=DEFAULT_S
         "wall_s": wall_s,
         "per_worker_counts": {wid: len(ids) for wid, ids in results.items()},
         "duplicate_count": duplicate_count,
-        "unique_claimed": len(seen),
+        "returned_ids": set(seen),
         "max_lock_waiters": max_holder["value"],
     }
+
+
+def ids_with_status(status):
+    with psycopg.connect(conninfo()) as conn, conn.cursor() as cur:
+        cur.execute(f"SELECT id FROM {ARENA_TABLE} WHERE status = %s", (status,))
+        return {row[0] for row in cur}
 
 
 def coverage_counts():
@@ -195,7 +203,7 @@ def _print_stats(label, stats):
     print(f"[{label}] wall time: {stats['wall_s']:.2f}s")
     print(f"[{label}] per-worker claimed counts: {stats['per_worker_counts']}")
     print(f"[{label}] duplicate claims (must be 0): {stats['duplicate_count']}")
-    print(f"[{label}] unique rows claimed: {stats['unique_claimed']}")
+    print(f"[{label}] unique IDs returned: {len(stats['returned_ids'])}")
     print(f"[{label}] max observed lock-waiting sessions: {stats['max_lock_waiters']}")
 
 

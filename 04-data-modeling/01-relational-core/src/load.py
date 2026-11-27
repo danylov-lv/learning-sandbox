@@ -11,7 +11,7 @@ Contract:
       re-run.
 
 Performance:
-    events.jsonl has 2,336,793 lines. Row-by-row INSERT will take a long
+    events.jsonl has about 2.3 million lines. Row-by-row INSERT will take a long
     time at this size -- use COPY (staging table + INSERT..SELECT) or
     batched inserts. Target minutes, not hours.
 

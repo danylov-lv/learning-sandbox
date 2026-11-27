@@ -26,6 +26,7 @@ MODULE_ROOT = os.path.normpath(os.path.join(HERE, ".."))
 sys.path.insert(0, HERE)
 
 import ground_truth  # noqa: E402
+import star_schema  # noqa: E402
 
 ALL_QUESTIONS = [
     "q01", "q02", "q03", "q04",
@@ -40,8 +41,6 @@ TASK_QUESTIONS = {
     "03": ["q09", "q10", "q11"],
     "04": ["q12", "q13a", "q13b", "q14", "q15"],
 }
-
-STAR_SCHEMA_QUESTIONS = {"q09", "q10", "q11"}
 
 DEFAULT_SQL_PATH = {
     "q01": "01-relational-core/src/q01.sql",
@@ -61,11 +60,6 @@ DEFAULT_SQL_PATH = {
     "q14": "04-capstone-bitemporal/src/q14.sql",
     "q15": "04-capstone-bitemporal/src/q15.sql",
 }
-
-STATEMENT_TIMEOUT_MS = 120_000
-
-PUBLIC_SCHEMA_RE = re.compile(r"\bpublic\s*\.")
-
 
 def default_dsn():
     port = os.environ.get("SANDBOX_03_PORT", "54303")
@@ -109,16 +103,8 @@ def normalize_value(v, expected_v):
         return d.strftime("%Y-%m-%dT%H:%M:%SZ")
     if isinstance(v, dt.date):
         return v.strftime("%Y-%m-%d")
-    if isinstance(v, Decimal):
+    if isinstance(expected_v, float) and isinstance(v, (Decimal, int, float)) and not isinstance(v, bool):
         return round(float(v), 4)
-    if isinstance(v, bool):
-        return v
-    if isinstance(v, int):
-        if isinstance(expected_v, float):
-            return round(float(v), 4)
-        return v
-    if isinstance(v, float):
-        return round(v, 4)
     if isinstance(v, str):
         if isinstance(expected_v, str) and re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", expected_v):
             # value came back as text already in timestamp format
@@ -134,10 +120,8 @@ def normalize_row(row, expected_row):
 
 
 def values_equal(a, b):
-    if a is None or b is None:
-        return a is None and b is None
-    if isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool) and not isinstance(b, bool):
-        return abs(float(a) - float(b)) <= 1e-3
+    if isinstance(a, bool) or isinstance(b, bool):
+        return type(a) is type(b) and a == b
     return a == b
 
 
@@ -154,7 +138,7 @@ def compare_rows(got_rows, expected_rows):
     got_sorted = sorted(got_rows, key=row_sort_key)
     exp_sorted = sorted(expected_rows, key=row_sort_key)
 
-    # Greedy multiset match with tolerance for floats.
+    # Compare row values after normalizing decimal answers to four places.
     remaining = list(range(len(exp_sorted)))
     unmatched_got = []
     for g in got_sorted:
@@ -177,7 +161,7 @@ def compare_rows(got_rows, expected_rows):
 
 
 def run_question(qkey, sql_path, expected, conn_kwargs, star_precheck_failed):
-    if qkey in STAR_SCHEMA_QUESTIONS and star_precheck_failed:
+    if qkey in star_schema.REPORT_TABLES and star_precheck_failed:
         print(f"NOT PASSED ({qkey}): {star_precheck_failed}")
         return False
 
@@ -186,18 +170,18 @@ def run_question(qkey, sql_path, expected, conn_kwargs, star_precheck_failed):
         print(f"NOT PASSED ({qkey}): {err}")
         return False
 
-    if qkey in STAR_SCHEMA_QUESTIONS and PUBLIC_SCHEMA_RE.search(text):
-        print(f"NOT PASSED ({qkey}): query references the public schema -- "
-              f"star-schema questions must be answerable from `mart` alone")
-        return False
-
     try:
         with psycopg.connect(**conn_kwargs) as conn:
             with conn.cursor() as cur:
-                cur.execute(f"SET statement_timeout = {STATEMENT_TIMEOUT_MS}")
-                if qkey in STAR_SCHEMA_QUESTIONS:
-                    cur.execute("SET search_path = mart")
-                cur.execute(text)
+                cur.execute(f"SET statement_timeout = {star_schema.STATEMENT_TIMEOUT_MS}")
+                if qkey in star_schema.REPORT_TABLES:
+                    error = star_schema.prepare_report(cur, qkey, text)
+                    if error:
+                        print(f"NOT PASSED ({qkey}): {error}")
+                        return False
+                    cur.execute("SELECT * FROM pg_temp.pricewatch_report")
+                else:
+                    cur.execute(text)
                 got_columns = [d.name for d in cur.description] if cur.description else []
                 got_rows_raw = cur.fetchall()
     except Exception as exc:
@@ -210,9 +194,10 @@ def run_question(qkey, sql_path, expected, conn_kwargs, star_precheck_failed):
         return False
 
     expected_rows = expected["rows"]
-    # Columns have consistent types across rows in this battery, so the first
-    # expected row (if any) is a safe type template for every got row.
-    template = expected_rows[0] if expected_rows else [None] * len(got_columns)
+    template = [
+        next((value for value in column if value is not None), None)
+        for column in zip(*expected_rows)
+    ] or [None] * len(got_columns)
     got_rows = [normalize_row(list(r), template) for r in got_rows_raw]
 
     ok, reason, extra_got, extra_expected = compare_rows(got_rows, expected_rows)
@@ -227,48 +212,6 @@ def run_question(qkey, sql_path, expected, conn_kwargs, star_precheck_failed):
 
     print(f"PASSED ({qkey})")
     return True
-
-
-def star_schema_precheck(conn_kwargs):
-    """Returns None if OK, else a reason string."""
-    required_tables = ["dim_shop", "dim_product", "dim_date", "fact_price_observation"]
-    try:
-        with psycopg.connect(**conn_kwargs) as conn:
-            with conn.cursor() as cur:
-                cur.execute(f"SET statement_timeout = {STATEMENT_TIMEOUT_MS}")
-                cur.execute(
-                    "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'mart')"
-                )
-                if not cur.fetchone()[0]:
-                    return "schema `mart` does not exist"
-
-                cur.execute(
-                    "SELECT table_name FROM information_schema.tables WHERE table_schema = 'mart'"
-                )
-                existing = {r[0] for r in cur.fetchall()}
-                missing = [t for t in required_tables if t not in existing]
-                if missing:
-                    return f"mart schema is missing table(s): {', '.join(missing)}"
-
-                for t in required_tables:
-                    cur.execute(f'SELECT COUNT(*) FROM mart."{t}"')
-                    count = cur.fetchone()[0]
-                    if count == 0:
-                        return f"mart.{t} has zero rows"
-
-                for t in ("dim_shop", "dim_product"):
-                    cur.execute(
-                        "SELECT column_name FROM information_schema.columns "
-                        "WHERE table_schema = 'mart' AND table_name = %s",
-                        (t,),
-                    )
-                    cols = {r[0] for r in cur.fetchall()}
-                    needed = {"valid_from", "valid_to"}
-                    if not needed.issubset(cols):
-                        return f"mart.{t} is missing column(s): {', '.join(sorted(needed - cols))}"
-    except Exception as exc:
-        return f"star-schema precheck failed: {first_error_line(exc)}"
-    return None
 
 
 def main():
@@ -297,12 +240,16 @@ def main():
     dsn = args.dsn or default_dsn()
     conn_kwargs = {"conninfo": dsn}
 
-    gt = ground_truth.load_or_compute()
+    try:
+        gt = ground_truth.load_or_compute()
+    except (OSError, ValueError, KeyError, AssertionError) as exc:
+        print(f"NOT PASSED: {first_error_line(exc)}")
+        sys.exit(1)
     answers = gt["answers"]
 
     star_precheck_failed = None
-    if any(q in STAR_SCHEMA_QUESTIONS for q in questions):
-        star_precheck_failed = star_schema_precheck(conn_kwargs)
+    if any(q in star_schema.REPORT_TABLES for q in questions):
+        star_precheck_failed = star_schema.check_structure(conn_kwargs, gt["notes"]["dedup_obs"])
 
     passed = 0
     for qkey in questions:

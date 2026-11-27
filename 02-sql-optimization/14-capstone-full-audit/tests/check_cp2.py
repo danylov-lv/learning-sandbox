@@ -31,6 +31,7 @@ from plan_check import (  # noqa: E402
     get_plan,
     require_node,
     forbid_node,
+    rows_estimate_error,
 )
 import baseline  # noqa: E402
 
@@ -132,29 +133,7 @@ def gate_qc04(plan):
 
 
 def gate_qc05(plan):
-    """Worst row-estimate error, skipping BitmapAnd/BitmapOr nodes.
-
-    tools/plan_check.py's rows_estimate_error() looks at every node's
-    Actual Rows vs Plan Rows, but BitmapAnd/BitmapOr nodes report
-    Actual Rows = 0 unconditionally (they combine bitmaps, they don't
-    produce tuples), which manufactures a spurious multi-thousand-x
-    "error" whenever the reference fix's second index (orders.created_at,
-    built for qc06/07/08) happens to combine with idx_orders_status via a
-    BitmapAnd -- verified in .authoring/tasks-w4-capstone.md. Skipping
-    those two node types and taking the worst of what remains reflects
-    what the planner actually believes about orders.status.
-    """
-    worst, worst_node = 1.0, None
-    for node in _iter_nodes(plan):
-        if node.get("Node Type") in ("BitmapAnd", "BitmapOr"):
-            continue
-        if "Actual Rows" not in node or "Plan Rows" not in node:
-            continue
-        actual = max(node["Actual Rows"] * max(node.get("Actual Loops", 1), 1), 1)
-        est = max(node["Plan Rows"], 1)
-        factor = max(actual / est, est / actual)
-        if factor > worst:
-            worst, worst_node = factor, node
+    worst, worst_node = rows_estimate_error(plan)
     where = f"{worst_node.get('Node Type')} on {worst_node.get('Relation Name', '?')}" if worst_node else "-"
     if worst > MAX_ESTIMATE_ERROR_QC05:
         raise PlanAssertionError(
@@ -162,15 +141,6 @@ def gate_qc05(plan):
             "-- pg_stats on orders.status still looks stale"
         )
     return worst
-
-
-def _iter_nodes(plan):
-    root = plan["Plan"] if "Plan" in plan else plan
-    stack = [root]
-    while stack:
-        node = stack.pop()
-        yield node
-        stack.extend(node.get("Plans", []))
 
 
 def gate_qc06(plan):

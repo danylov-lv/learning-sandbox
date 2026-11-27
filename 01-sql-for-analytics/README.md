@@ -71,10 +71,16 @@ uv run python validate.py 04     # validate a single task by number
 uv run python validate.py all    # validate every task
 ```
 
-The validator runs `src/query.sql` against the live database, normalizes the result
-(canonical row sort, floats rounded to 6 significant digits, dates/timestamps as ISO
-strings), and diffs it against `tests/expected.json`. Prints `PASSED` or
-`NOT PASSED: <reason>`.
+The validator runs `src/query.sql` against the default seeded database and
+compares the result with `tests/expected.json`. It checks column names and order,
+required date and timestamp types, and exact numeric values. Row order is
+arbitrary, and duplicate rows count separately.
+
+Tasks 02, 05, 10, and 11 also run the query against a small fixture in a
+temporary database. The module's Docker role can create that database. The
+validator drops it after the check and leaves the seeded data in place.
+
+The validator prints `PASSED` or `NOT PASSED: <reason>`.
 
 ## Tasks
 

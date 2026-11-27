@@ -65,10 +65,6 @@ exercises is available early. Chapters 02–09 and the schema reference are
 planned. Run each executable example in the module's PostgreSQL 16 environment
 before publishing it.
 
-- Check a timestamp exactly on a rolling frame's lower bound. PostgreSQL's
-  offset `RANGE` includes the boundary, while exercise 05 describes an open
-  lower bound. Reconcile the wording and grading contract before presenting
-  them together. [PostgreSQL 16 window expressions](https://www.postgresql.org/docs/16/sql-expressions.html#SYNTAX-WINDOW-FUNCTIONS)
 - Check hour boundaries, the stop argument of `generate_series`, and an ISO
   week crossing a calendar year. Use the module's `timestamp without time zone`
   type in examples and verify any comparison with `timestamptz` separately.

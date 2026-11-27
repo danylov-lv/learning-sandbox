@@ -10,11 +10,13 @@ from pathlib import Path
 
 TASK_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TASK_ROOT / "src"))
+sys.path.insert(0, str(TASK_ROOT.parent / "tools"))
 
 import psycopg  # noqa: E402
 from psycopg import Cursor  # noqa: E402
 
 from dashboard import fetch_dashboard  # noqa: E402
+from plan_check import conninfo  # noqa: E402
 
 # Users chosen from a query against the live DB for the highest order
 # counts among non-degenerate accounts (the single most-active synthetic
@@ -25,10 +27,6 @@ USER_IDS = [712, 758, 827]
 LIMIT = 30
 MAX_QUERIES_PER_CALL = 4  # 3 for a set-based rewrite; 4 leaves room for
                           # splitting items/products into two queries
-
-
-def conninfo():
-    return "host=localhost port=54302 dbname=sandbox user=sandbox password=sandbox"
 
 
 class _CountingCursor(Cursor):
@@ -119,7 +117,11 @@ def reference_dashboard(conn, user_id, limit):
 
 
 def main():
-    conn = psycopg.connect(conninfo())
+    try:
+        conn = psycopg.connect(conninfo())
+    except psycopg.Error as e:
+        print(f"NOT PASSED: could not connect to the database: {e}")
+        sys.exit(1)
 
     over_limit = []
     parity_mismatches = []

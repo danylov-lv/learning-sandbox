@@ -42,7 +42,7 @@ from datetime import datetime, timedelta, timezone
 
 import numpy as np
 
-from common import CURRENCIES, FX_TO_USD, START_DATE, END_DATE
+from common import CURRENCIES, DATASET_VERSION, FX_TO_USD, START_DATE, END_DATE
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.normpath(os.path.join(HERE, "..", "data"))
@@ -121,8 +121,14 @@ def asof(times, vals, t):
 
 
 def load_meta():
+    for path in (EVENTS_PATH, CLIENTS_PATH, META_PATH):
+        if not os.path.isfile(path):
+            raise ValueError(f"Missing data/{os.path.basename(path)}. Run `uv run python harness/events.py`.")
     with open(META_PATH, encoding="utf-8") as f:
-        return json.load(f)
+        meta = json.load(f)
+    if meta.get("dataset_version") != DATASET_VERSION:
+        raise ValueError("The PriceWatch dataset is out of date. Run `uv run python harness/events.py` and reload your database.")
+    return meta
 
 
 def _round4(x):
@@ -452,7 +458,7 @@ def compute_all():
             rows.append([sc, name_asof, nv[-1]])
     rows.sort(key=lambda r: r[0])
     answers["q07"] = {"columns": ["shop_code", "name_as_of_cutoff", "current_name"], "rows": rows}
-    assert rows, "q07 must be non-empty"
+    assert any(as_of != latest for _, as_of, latest in rows), "q07 must distinguish historical and current names"
 
     # ---- q08: listings discovered while shop tier as-of was gold -----------
     gold_count = {}

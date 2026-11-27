@@ -12,6 +12,9 @@
 --
 -- How to apply it (from the module root, with `docker compose up -d` running
 -- and task 01's schema already loaded):
---   docker compose exec -T postgres psql -U sandbox -d sandbox < 02-scd2-history/src/migration.sql
+-- PowerShell:
+--   Get-Content -Raw -Encoding UTF8 02-scd2-history/src/migration.sql | docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U sandbox -d sandbox
+-- POSIX shell:
+--   docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U sandbox -d sandbox < 02-scd2-history/src/migration.sql
 --
 -- TODO: write your history DDL and backfill.

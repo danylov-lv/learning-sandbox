@@ -5,6 +5,7 @@ Run from the module root:
 """
 
 import sys
+from math import isfinite
 from pathlib import Path
 
 import pyarrow.parquet as pq
@@ -98,15 +99,20 @@ def main():
 
     results = load_results(RESULTS_PATH, what="results-local.json")
     if "write_total_s" not in results:
-        fail("results-local.json missing 'write_total_s' — run tests/bench.py, do not hand-edit it")
+        fail("results-local.json missing 'write_total_s' — rerun tests/bench.py")
+    if not 1 <= results.get("write_sample_rows", 0) <= total_rows:
+        fail("results-local.json missing a valid 'write_sample_rows' — rerun tests/bench.py")
     variants_results = results.get("variants", {})
     for variant in VARIANTS:
         v = variants_results.get(variant)
         if v is None:
             fail(f"results-local.json missing measurements for variant '{variant}'")
-        for key in ("rows_written", "file_size_bytes", "read_time_s"):
+        for key in ("rows_written", "file_size_bytes", "read_time_s", "write_time_s"):
             if key not in v:
-                fail(f"results-local.json variant '{variant}' missing '{key}'")
+                fail(f"results-local.json variant '{variant}' missing '{key}' — rerun tests/bench.py")
+        for key in ("read_time_s", "write_time_s"):
+            if not isfinite(v[key]) or v[key] <= 0:
+                fail(f"results-local.json variant '{variant}' has an invalid '{key}' — rerun tests/bench.py")
         if v["rows_written"] != total_rows:
             fail(f"results-local.json: variant '{variant}' rows_written={v['rows_written']}, expected {total_rows}")
 

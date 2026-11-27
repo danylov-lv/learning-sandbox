@@ -11,9 +11,8 @@
 --   price               double
 --
 -- Query all products in the lake -- do not hardcode product_id values in
--- this file. The validator only checks a fixed set of 10 product_ids
--- (data/ground-truth.json's latest_price_probe) against your full result,
--- filtering it down itself.
+-- this file. The validator checks coverage across the lake and compares
+-- the timestamp and price for the 10 samples in latest_price_probe.
 --
 -- Two ways to compute "latest row per group" in SQL: a window function
 -- (ROW_NUMBER() / RANK() partitioned by product_id, ordered by

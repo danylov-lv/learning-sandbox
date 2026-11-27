@@ -30,7 +30,8 @@ uv run python seed/generate.py  # respects SCALE env (default 1.0); takes a whil
 ```
 
 Postgres is reachable at `localhost:54302`, db/user/password `sandbox`.
-Port is overridable via `SANDBOX_02_PORT`.
+To use a different host port, set `SANDBOX_02_PORT` for Compose and
+`PGPORT` to the same value for the seed script, tools, and validators.
 
 `seed/generate.py` deterministically generates the Kupitron dataset (fixed
 seed), applies `seed/schema.sql`, bulk-loads via `COPY`, and runs a
@@ -73,6 +74,30 @@ root:
 
   Also safe on data-modifying statements — the `EXPLAIN ANALYZE` it runs is
   always wrapped in a rolled-back transaction.
+
+## Baselines for tasks 01, 02, and 04
+
+After seeding and before applying any optimization to `orders`, record all
+three baselines from the module root:
+
+```bash
+uv run python tools/baseline.py record queries/q01.sql
+uv run python tools/baseline.py record queries/q02.sql
+uv run python tools/baseline.py record queries/q04.sql
+```
+
+Keep these entries when you work on tasks 02 and 04. Their timing gates
+compare your optimized queries against the stock schema.
+
+If you already indexed `orders` and missed a baseline or recorded it late,
+use a fresh database on the same machine. From the module root, set
+`SANDBOX_02_PORT` and `PGPORT` to the same unused port, then run
+`docker compose -p sql02-baselines up -d --wait` and
+`uv run python seed/generate.py`. Re-record just the missing or late entries
+with the commands above. Stop only the temporary project with
+`docker compose -p sql02-baselines down -v`, then restore your usual port
+settings before running the task validators. Your working database retains
+its indexes and data.
 
 ## How to work
 

@@ -5,9 +5,12 @@ Run from the module root:
 """
 
 import sys
+from math import floor
 from pathlib import Path
 
 import pyarrow.parquet as pq
+
+from bench import probe_bounds, rowgroup_overlap_count
 
 TASK_ROOT = Path(__file__).resolve().parents[1]
 MODULE_ROOT = TASK_ROOT.parent
@@ -31,12 +34,6 @@ VARIANTS = [
 OUT_DIR = DATA_DIR / "rowgroups"
 RESULTS_PATH = TASK_ROOT / "results-local.json"
 
-# Structural pruning targets, measured on the reference implementation against
-# the current dataset with a ~2x safety margin. If you regenerate the dataset
-# at a very different size these ratios should still hold (row-group pruning
-# depends on the sort order and row-group size, not on absolute row count),
-# but if this task starts failing after a large `--gb` change, re-measure and
-# adjust the thresholds below together with the README.
 RG8K_SORTED_MAX_RATIO = 0.05
 RG8K_UNSORTED_MIN_RATIO = 0.5
 RG128K_SORTED_MAX_RATIO = 0.15
@@ -50,8 +47,10 @@ def main():
     gt = load_ground_truth()
     total_rows = gt["total_rows"]
     fp = gt["filter_probe"]
+    probe = probe_bounds(gt)
 
     row_group_counts = {}
+    overlap_counts = {}
     for variant in VARIANTS:
         path = OUT_DIR / f"snapshots-{variant}.parquet"
         if not path.exists():
@@ -62,6 +61,7 @@ def main():
         if meta.num_rows != total_rows:
             fail(f"{variant}: num_rows={meta.num_rows}, expected {total_rows} (from ground-truth.json)")
         row_group_counts[variant] = meta.num_row_groups
+        overlap_counts[variant] = rowgroup_overlap_count(path, *probe)[0]
 
     # row-group count sanity: rg8k should have far more, smaller row groups than rg1m
     for suffix in ("unsorted", "sorted"):
@@ -88,46 +88,37 @@ def main():
         approx(v["probe_rows"], fp["rows"], rel_tol=1e-6, what=f"{variant}: probe_rows")
         approx(v["probe_price_sum"], fp["price_sum"], rel_tol=1e-6, what=f"{variant}: probe_price_sum")
 
-    def ratio(variant):
-        v = variants_results[variant]
-        total = v["total_row_groups"]
-        if total == 0:
-            fail(f"{variant}: total_row_groups is 0")
-        return v["matching_row_groups"] / total
+        if (v["matching_row_groups"], v["total_row_groups"]) != (overlap_counts[variant], row_group_counts[variant]):
+            fail(f"{variant}: benchmark counts differ from the current Parquet metadata — rerun tests/bench.py")
 
-    r_8k_sorted = ratio("rg8k-sorted")
-    r_8k_unsorted = ratio("rg8k-unsorted")
-    r_128k_sorted = ratio("rg128k-sorted")
-    r_128k_unsorted = ratio("rg128k-unsorted")
+    for size, sorted_limit, unsorted_limit in (
+        ("rg8k", RG8K_SORTED_MAX_RATIO, RG8K_UNSORTED_MIN_RATIO),
+        ("rg128k", RG128K_SORTED_MAX_RATIO, RG128K_UNSORTED_MIN_RATIO),
+    ):
+        sorted_variant = f"{size}-sorted"
+        sorted_total = row_group_counts[sorted_variant]
+        sorted_matching = overlap_counts[sorted_variant]
+        max_matching = max(1, floor(sorted_limit * sorted_total))
+        if sorted_matching > max_matching:
+            fail(
+                f"{sorted_variant}: {sorted_matching}/{sorted_total} row groups overlap the probe, "
+                f"expected at most {max_matching} — check the global sort"
+            )
 
-    if r_8k_sorted > RG8K_SORTED_MAX_RATIO:
-        fail(
-            f"rg8k-sorted: {r_8k_sorted:.3f} of row groups matched the probe, "
-            f"expected <= {RG8K_SORTED_MAX_RATIO} — sorting by (source_id, captured_at) "
-            f"should make most row groups provably irrelevant to the probe"
-        )
-    if r_8k_unsorted < RG8K_UNSORTED_MIN_RATIO:
-        fail(
-            f"rg8k-unsorted: only {r_8k_unsorted:.3f} of row groups matched the probe, "
-            f"expected >= {RG8K_UNSORTED_MIN_RATIO} — unsorted row groups should span the "
-            f"whole source/time range, so almost none should be prunable"
-        )
-    if r_128k_sorted > RG128K_SORTED_MAX_RATIO:
-        fail(
-            f"rg128k-sorted: {r_128k_sorted:.3f} of row groups matched the probe, "
-            f"expected <= {RG128K_SORTED_MAX_RATIO}"
-        )
-    if r_128k_unsorted < RG128K_UNSORTED_MIN_RATIO:
-        fail(
-            f"rg128k-unsorted: only {r_128k_unsorted:.3f} of row groups matched the probe, "
-            f"expected >= {RG128K_UNSORTED_MIN_RATIO}"
-        )
+        unsorted_variant = f"{size}-unsorted"
+        unsorted_total = row_group_counts[unsorted_variant]
+        unsorted_matching = overlap_counts[unsorted_variant]
+        if unsorted_matching / unsorted_total < unsorted_limit:
+            fail(
+                f"{unsorted_variant}: only {unsorted_matching}/{unsorted_total} row groups overlap "
+                f"the probe, expected at least {unsorted_limit:.0%} — check the input order"
+            )
 
     check_notes_filled(TASK_ROOT / "NOTES.md")
 
     passed(
-        f"row-group pruning ratios: rg8k sorted={r_8k_sorted:.3f} unsorted={r_8k_unsorted:.3f}, "
-        f"rg128k sorted={r_128k_sorted:.3f} unsorted={r_128k_unsorted:.3f}"
+        "row-group pruning ratios: "
+        + ", ".join(f"{name}={overlap_counts[name] / row_group_counts[name]:.3f}" for name in VARIANTS)
     )
 
 

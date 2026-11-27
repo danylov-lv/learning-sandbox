@@ -45,14 +45,14 @@ In `NOTES.md`, record the pruning ratios `tests/bench.py` prints for each varian
 - all six files exist, each with `num_rows` equal to `ground-truth.json`'s `total_rows`;
 - row-group count sanity: `rg8k` has at least 10x more row groups than `rg1m` (same sort order compared to itself) — confirms `row_group_size` actually took effect per variant instead of being ignored or applied once globally;
 - probe correctness: every variant's pushdown query returns exactly `filter_probe.rows` rows and `filter_probe.price_sum` (relative tolerance 1e-6) — sorting and row-group size must never change the *answer*, only how much gets skipped to compute it;
-- structural pruning targets (measured on the reference dataset, ratio = matching row groups / total row groups):
+- structural pruning targets from the current file metadata, expressed as the fraction of row groups that overlap the probe:
   - `rg8k-sorted` <= 0.05
   - `rg8k-unsorted` >= 0.5
   - `rg128k-sorted` <= 0.15
   - `rg128k-unsorted` >= 0.5
 - `NOTES.md` has real measurements and conclusions, not just the template.
 
-These ratio thresholds were measured against this repository's default test-scale dataset with roughly a 2x safety margin baked in (see `tests/validate.py` for the exact numbers). If you regenerate the dataset at a very different `--gb` size and this task starts failing on the ratio checks specifically (not on correctness), re-measure with `tests/bench.py` and treat that as expected — note what you found in `NOTES.md`.
+The sorted limits always allow one matching row group. On the 400,000-row dataset, one of four 128K groups means 25% overlap even with a correct global sort. When there are enough groups, the percentage limits apply directly. Use `NOTES.md` to explain how the number of groups affects the reported ratios.
 
 ## Estimated evenings
 

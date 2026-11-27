@@ -141,15 +141,17 @@ def require_join(plan, join_type):
 def rows_estimate_error(plan):
     """Worst-case planner misestimation factor across all nodes.
 
-    Returns (factor, node). factor = max(actual/estimated, estimated/actual)
-    computed with actual rows multiplied by loop count; 0-row cases use 1 as
-    the floor so the factor stays finite.
+    Returns (factor, node). Compare estimated and actual rows per execution.
+    Bitmap combinators do not report a row count, and unexecuted nodes have
+    no actual count to compare. Use 1 as the floor for zero-row estimates.
     """
     worst, worst_node = 1.0, None
     for node in iter_nodes(plan):
+        if node.get("Actual Loops") == 0 or node.get("Node Type") in ("BitmapAnd", "BitmapOr"):
+            continue
         if "Actual Rows" not in node or "Plan Rows" not in node:
             continue
-        actual = max(node["Actual Rows"] * max(node.get("Actual Loops", 1), 1), 1)
+        actual = max(node["Actual Rows"], 1)
         est = max(node["Plan Rows"], 1)
         factor = max(actual / est, est / actual)
         if factor > worst:

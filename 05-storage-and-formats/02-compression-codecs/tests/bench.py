@@ -1,9 +1,9 @@
 """Benchmark harness for 02-compression-codecs.
 
 Imports the learner's write_codecs.write_all, runs it once (it writes all
-five variants), then measures on-disk size and full-scan read time for each
-variant. Writes results-local.json next to this task's README and prints a
-summary table.
+five variants), then measures on-disk size, full-scan read time, and
+sample Parquet encoding time for each variant. Writes results-local.json
+next to this task's README and prints a summary table.
 
 Run from the module root:
     uv run python 02-compression-codecs/tests/bench.py
@@ -14,6 +14,7 @@ import sys
 import time
 from pathlib import Path
 
+import pyarrow as pa
 import pyarrow.parquet as pq
 
 TASK_ROOT = Path(__file__).resolve().parents[1]
@@ -22,7 +23,14 @@ sys.path.insert(0, str(MODULE_ROOT))
 
 from harness.common import DATA_DIR, RAW_DIR, fail, guarded, load_learner_module  # noqa: E402
 
-VARIANTS = ["none", "snappy", "gzip", "zstd3", "zstd19"]
+WRITER_OPTIONS = {
+    "none": {"compression": "none"},
+    "snappy": {"compression": "snappy"},
+    "gzip": {"compression": "gzip"},
+    "zstd3": {"compression": "zstd", "compression_level": 3},
+    "zstd19": {"compression": "zstd", "compression_level": 19},
+}
+WRITE_SAMPLE_ROWS = 100_000
 OUT_DIR = DATA_DIR / "codecs"
 RESULTS_PATH = TASK_ROOT / "results-local.json"
 
@@ -46,10 +54,22 @@ def main():
     if not isinstance(rows_written, dict):
         fail(f"write_all must return a dict of {{variant: rows_written}}, got {type(rows_written).__name__}")
 
-    results = {"write_total_s": write_total_s, "variants": {}}
+    sample_path = OUT_DIR / "snapshots-none.parquet"
+    if not sample_path.exists():
+        fail(f"expected output file missing: {sample_path}")
+    sample_batch = next(pq.ParquetFile(sample_path).iter_batches(batch_size=WRITE_SAMPLE_ROWS), None)
+    if sample_batch is None:
+        fail(f"no rows to use for the codec write sample in {sample_path}")
+    sample = pa.Table.from_batches([sample_batch])
+    results = {
+        "write_total_s": write_total_s,
+        "write_sample_rows": sample.num_rows,
+        "variants": {},
+    }
 
-    print(f"{'variant':<10}{'rows':>10}{'size_mb':>12}{'read_s':>10}")
-    for variant in VARIANTS:
+    print(f"encoding the same {sample.num_rows:,}-row sample with each codec ...")
+    print(f"{'variant':<10}{'rows':>10}{'size_mb':>12}{'read_s':>10}{'encode_s':>10}")
+    for variant, writer_options in WRITER_OPTIONS.items():
         path = OUT_DIR / f"snapshots-{variant}.parquet"
         if not path.exists():
             fail(f"expected output file missing: {path}")
@@ -59,15 +79,21 @@ def main():
         size_bytes = path.stat().st_size
 
         t0 = time.perf_counter()
-        table = pq.read_table(path)
+        rows_read = sum(batch.num_rows for batch in pq.ParquetFile(path).iter_batches())
         read_time_s = time.perf_counter() - t0
+
+        with pa.MockOutputStream() as output:
+            t0 = time.perf_counter()
+            pq.write_table(sample, output, **writer_options)
+            write_time_s = time.perf_counter() - t0
 
         results["variants"][variant] = {
             "rows_written": rows_written[variant],
             "file_size_bytes": size_bytes,
             "read_time_s": read_time_s,
+            "write_time_s": write_time_s,
         }
-        print(f"{variant:<10}{table.num_rows:>10}{size_bytes / 1e6:>12.1f}{read_time_s:>10.2f}")
+        print(f"{variant:<10}{rows_read:>10}{size_bytes / 1e6:>12.1f}{read_time_s:>10.3f}{write_time_s:>10.3f}")
 
     RESULTS_PATH.write_text(json.dumps(results, indent=2), encoding="utf-8")
     print(f"\nwrote {RESULTS_PATH}")

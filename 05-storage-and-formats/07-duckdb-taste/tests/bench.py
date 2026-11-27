@@ -88,43 +88,77 @@ def run_probe_naive(gt):
     return {"wall_s": wall, "row_count": table.num_rows, "price_sum": price_sum}
 
 
-def parse_explain_analyze(con, pruning_proof_body):
-    match = re.match(r"(?is)^\s*EXPLAIN\s+ANALYZE\s*(.*)$", pruning_proof_body)
-    if not match:
-        fail("pruning_proof.sql must start with EXPLAIN ANALYZE")
-    inner_sql = match.group(1).strip()
-    if not inner_sql:
-        fail("pruning_proof.sql has EXPLAIN ANALYZE but no query after it")
+def walk_plan(node):
+    yield node
+    for child in node.get("children", []):
+        yield from walk_plan(child)
 
-    if PROFILE_PATH.exists():
-        PROFILE_PATH.unlink()
+
+def parquet_files(lake_dir, months):
+    return {path.resolve() for month in months for path in (lake_dir / f"month={month}").glob("*.parquet")}
+
+
+def check_partition_selection(con, sql, lake_dir, months):
+    target_files = parquet_files(lake_dir, months)
+    total_files = sum(1 for _ in lake_dir.glob("month=*/*.parquet"))
+    if not 0 < len(target_files) < total_files:
+        fail(f"need Parquet files inside and outside the probe months {months} — check the task 04 lake")
+
+    plan = json.loads(con.execute("SELECT json_serialize_plan(?, optimize := true)", [sql]).fetchone()[0])
+    if plan.get("error"):
+        fail(f"could not inspect the optimized probe plan: {plan['error_message']}")
+    scans = [
+        node
+        for root in plan["plans"]
+        for node in walk_plan(root)
+        if node.get("type") == "LOGICAL_GET" and node.get("name") in ("read_parquet", "parquet_scan")
+    ]
+    if len(scans) != 1:
+        fail("the probe plan must have one Parquet scan of the task 04 lake")
+
+    scan = scans[0]
+    selected_files = {Path(path).resolve() for path in scan["function_data"]["files"]}
+    pruning = scan["extra_info"]
+    if pruning.get("total_files") != total_files or not pruning.get("file_filters"):
+        fail("the probe must scan the lake with a partition filter applied by DuckDB")
+    if selected_files != target_files:
+        fail(f"the probe's partition filter must select exactly the Parquet files for {months}")
+    return len(target_files)
+
+
+def parse_explain_analyze(con, pruning_sql, probe_sql, lake_dir, months):
+    match = re.fullmatch(r"\s*EXPLAIN\s+ANALYZE\s+(.+?)\s*", pruning_sql, re.IGNORECASE | re.DOTALL)
+    if not match:
+        fail("pruning_proof.sql must start with EXPLAIN ANALYZE and wrap the query in probe.sql")
+    inner_sql = match.group(1)
+
+    canonical = "SELECT json_deserialize_sql(json_serialize_sql(?))"
+    proof_query = con.execute(canonical, [inner_sql]).fetchone()[0]
+    probe_query = con.execute(canonical, [probe_sql]).fetchone()[0]
+    if proof_query != probe_query:
+        fail("pruning_proof.sql must wrap the same SELECT as probe.sql")
+    files_in_probe_months = check_partition_selection(con, inner_sql, lake_dir, months)
+
+    PROFILE_PATH.unlink(missing_ok=True)
     con.execute("PRAGMA enable_profiling='json'")
-    con.execute(f"PRAGMA profiling_output='{PROFILE_PATH.as_posix()}'")
     try:
+        con.execute("SET profiling_output = ?", [str(PROFILE_PATH)])
         con.execute(inner_sql).fetchall()
     finally:
         con.execute("PRAGMA disable_profiling")
 
     if not PROFILE_PATH.exists():
-        fail("DuckDB did not write a profiling output file -- unexpected duckdb version behavior")
+        fail("DuckDB did not write a profiling output file")
     profile = json.loads(PROFILE_PATH.read_text(encoding="utf-8"))
     PROFILE_PATH.unlink()
 
-    files_read = 0
-    found = False
-
-    def walk(node):
-        nonlocal files_read, found
-        info = node.get("extra_info", {})
-        if info.get("Function") == "READ_PARQUET" and "Total Files Read" in info:
-            files_read += int(info["Total Files Read"])
-            found = True
-        for child in node.get("children", []):
-            walk(child)
-
-    walk(profile)
-    if not found:
-        fail("could not find a READ_PARQUET 'Total Files Read' entry in the EXPLAIN ANALYZE plan")
+    files_read = sum(
+        int(info.get("Total Files Read", 0))
+        for node in walk_plan(profile)
+        if (info := node.get("extra_info", {})).get("Function") in ("READ_PARQUET", "PARQUET_SCAN")
+    )
+    if not 0 < files_read <= files_in_probe_months:
+        fail(f"the probe read {files_read} files, expected between 1 and {files_in_probe_months}")
     return files_read
 
 
@@ -149,10 +183,10 @@ def main():
     naive_probe = run_probe_naive(gt)
 
     print("running pruning_proof.sql and parsing its EXPLAIN ANALYZE plan ...")
-    files_read = parse_explain_analyze(con, pruning_sql)
-
     months = covered_months(fp["captured_at_from"], fp["captured_at_to"])
-    files_in_probe_months = sum(1 for m in months for _ in (LAKE_DIR / f"month={m}").glob("*.parquet"))
+    files_read = parse_explain_analyze(con, pruning_sql, probe_sql, LAKE_DIR, months)
+
+    files_in_probe_months = len(parquet_files(LAKE_DIR, months))
     files_total_lake = sum(1 for _ in LAKE_DIR.glob("month=*/*.parquet"))
 
     results = {

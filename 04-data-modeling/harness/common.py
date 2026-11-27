@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 START_DATE = datetime(2024, 1, 1, tzinfo=timezone.utc)
 END_DATE = datetime(2026, 1, 1, tzinfo=timezone.utc)
 SPAN_DAYS = (END_DATE - START_DATE).days
+DATASET_VERSION = 2
 
 CATEGORIES = [
     "electronics",

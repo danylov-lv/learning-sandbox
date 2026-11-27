@@ -8,28 +8,34 @@ You are going to build the storage layer properly: columnar formats, compression
 
 ## Setup
 
-Prerequisites: Docker with compose v2, uv, ~15 GB free disk for the default dataset (5 GB raw plus derived copies).
+Prerequisites: uv, Docker with Compose v2 for tasks 05–06, and about 15 GB of free disk for the default 5 GB dataset and its derived copies.
 
 ```bash
 cd 05-storage-and-formats
 uv sync
-docker compose up -d --wait     # MinIO on ports 9301 (S3 API) / 9302 (console)
 ```
 
-MinIO console: http://localhost:9302 (user `sandbox`, password `sandbox123`). The compose file creates the bucket `price-lake` automatically. Ports are overridable via `SANDBOX_04_MINIO_PORT` / `SANDBOX_04_MINIO_CONSOLE_PORT`.
+### Start MinIO for tasks 05 and 06
+
+```bash
+docker compose up -d --wait --build
+docker compose run --rm minio-init
+```
+
+The first command builds MinIO and its CLI from pinned upstream releases. The second creates the `price-lake` bucket and is safe to rerun. The API and console are available locally on ports 9301 and 9302. The console at http://localhost:9302 uses `sandbox` / `sandbox123`. Override the host ports with `SANDBOX_04_MINIO_PORT` and `SANDBOX_04_MINIO_CONSOLE_PORT`, respectively.
 
 ## Generate the dataset
 
 ```bash
 uv run python generate.py           # 5 GB of raw JSONL (default)
 uv run python generate.py --gb 1    # smaller run
-uv run python generate.py --rows 500000
+uv run python generate.py --rows 400000  # smaller dataset for the full exercise sequence
 ```
 
 The generator is deterministic (fixed seeds): the same arguments always produce the same data. It writes:
 
 - `data/raw/part-*.jsonl` — scraped price snapshots (product, source, messy unicode titles, nested `attrs` dict, skewed zipf/log-normal distributions, 18 months of timestamps with seasonal and diurnal skew, ~1.5% non-200 rows with null prices);
-- `data/ground-truth.json` — aggregates computed while generating (row counts, per-currency counts, per-month price sums, distinct products, probe filters). Task validators check your outputs against this file, at any dataset size.
+- `data/ground-truth.json` — aggregates computed while generating (row counts, per-currency counts, per-month price sums, distinct products, probe filters). Task validators check your outputs against this file. The structural checks assume enough rows to expose pruning and small-file effects, so use at least 400,000 rows for the full sequence.
 
 Measured on the reference machine (NVMe SSD): `--gb 1` produces 1.0 GB / ~1.62 M rows in ~35 s (plus ~7 s one-off universe build); `--gb 5` extrapolates to roughly 8 M rows in ~3 minutes. Budget ~2x the raw size again for the Parquet/CSV/lake copies the tasks create under `data/`.
 

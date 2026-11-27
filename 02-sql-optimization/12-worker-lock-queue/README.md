@@ -77,8 +77,9 @@ reference), then drains a second fresh copy with 8 concurrent workers
 running your current `src/claim.sql`, and verifies:
 
 1. **Zero duplicate claims and full coverage** — every arena row ends up
-   `claimed` exactly once; no row is ever returned by more than one
-   worker's claim.
+   `claimed`, and the returned IDs match exactly the rows the workers
+   claimed, with each ID returned once. Each claim returns at most
+   `batch_size` IDs.
 2. **The 8-worker drain actually scales** — its wall time must be at most
    the 1-worker reference time divided by a fixed factor. A claim query
    that serializes all workers onto the same lock queue does not clear

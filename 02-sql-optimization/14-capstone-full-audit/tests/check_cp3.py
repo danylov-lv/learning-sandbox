@@ -4,12 +4,8 @@ Run from the module root:
     uv run python 14-capstone-full-audit/tests/check_cp3.py
 
 Gates (see .authoring/tasks-w4-capstone.md for the full verification story):
-  1. Vacuum hygiene on orders/payments/inventory_events -- autovacuum
-     re-enabled, at least one vacuum has run, dead-tuple ratio < 2%. Same
-     catalog gates as 11-vacuum-debt/tests/check.py; that task's author
-     already scratch-verified the pass path (VACUUM cannot run inside a
-     transaction, so it can't be re-verified in a rolled-back txn here --
-     see the authoring notes for how this was confirmed instead).
+  1. Vacuum hygiene on orders/payments/inventory_events, using the same
+     physical-table checks as 11-vacuum-debt/tests/check.py.
   2. Redundant-index gate on reviews -- same two indexes as
      08-index-audit-reviews/tests/check.py must be gone.
   3. Statistics freshness on orders.status -- a status-filtered probe
@@ -28,13 +24,11 @@ sys.path.insert(0, str(MODULE_ROOT / "tools"))
 
 import psycopg  # noqa: E402
 
-from plan_check import conninfo, get_plan  # noqa: E402
+from plan_check import conninfo, get_plan, rows_estimate_error  # noqa: E402
+from vacuum_check import check_vacuum_hygiene  # noqa: E402
 
 REPORT_FILE = TASK_ROOT / "REPORT.md"
 QC_IDS = [f"qc{n:02d}" for n in range(1, 9)]
-
-VACUUM_TABLES = ["orders", "payments", "inventory_events"]
-MAX_DEAD_RATIO = 0.02
 
 DROPPED_REVIEW_INDEXES = ["idx_reviews_product_id", "idx_reviews_review_text"]
 
@@ -55,64 +49,6 @@ REQUIRED_SECTION_HEADINGS = [
     "7. Type-Hygiene Findings",
     "8. Remaining Risks",
 ]
-
-
-def table_stats(cur, table):
-    cur.execute("SELECT reloptions FROM pg_class WHERE relname = %s", (table,))
-    row = cur.fetchone()
-    reloptions = row[0] if row and row[0] else []
-    cur.execute(
-        """
-        SELECT n_live_tup, n_dead_tup, last_vacuum, last_autovacuum
-        FROM pg_stat_user_tables WHERE relname = %s
-        """,
-        (table,),
-    )
-    row = cur.fetchone()
-    if row is None:
-        return None
-    n_live, n_dead, last_vacuum, last_autovacuum = row
-    return {
-        "reloptions": reloptions,
-        "n_live": n_live or 0,
-        "n_dead": n_dead or 0,
-        "last_vacuum": last_vacuum,
-        "last_autovacuum": last_autovacuum,
-    }
-
-
-def check_vacuum_hygiene(cur, failures):
-    for table in VACUUM_TABLES:
-        stats = table_stats(cur, table)
-        if stats is None:
-            reason = f"{table}: not found in pg_stat_user_tables -- is the table missing?"
-            print(f"FAIL  {reason}")
-            failures.append(reason)
-            continue
-
-        autovac_off = any("autovacuum_enabled=off" in opt for opt in stats["reloptions"])
-        if autovac_off:
-            reason = f"{table}: autovacuum still disabled (reloptions={stats['reloptions']})"
-            print(f"FAIL  {reason}")
-            failures.append(reason)
-        else:
-            print(f"PASS  {table}: autovacuum_enabled=off not present")
-
-        vacuumed = stats["last_vacuum"] is not None or stats["last_autovacuum"] is not None
-        if not vacuumed:
-            reason = f"{table}: never vacuumed (last_vacuum and last_autovacuum both NULL)"
-            print(f"FAIL  {reason}")
-            failures.append(reason)
-        else:
-            print(f"PASS  {table}: vacuumed at least once")
-
-        ratio = stats["n_dead"] / max(stats["n_live"], 1)
-        if ratio >= MAX_DEAD_RATIO:
-            reason = f"{table}: dead-tuple ratio {ratio:.4f} >= {MAX_DEAD_RATIO}"
-            print(f"FAIL  {reason}")
-            failures.append(reason)
-        else:
-            print(f"PASS  {table}: dead-tuple ratio {ratio:.4f} < {MAX_DEAD_RATIO}")
 
 
 def check_redundant_indexes(cur, failures):
@@ -136,18 +72,7 @@ def check_stats_freshness(failures):
         failures.append(reason)
         return
 
-    worst, worst_node = 1.0, None
-    stack = [plan["Plan"]]
-    while stack:
-        node = stack.pop()
-        if node.get("Node Type") not in ("BitmapAnd", "BitmapOr"):
-            if "Actual Rows" in node and "Plan Rows" in node:
-                actual = max(node["Actual Rows"] * max(node.get("Actual Loops", 1), 1), 1)
-                est = max(node["Plan Rows"], 1)
-                factor = max(actual / est, est / actual)
-                if factor > worst:
-                    worst, worst_node = factor, node
-        stack.extend(node.get("Plans", []))
+    worst, worst_node = rows_estimate_error(plan)
 
     where = f"{worst_node.get('Node Type')} on {worst_node.get('Relation Name', '?')}" if worst_node else "-"
     if worst > MAX_ESTIMATE_ERROR:
@@ -213,16 +138,12 @@ def main():
     failures = []
 
     try:
-        conn = psycopg.connect(conninfo())
+        with psycopg.connect(conninfo()) as conn, conn.cursor() as cur:
+            failures.extend(check_vacuum_hygiene(cur))
+            check_redundant_indexes(cur, failures)
     except psycopg.Error as e:
-        print(f"NOT PASSED: could not connect to the database: {e}")
+        print(f"NOT PASSED: could not check database hygiene: {e}")
         sys.exit(1)
-
-    with conn.cursor() as cur:
-        check_vacuum_hygiene(cur, failures)
-        check_redundant_indexes(cur, failures)
-    conn.rollback()
-    conn.close()
 
     check_stats_freshness(failures)
     check_report(failures)

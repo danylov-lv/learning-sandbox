@@ -4,7 +4,7 @@ Uploads data/lake -> prefix "lake/" and data/lake-trap -> prefix "lake-trap/"
 via the learner's upload(), using their concurrent upload code (skips
 re-upload if the bucket already holds the right number of objects under a
 prefix). Then measures LIST enumeration cost for each prefix, a probe query
-against the S3 lake vs the same probe against local disk, and a single-month
+against both S3 layouts and the local lake, and a single-month
 aggregate against the S3 lake vs the S3 trap. Writes results-local.json next
 to this file.
 
@@ -30,6 +30,7 @@ from harness.common import (  # noqa: E402
     DATA_DIR,
     S3_ACCESS_KEY,
     S3_BUCKET,
+    S3_LIST_PAGE_SIZE,
     S3_SECRET_KEY,
     fail,
     guarded,
@@ -75,7 +76,7 @@ def list_prefix(client, bucket, prefix):
     t0 = time.perf_counter()
     object_count = 0
     page_count = 0
-    for page in paginator.paginate(Bucket=bucket, Prefix=prefix):
+    for page in paginator.paginate(Bucket=bucket, Prefix=prefix, PaginationConfig={"PageSize": S3_LIST_PAGE_SIZE}):
         page_count += 1
         object_count += len(page.get("Contents", []))
     wall = time.perf_counter() - t0
@@ -158,7 +159,7 @@ def main():
         elapsed = time.perf_counter() - t0
         print(f"  uploaded {uploaded} objects in {elapsed:.1f}s")
 
-    results = {"prefixes": {}}
+    results = {"list_page_size": S3_LIST_PAGE_SIZE, "prefixes": {}}
 
     print()
     print(f"{'prefix':<12}{'objects':>10}{'list_pages':>12}{'list_wall_s':>14}")
@@ -181,9 +182,11 @@ def main():
     print("running probe query (source + date range, month-pruned) ...")
     s3_probe = run_probe(s3_lake_dataset, gt, month_field="month")
     local_probe = run_probe(local_lake_dataset, gt, month_field="month")
-    results["probe_query"] = {"s3_lake": s3_probe, "local_lake": local_probe}
-    print(f"  s3 lake:    {s3_probe['wall_s']:.4f}s, {s3_probe['rows']} rows")
-    print(f"  local lake: {local_probe['wall_s']:.4f}s, {local_probe['rows']} rows")
+    trap_probe = run_probe(s3_trap_dataset, gt)
+    results["probe_query"] = {"s3_lake": s3_probe, "local_lake": local_probe, "s3_lake_trap": trap_probe}
+    print(f"  s3 lake:      {s3_probe['wall_s']:.4f}s, {s3_probe['rows']} rows")
+    print(f"  local lake:   {local_probe['wall_s']:.4f}s, {local_probe['rows']} rows")
+    print(f"  s3 lake-trap: {trap_probe['wall_s']:.4f}s, {trap_probe['rows']} rows")
 
     month_key = max(gt["rows_by_month"], key=lambda k: gt["rows_by_month"][k])
     print(f"\nrunning single-month aggregate for month={month_key} ...")

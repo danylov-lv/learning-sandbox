@@ -47,6 +47,9 @@ uv sync
 uv run python harness/events.py      # writes data/events.jsonl + clients.jsonl (seed 42, deterministic)
 ```
 
+If the validator reports an older dataset version, regenerate the files
+with the command above and reload your database before validating again.
+
 Postgres is reachable at `localhost:54303`, db/user/password all `sandbox`
 (port overridable via `SANDBOX_03_PORT`). Then read `harness/questions.md` —
 it is the learner-facing contract for the full q01–q15 battery: what each

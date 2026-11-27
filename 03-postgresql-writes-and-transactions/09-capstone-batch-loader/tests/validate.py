@@ -40,6 +40,22 @@ def verify(conn, batches):
     require_prices(conn, [event for path in batches.values() for event in read_csv(path)])
 
 
+def with_copy_check(load_batch):
+    def checked_load(conn, batch_id, path, before_commit):
+        start = len(conn.activity)
+        message = "load this batch via COPY FROM STDIN into price_stage"
+        try:
+            applied = load_batch(conn, batch_id, path, before_commit)
+        except (InjectedFailure, errors.InvalidTextRepresentation):
+            require(uses_copy(conn, since=start), message)
+            raise
+        if applied is True:
+            require(uses_copy(conn, since=start), message)
+        return applied
+
+    return checked_load
+
+
 def sequential(load_batch, good, bad):
     with arena() as database, database.connect() as conn, database.connect() as reader:
         calls = []
@@ -64,7 +80,6 @@ def sequential(load_batch, good, bad):
 
         require(load_batch(conn, "friday", good, before_commit) is True, "a successful new batch must return True")
         require(calls == [True, True], "invoke the hook exactly once per newly applied batch")
-        require(uses_copy(conn), "load new CSV rows via COPY FROM STDIN into price_stage")
         verify(reader, {"friday": good})
         require(load_batch(conn, "friday", good, before_commit) is False, "a committed batch must return False on replay")
         require(calls == [True, True], "skip the pre-commit hook on replay")
@@ -172,7 +187,7 @@ def overlapping_merges(load_batch, left_path, right_path, *, target):
 
 
 def check(source: Path, checkpoint: int = 2) -> None:
-    load_batch = submission(source).load_batch
+    load_batch = with_copy_check(submission(source).load_batch)
     with TemporaryDirectory() as temp:
         directory = Path(temp)
         left = write_csv(directory / "left.csv", BATCH_A)

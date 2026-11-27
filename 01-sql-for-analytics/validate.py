@@ -1,61 +1,56 @@
-"""Validation harness for module 01-sql-for-analytics.
+"""Validate SQL against the default seed and task-specific fixtures.
 
 Usage:
-    uv run python validate.py 04     # validate task 04
-    uv run python validate.py all    # validate every task
-
-Executes NN-*/src/query.sql against the sandbox DB, normalizes the result
-(canonical row sort, floats rounded to 6 significant digits, dates/timestamps
-as ISO strings) and compares it with NN-*/tests/expected.json.
-
-Expected values assume the DEFAULT seed scale (1.0).
+    uv run python validate.py 04
+    uv run python validate.py all
 """
 
 import json
-import math
 import os
 import sys
+from collections import Counter
 from datetime import date, datetime
 from decimal import Decimal
+from itertools import islice
 from pathlib import Path
+from uuid import uuid4
 
 import psycopg
+from psycopg import sql
+
 
 MODULE_DIR = Path(__file__).resolve().parent
+TEMPORAL_COLUMNS = {
+    "month": "date",
+    "week_start": "date",
+    "captured_at": "timestamp",
+    "hour_start": "timestamp",
+    "streak_start": "timestamp",
+    "streak_end": "timestamp",
+}
 
 
-def connect():
+def connect(dbname="sandbox", *, autocommit=False):
     return psycopg.connect(
         host=os.environ.get("SANDBOX_01_HOST", "localhost"),
         port=int(os.environ.get("SANDBOX_01_PORT", "54301")),
-        dbname="sandbox",
+        dbname=dbname,
         user="sandbox",
         password="sandbox",
+        autocommit=autocommit,
     )
 
 
-def round_sig(x, sig=6):
-    if x == 0 or not math.isfinite(x):
-        return float(x)
-    return float(f"{x:.{sig}g}")
-
-
-def normalize_value(v):
-    if v is None or isinstance(v, bool) or isinstance(v, int):
-        return v
-    if isinstance(v, Decimal) or isinstance(v, float):
-        return round_sig(float(v))
-    if isinstance(v, datetime):
-        return v.isoformat(sep=" ")
-    if isinstance(v, date):
-        return v.isoformat()
-    return str(v)
-
-
-def normalize_result(columns, rows):
-    norm = [[normalize_value(v) for v in row] for row in rows]
-    norm.sort(key=lambda r: json.dumps(r, default=str))
-    return {"columns": list(columns), "rows": norm}
+def normalize_value(value):
+    if value is None or type(value) in (int, str, Decimal):
+        return value
+    if isinstance(value, float):
+        return Decimal(str(value))
+    if isinstance(value, datetime):
+        return value.isoformat(sep=" ")
+    if isinstance(value, date):
+        return value.isoformat()
+    raise ValueError(f"unsupported result type: {type(value).__name__}")
 
 
 def strip_sql(text):
@@ -67,60 +62,96 @@ def strip_sql(text):
     return " ".join(lines)
 
 
-def run_query(sql):
-    with connect() as conn:
+def run_query(query, *, dbname="sandbox", fixture=None):
+    with connect(dbname) as conn:
         with conn.cursor() as cur:
             cur.execute("SET statement_timeout = '600s'")
-            cur.execute(sql)
-            columns = [d.name for d in cur.description] if cur.description else []
-            rows = cur.fetchall() if cur.description else []
-    return columns, rows
+            if fixture is not None:
+                schema = MODULE_DIR / "seed" / "schema.sql"
+                cur.execute(schema.read_text(encoding="utf-8"))
+                cur.execute(fixture.read_text(encoding="utf-8"))
+            cur.execute(query)
+            description = cur.description or []
+            rows = cur.fetchall() if description else []
+            return description, rows
+
+
+def run_edge_query(query, fixture):
+    dbname = f"sandbox_01_check_{uuid4().hex}"
+    database = sql.Identifier(dbname)
+    with connect(autocommit=True) as admin:
+        admin.execute(sql.SQL("CREATE DATABASE {}").format(database))
+        try:
+            return run_query(query, dbname=dbname, fixture=fixture)
+        finally:
+            admin.execute(sql.SQL("DROP DATABASE {}").format(database))
+
+
+def compare_result(description, rows, expected):
+    columns = [column.name for column in description]
+    if columns != expected["columns"]:
+        return f"column mismatch: expected {expected['columns']}, got {columns}"
+
+    for column in description:
+        type_name = TEMPORAL_COLUMNS.get(column.name)
+        if type_name and column.type_code != psycopg.adapters.types[type_name].oid:
+            return f"column type mismatch: {column.name} must be {type_name}"
+
+    expected_rows = expected["rows"]
+    if len(rows) != len(expected_rows):
+        return f"row count mismatch: expected {len(expected_rows)} rows, got {len(rows)}"
+
+    try:
+        actual = Counter(tuple(normalize_value(value) for value in row) for row in rows)
+    except ValueError as exc:
+        return str(exc)
+
+    target = Counter(tuple(row) for row in expected_rows)
+    if actual == target:
+        return ""
+
+    missing = list(islice((target - actual).elements(), 3))
+    unexpected = list(islice((actual - target).elements(), 3))
+    return f"differing rows (up to 3 shown): expected {missing}, got {unexpected}"
 
 
 def validate_task(task_dir):
-    """Returns (passed: bool, message: str)."""
     query_path = task_dir / "src" / "query.sql"
-    expected_path = task_dir / "tests" / "expected.json"
+    tests = task_dir / "tests"
+    expected_path = tests / "expected.json"
     if not query_path.exists():
         return False, f"missing {query_path.name}"
     if not expected_path.exists():
         return False, "missing tests/expected.json"
 
-    sql_text = query_path.read_text(encoding="utf-8")
-    if not strip_sql(sql_text):
+    query = query_path.read_text(encoding="utf-8")
+    if not strip_sql(query):
         return False, "no query written yet"
 
-    expected = json.loads(expected_path.read_text(encoding="utf-8"))
+    checks = [(None, expected_path)]
+    edge_setup = tests / "edge_setup.sql"
+    edge_expected = tests / "edge_expected.json"
+    if edge_setup.exists() != edge_expected.exists():
+        return False, "edge fixture requires edge_setup.sql and edge_expected.json"
+    if edge_setup.exists():
+        checks.append((edge_setup, edge_expected))
 
-    try:
-        columns, rows = run_query(sql_text)
-    except psycopg.Error as e:
-        first_line = str(e).strip().splitlines()[0] if str(e).strip() else type(e).__name__
-        return False, f"query error: {first_line}"
+    for fixture, path in checks:
+        expected = json.loads(path.read_text(encoding="utf-8"), parse_float=Decimal)
+        try:
+            if fixture is None:
+                description, rows = run_query(query)
+            else:
+                description, rows = run_edge_query(query, fixture)
+            mismatch = compare_result(description, rows, expected)
+        except psycopg.Error as exc:
+            lines = str(exc).strip().splitlines()
+            mismatch = f"query error: {lines[0] if lines else type(exc).__name__}"
 
-    got = normalize_result(columns, rows)
-
-    if got["columns"] != expected["columns"]:
-        return False, (
-            f"column mismatch: expected {expected['columns']}, got {got['columns']}"
-        )
-    if len(got["rows"]) != len(expected["rows"]):
-        return False, (
-            f"row count mismatch: expected {len(expected['rows'])} rows, "
-            f"got {len(got['rows'])}"
-        )
-
-    diffs = []
-    for i, (er, gr) in enumerate(zip(expected["rows"], got["rows"])):
-        if er != gr:
-            diffs.append((i, er, gr))
-        if len(diffs) >= 3:
-            break
-    if diffs:
-        parts = [f"{len(diffs)}+ differing rows (after canonical sort);"]
-        for i, er, gr in diffs:
-            parts.append(f" row {i}: expected {er}, got {gr};")
-        return False, "".join(parts)
+        if mismatch:
+            if fixture is not None:
+                mismatch = f"edge fixture: {mismatch}"
+            return False, mismatch
     return True, ""
 
 
